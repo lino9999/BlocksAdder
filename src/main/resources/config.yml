@@ -8,6 +8,10 @@ resource-pack:
     enabled: false
     bind: '0.0.0.0'
     port: 8163
+block-behavior:
+  light-updates-per-tick: 256
+native-blocks:
+  repairs-per-tick: 256
 world:
   enabled: true
   max-content-per-chunk: 128
@@ -16,3 +20,17 @@ world:
   display-view-range: 1.0
   growth-check-ticks: 100
   growth-batch-size: 128
+environment:
+  max-cells-per-chunk: 2048
+  max-loaded-cells: 65536
+  updates-per-tick: 256
+crops:
+  max-in-area: 1000
+  area-radius: 32
+models:
+  max-active-rigs: 128
+  max-total-bones: 4096
+generation:
+  enabled: true
+  work-per-tick: 512
+  max-millis-per-tick: 4

@@ -6,11 +6,15 @@
 
 BlocksAdder by **Lino** is a Java plugin for building namespaced server content with YAML. Create items, decorate worlds, register recipes, grow crops and display player stats using the Minecraft client and a server resource pack.
 
-[Download the JAR](https://github.com/lino9999/BlocksAdder/releases) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Verification](docs/verification.md)
+[Download the JAR](https://github.com/lino9999/BlocksAdder/releases) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
 
-**Release status:** initial independent implementation. The [feature comparison](docs/feature-parity.md) records the implemented surface and remaining differences from the supplied reference plugin. Full-body skeletal animations, player disguises, controlled vehicles, custom fluid/fire simulation and dedicated third-party integration adapters remain unimplemented. Headless server checks do not certify client visuals or every player interaction.
+**Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
+
+**Active development:** `main` is now `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Development adds timed mining, native block states, skeletal rigs/disguises, vehicles, automatic generation, fluid/fire engines, richer crops and recipe adapters. Two actual protocol-player scenarios passed 141 assertions each; endpoint and artifact scope is recorded in [development verification](docs/development-verification.md). The [parity tracker](docs/parity-progress.md) retains remaining requirements. The released preview and its report remain historical artifacts.
 
 ## Features
+
+Development guides: [items and event actions](docs/item-behaviors.md), [mining](docs/mining.md), [block sounds](docs/block-sounds.md), [models and disguises](docs/entity-models.md), [liquids and fire](docs/fluids-fire.md), [automatic generation](docs/world-generation.md), [crop growth](docs/crop-growth.md), [equipment](docs/equipment.md), and [content administration](docs/content-administration.md).
 
 - **Custom items:** stable namespaced identity, modern item models, float model data, names/lore, stack limits, durability, enchantments, attributes, leather colors, food and equipment models.
 - **Custom blocks:** collision blocks with display models, persistent placement indexes, protected placement/removal and configurable chunk limits.
@@ -23,7 +27,7 @@ BlocksAdder by **Lino** is a Java plugin for building namespaced server content 
 - **Resource packs:** sorted ZIP output, stable hashes, modern item definitions, model/font/sound generation, asset merging, size limits, manual delivery and optional built-in HTTP hosting.
 - **Administration and integrations:** paginated catalog, recipe previews, item management, candidate validation, reload rollback, Bukkit service API and cancellable content events.
 
-BlocksAdder has no mandatory plugin dependencies. It uses public server APIs and does not download executable tools, contact activation servers or send telemetry.
+BlocksAdder's core has no mandatory plugin dependencies. Advanced packet features and raw tile-NBT loot conditions use optional ProtocolLib through its public API. Install a compatible official build for your server; modern Paper and Spigot have separate artifacts. See [ProtocolLib's installation/API guidance](https://github.com/dmulloy2/ProtocolLib/blob/master/Readme.md). BlocksAdder does not download executable tools, contact activation servers or send telemetry.
 
 ## Requirements and installation
 
@@ -75,6 +79,39 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | `/ba sound <sound> <player> [volume] [pitch]` | `blocksadder.sound` | Play a namespaced sound. |
 | `/ba totem <player>` | `blocksadder.totem` | Play the vanilla totem effect. |
 
+The development branch additionally provides these commands; they are absent from the historical 1.0.0 JAR:
+
+| Command | Permission | Purpose |
+| --- | --- | --- |
+| `/ba model list` | `blocksadder.model` | List skeletal models. |
+| `/ba model attach <model> <entity UUID>` | `blocksadder.model` | Attach a model to a loaded entity. |
+| `/ba model play <rig UUID> <animation\|stop> [loop]` | `blocksadder.model` | Control skeletal animation. |
+| `/ba model detach\|info\|bones <rig UUID>` | `blocksadder.model` | Remove or inspect a rig. |
+| `/ba model bone <rig UUID> <bone>` | `blocksadder.model` | Read an animated bone location. |
+| `/ba model color <rig UUID> <bone\|all> <#RRGGBB>` | `blocksadder.model` | Set bone tint. |
+| `/ba model glow <rig UUID> <bone\|all> <true\|false>` | `blocksadder.model` | Toggle the enchantment effect. |
+| `/ba model mount <rig UUID> <bone> <player>` | `blocksadder.model` | Use a bone seat. |
+| `/ba model lock <rig UUID> <bone> <true\|false>` | `blocksadder.model` | Control mount locking. |
+| `/ba disguise <model> [player]` | `blocksadder.disguise` | Apply a player model. |
+| `/ba undisguise [player]` | `blocksadder.undisguise` | Restore normal player appearance. |
+| `/ba liquid\|fire inspect` | `blocksadder.liquid` or `blocksadder.fire` | Inspect targeted environment content. |
+| `/ba liquid\|fire place <id> [x y z world]` | Matching environment permission | Place custom environment content. |
+| `/ba liquid\|fire remove [x y z world]` | Matching environment permission | Remove managed environment content. |
+| `/ba fire age <age> [x y z world]` | `blocksadder.fire` | Set logical custom fire age. |
+| `/ba vehicle list` | `blocksadder.vehicle` | List vehicle definitions. |
+| `/ba vehicle spawn <id> [x y z world]` | `blocksadder.vehicle` | Spawn a vehicle. |
+| `/ba vehicle info\|remove <vehicle UUID>` | `blocksadder.vehicle` | Inspect or remove a vehicle. |
+| `/ba vehicle mount <vehicle UUID> [player]` | `blocksadder.vehicle` | Mount a native vehicle seat. |
+| `/ba vehicle dismount [player]` | `blocksadder.vehicle` | Dismount a managed vehicle. |
+| `/ba vehicle fuel <vehicle UUID> [amount]` | `blocksadder.vehicle` | Read or set fuel. |
+| `/ba config item <disable\|delete> <item>` | `blocksadder.config.item.<action>` | Preview and apply an item configuration edit. |
+| `/ba config namespace <disable\|delete> <namespace>` | `blocksadder.config.namespace.<action>` | Edit namespace content and dependent recipes. |
+| `/ba config recipes <disable\|delete> <item>` | `blocksadder.config.recipes.<action>` | Edit recipes that consume or create an item. |
+
+Configuration edits require a repeated identical command within thirty seconds. The first invocation previews the affected files/content; the second applies the reviewed plan. Changed source files invalidate the preview, and failed validation restores the original files and registry.
+
+Vehicle, disguise and undisguise commands require `blocksadder.others` when targeting another player. Ordinary vehicle riding uses `blocksadder.vehicle.ride`; placement uses `blocksadder.vehicle.place`; sneak-attack removal uses `blocksadder.vehicle.break`. Crop fertilizing uses `blocksadder.crop.fertilize`.
+
 Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/babrowse` (`/bbrowse`), `/bareload` (`/breload`), `/barecipe` (`/brecipe`) and `/bainspect` (`/binspect`). They accept the same arguments as their matching subcommands. Reference-plugin commands, aliases and permission nodes are not registered.
 
 `blocksadder.admin` grants every built-in permission and defaults to operators. Public browsing/help/info/recipe/glyph/pack/HUD/emote commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
@@ -121,7 +158,7 @@ Install JDK 21 or newer and Maven 3.9+, then run:
 mvn -B clean package
 ```
 
-The output is `target/BlocksAdder-1.0.0.jar`. Server APIs are provided by the server and are not bundled. GitHub Actions compiles the project on Java 21 and 25. Temporary test plugins, original artifacts and disposable servers are excluded from the repository.
+The current development output is `target/BlocksAdder-1.1.0-SNAPSHOT.jar`. Server APIs are provided by the server and are not bundled. GitHub Actions compiles the project on Java 21 and 25. Temporary test plugins, original artifacts and disposable servers are excluded from the repository.
 
 ## SpigotMC publishing files
 

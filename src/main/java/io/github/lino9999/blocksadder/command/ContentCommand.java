@@ -19,13 +19,17 @@ import java.util.Map;
 
 public final class ContentCommand implements TabExecutor {
     private static final Map<String, String> SHORTCUTS = Map.of("baget", "get", "bagive", "give", "bapack", "pack", "babrowse", "browse", "bareload", "reload", "barecipe", "recipe", "bainspect", "inspect");
-    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem");
+    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem", "model", "disguise", "undisguise", "liquid", "fire", "vehicle", "config");
     private final BlocksAdderPlugin plugin;
     private final CatalogMenu menus;
+    private final AdvancedContentCommands advanced;
+    private final ConfigurationCommands configuration;
 
     public ContentCommand(BlocksAdderPlugin plugin, CatalogMenu menus) {
         this.plugin = plugin;
         this.menus = menus;
+        this.advanced = new AdvancedContentCommands(plugin);
+        this.configuration = new ConfigurationCommands(plugin);
     }
 
     @Override
@@ -122,10 +126,22 @@ public final class ContentCommand implements TabExecutor {
                     Text.send(sender, "Tree generated.");
                 }
                 case "entity" -> entity(sender, args);
+                case "model" -> advanced.model(sender, args);
+                case "disguise" -> advanced.disguise(sender, args, false);
+                case "undisguise" -> advanced.disguise(sender, args, true);
+                case "liquid" -> advanced.environment(sender, args, false);
+                case "fire" -> advanced.environment(sender, args, true);
+                case "vehicle" -> advanced.vehicle(sender, args);
+                case "config" -> configuration.execute(sender, args);
                 case "emote" -> {
-                    usage(args, 2, "emote <emote|stop> [player]");
+                    usage(args, 2, "emote <emote|list|info|stop|stop-now> [player]");
+                    if (args[1].equalsIgnoreCase("list")) {
+                        Text.send(sender, "Emotes: " + String.join(", ", plugin.content().sections("emotes").keySet().stream().sorted().toList()));
+                        break;
+                    }
                     Player actor = args.length > 2 ? online(args[2], sender) : player(sender);
-                    if (!plugin.gameplay().playEmote(actor, args[1])) throw new IllegalArgumentException("Unknown emote: " + args[1]);
+                    if (args[1].equalsIgnoreCase("info")) { Text.send(sender, plugin.emoteState(actor)); break; }
+                    if (!plugin.playEmote(actor, args[1])) throw new IllegalArgumentException("Unknown or unavailable emote: " + args[1]);
                     Text.send(sender, "Emote updated.");
                 }
                 case "sound" -> {
@@ -329,8 +345,12 @@ public final class ContentCommand implements TabExecutor {
         Text.send(sender, "/ba inspect | modeldata | block | repair | rename <name> | durability <remaining> | color <#RRGGBB>");
         Text.send(sender, "/ba pack <build|send|hash> [player|all] | reload | validate | info");
         Text.send(sender, "/ba stat <read|write|add|subtract> <player> <stat> [value] | hud <show|hide> <hud> [player]");
-        Text.send(sender, "/ba tree <id> | entity <spawn|remove> <id|UUID> [player] | emote <id|stop> [player]");
+        Text.send(sender, "/ba tree <id> | entity <spawn|remove> <id|UUID> [player] | emote <id|list|info|stop|stop-now> [player]");
         Text.send(sender, "/ba sound <sound> <player> [volume] [pitch] | totem <player>");
+        Text.send(sender, "/ba model <list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable> | disguise <model> [player] | undisguise [player]");
+        Text.send(sender, "/ba vehicle <list|spawn|info|mount|dismount|remove|fuel>");
+        Text.send(sender, "/ba config <item|namespace|recipes> <disable|delete> <identifier>");
+        Text.send(sender, "/ba liquid <inspect|place|remove> | fire <inspect|place|remove|age>");
     }
 
     @Override
@@ -357,8 +377,14 @@ public final class ContentCommand implements TabExecutor {
                 case "hud" -> { if (args.length == 2) choices.addAll(List.of("show", "hide")); if (args.length == 3) choices.addAll(plugin.content().sections("huds").keySet()); }
                 case "tree" -> choices.addAll(plugin.content().sections("trees").keySet());
                 case "glyph" -> choices.addAll(plugin.content().sections("font_images").keySet());
-                case "emote" -> { choices.add("stop"); choices.addAll(plugin.content().sections("emotes").keySet()); }
+                case "emote" -> { choices.addAll(List.of("list", "info", "stop", "stop-now")); choices.addAll(plugin.content().sections("emotes").keySet()); }
                 case "entity" -> { if (args.length == 2) choices.addAll(List.of("spawn", "remove")); if (args.length == 3 && args[1].equals("spawn")) choices.addAll(plugin.content().sections("entities").keySet()); }
+                case "model" -> { if (args.length == 2) choices.addAll(List.of("list", "attach", "play", "detach", "info", "bones", "bone", "color", "glow", "mount", "lock", "camera", "variables", "variable")); if (args.length == 3 && args[1].equals("attach")) choices.addAll(plugin.models().models()); }
+                case "vehicle" -> { if (args.length == 2) choices.addAll(List.of("list", "spawn", "info", "mount", "dismount", "remove", "fuel")); if (args.length == 3 && args[1].equals("spawn")) choices.addAll(plugin.vehicles().definitions()); }
+                case "config" -> { if (args.length == 2) choices.addAll(List.of("item", "namespace", "recipes")); if (args.length == 3) choices.addAll(List.of("disable", "delete")); if (args.length == 4) choices.addAll(plugin.content().items().stream().filter(item -> !item.options().getBoolean("hidden", false)).map(item -> args[1].equals("namespace") ? item.id().namespace() : item.id().toString()).distinct().toList()); }
+                case "disguise" -> { if (args.length == 2) choices.addAll(plugin.models().models()); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }
+                case "undisguise" -> choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                case "liquid", "fire" -> { if (args.length == 2) choices.addAll(action.equals("fire") ? List.of("inspect", "place", "remove", "age") : List.of("inspect", "place", "remove")); if (args.length == 3 && args[1].equals("place")) choices.addAll(plugin.content().sections(action.equals("fire") ? "fires" : "liquids").keySet()); }
                 case "sound" -> { if (args.length == 2) choices.addAll(plugin.content().sections("sounds").keySet()); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }
                 case "totem" -> choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                 default -> { }

@@ -22,6 +22,17 @@ public final class PluginSettings {
         range(config, "world.max-entities-per-chunk", 32, 1, 1024);
         range(config, "world.growth-check-ticks", 100, 20, 72000);
         range(config, "world.growth-batch-size", 128, 1, 4096);
+        range(config, "crops.max-in-area", 1000, 1, 100000);
+        range(config, "crops.area-radius", 32, 1, 256);
+        range(config, "environment.updates-per-tick", 256, 1, 4096);
+        range(config, "environment.max-cells-per-chunk", 2048, 1, 65536);
+        range(config, "environment.max-loaded-cells", 65536, 1, 1000000);
+        range(config, "models.max-active-rigs", 128, 1, 2048);
+        range(config, "models.max-total-bones", 4096, 1, 65536);
+        range(config, "native-blocks.repairs-per-tick", 256, 1, 16384);
+        range(config, "block-behavior.light-updates-per-tick", 256, 1, 16384);
+        range(config, "generation.work-per-tick", 512, 1, 16384);
+        range(config, "generation.max-millis-per-tick", 4, 1, 40);
         double view = config.getDouble("world.display-view-range", 1);
         if (!Double.isFinite(view) || view < 0.1 || view > 4) throw new IllegalArgumentException("world.display-view-range must be between 0.1 and 4.");
         return config;

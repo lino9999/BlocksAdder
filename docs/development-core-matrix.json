@@ -1,0 +1,209 @@
+{
+  "recorded_at": "2026-10-25T07:34:57.261263+00:00",
+  "scope": "Combined development artifact: loading, core item/API/recipe/pack/HTTP/admin validation/world lifecycle regression. This does not cover every new feature or establish complete functional parity.",
+  "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+  "processes": 18,
+  "assertions": 2421,
+  "all_passed": true,
+  "host_warning": "Some 26.x servers emitted OSHI/JNA Windows Perflib warnings before plugin tests. They did not originate from BlocksAdder and did not fail executed assertions.",
+  "runs": [
+    {
+      "server": "spigot-1.21.11",
+      "cycle": 1,
+      "java": 21,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=4598-Spigot-56165ca-d74c5d8 (MC: 1.21.11 Unobfuscated)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "spigot-1.21.11",
+      "cycle": 2,
+      "java": 21,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=4598-Spigot-56165ca-d74c5d8 (MC: 1.21.11 Unobfuscated)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "spigot-26.1.2",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=4632-Spigot-566f972-690a402 (MC: 26.1.2)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "spigot-26.1.2",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=4632-Spigot-566f972-690a402 (MC: 26.1.2)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "spigot-26.2",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=4648-Spigot-8db49a2-96ae8cd (MC: 26.2)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "spigot-26.2",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=4648-Spigot-8db49a2-96ae8cd (MC: 26.2)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "spigot-26.3",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=4663-Spigot-bed90fc-c4db4c3 (MC: 26.3)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "spigot-26.3",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=4663-Spigot-bed90fc-c4db4c3 (MC: 26.3)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "paper-1.21.11",
+      "cycle": 1,
+      "java": 21,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=1.21.11-132-c5eb079 (MC: 1.21.11)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-1.21.11",
+      "cycle": 2,
+      "java": 21,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=1.21.11-132-c5eb079 (MC: 1.21.11)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-26.1.1",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=26.1.1-29-77c0866 (MC: 26.1.1)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-26.1.1",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=26.1.1-29-77c0866 (MC: 26.1.1)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-26.1.2",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=26.1.2-74-e4e17fc (MC: 26.1.2)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-26.1.2",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=26.1.2-74-e4e17fc (MC: 26.1.2)",
+      "host_performance_counter_warning": false
+    },
+    {
+      "server": "paper-26.2",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=26.2-134-3e24be0 (MC: 26.2)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "paper-26.2",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=26.2-134-3e24be0 (MC: 26.2)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "paper-26.3",
+      "cycle": 1,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 134,
+      "restart_marker": true,
+      "server_details": "server=26.3-218-1b9bf5c (MC: 26.3)",
+      "host_performance_counter_warning": true
+    },
+    {
+      "server": "paper-26.3",
+      "cycle": 2,
+      "java": 25,
+      "jar_sha256": "ec0c34acfcbc851c6f286c3cba9ebc525eea35685ca38c0df8d84f69dab8ac4f",
+      "passed": true,
+      "assertions": 135,
+      "restart_marker": true,
+      "server_details": "server=26.3-218-1b9bf5c (MC: 26.3)",
+      "host_performance_counter_warning": true
+    }
+  ]
+}

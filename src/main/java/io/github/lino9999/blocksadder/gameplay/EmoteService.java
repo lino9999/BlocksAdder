@@ -42,6 +42,7 @@ final class EmoteService implements AutoCloseable {
     private void load(boolean activate) {
         Map<String, Emote> next = new HashMap<>();
         registry.get().sections("emotes").forEach((id, section) -> {
+            if (section.contains("model") || section.contains("animation") || section.contains("id") && !section.contains("frames")) return;
             int duration = section.getInt("duration", 40);
             if (duration < 1 || duration > 1200) throw new IllegalArgumentException("Emote " + id + ": duration must be between 1 and 1200 ticks.");
             List<Frame> frames = new ArrayList<>();

@@ -38,6 +38,7 @@ public final class CatalogMenu implements Listener {
 
     public void open(Player player, String category, int page) {
         List<ItemDefinition> content = registry.get().items().stream()
+                .filter(item -> !item.options().getBoolean("hidden", false))
                 .filter(item -> category.isBlank() || item.category().equalsIgnoreCase(category))
                 .filter(item -> categoryAllowed(player, item.category()))
                 .sorted(Comparator.comparing(ItemDefinition::id)).toList();

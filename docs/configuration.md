@@ -1,6 +1,6 @@
 # Configuration and resource packs
 
-BlocksAdder stores settings in `plugins/BlocksAdder/config.yml`. Content YAML files are loaded recursively from `contents/` in sorted path order. Every definition file needs a lowercase `namespace`; an item key `sapphire` inside namespace `my_pack` becomes `my_pack:sapphire`. Full identifiers are stable and should remain unchanged after placing content in worlds. Ambiguous short identifiers are rejected.
+BlocksAdder stores settings in `plugins/BlocksAdder/config.yml`. Content YAML files are loaded recursively from `contents/` in sorted path order. Every definition file needs a lowercase `namespace` or the original `info.namespace`; an item key `sapphire` inside namespace `my_pack` becomes `my_pack:sapphire`. Full identifiers are stable and should remain unchanged after placing content in worlds. Ambiguous short identifiers are rejected.
 
 ## File layout
 
@@ -56,7 +56,9 @@ items:
 
 Stack limits range from 1–99. `durability` sets a positive custom maximum damage on a damageable item. Leather armor accepts `color: '#55CCFF'`. `attributes` is a map of Minecraft attribute names to additive main-hand amounts. `equipment-model` is a namespaced equipment asset and `equipment-slot` is a Bukkit slot such as `CHEST`. Additional equipment assets must be supplied in your resource pack. Food uses a `food` section with `nutrition`, `saturation` and `always-eat`.
 
-An item may have one world-content section: `block`, `furniture` or `crop`. See [world-content.md](world-content.md). Top-level supported sections are `recipes`, `categories`, `font_images`, `stats`, `huds`, `loot`, `emotes`, `entities`, `trees` and `sounds`. The loader retains a `liquids` definition section for future schema work, but no fluid simulation consumes it in this release.
+An item may have one world-content section: `block`, `furniture` or `crop`. See [world-content.md](world-content.md). Current development additionally consumes `models`, `liquids`, `fires`, `populators`, `decorators` and `tree_populators`, including original generation aliases. Read [entity models](entity-models.md), [fluids/fire](fluids-fire.md), [generation](world-generation.md) and [mining](mining.md) for the new schemas and verification boundaries. Existing top-level sections remain `recipes`, `categories`, `font_images`, `stats`, `huds`, `loot`, `emotes`, `entities`, `trees` and `sounds`.
+
+Development imports common original item keys such as `display_name`, `resource.material`, `resource.model_id`, generated texture lists and `resource.model_path`, and recognizes original block/furniture/crop behaviour sections. Common `recipes.crafting_table`, `cooking`, `stonecutter`, `smithing_table` and `anvil` families normalize into the current recipe registry. This is partial schema compatibility; richer original predicates, return-item actions, shaders and other properties still need their own parity work. Legacy raw `contents/<namespace>/textures`, `models`, `sounds` and other asset directories are mapped into `assets/<namespace>/...` when packing, alongside modern resourcepack folders.
 
 ## Resource-pack settings
 
@@ -102,6 +104,8 @@ The texture belongs at `assets/my_pack/textures/font/sapphire.png`, and the soun
 
 See [gameplay.md](gameplay.md) for permission-aware aliases, recipes, loot, stats/HUDs, right-click actions and simple emote timelines.
 
+Development extensions have separate guides: [native blocks](native-blocks.md), [mining](mining.md), [models/disguises](entity-models.md), [vehicles](vehicles.md), [crop growth and geometry](crop-growth.md), [armor equipment assets](equipment.md), [liquids/fire](fluids-fire.md), [automatic generation](world-generation.md), [recipe return/repair behavior](recipes-parity.md), and [transactional configuration commands](content-administration.md). Their tested scope and open requirements are retained in each guide and the [parity tracker](parity-progress.md).
+
 ## Validation and reload
 
 `/ba validate` parses settings, every content file, item prototypes, recipes, gameplay definitions and world-content definitions without replacing live content. Duplicate IDs, invalid references and unsupported values reject the candidate. `/ba reload` repeats validation, publishes the candidate and reconfigures services. Service activation failures restore the previous registry/settings and attempt to restore services; failures are logged. Fix the file and validate again. Keep a backup before large content edits.
@@ -111,3 +115,5 @@ Removing a definition does not automatically erase its saved placement identity;
 ## Version references
 
 Server Java requirements follow [Paper's requirements](https://docs.papermc.io/paper/getting-started/). Pack metadata uses the [modern min_format/max_format schema](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w31a). The baseline client has [split block/item texture atlases](https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-11), and [26.3 uses pack format 97.1](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3). Custom models must keep textures within a compatible atlas; administrator assets need interactive client acceptance.
+
+Generated metadata uses integer `max_format: 97`; Mojang defines an integer maximum as including every minor version of that major format, so the range includes 97.1. This metadata declaration does not certify every custom asset across the range.

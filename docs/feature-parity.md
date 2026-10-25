@@ -1,5 +1,7 @@
 # Original feature requirements
 
+This page retains the published preview 1.0.0 comparison. Current development continues toward full parity; see [parity-progress.md](parity-progress.md) for new implementations and their evidence. A preview gap is not automatically a gap in current source, and a new implementation is not automatically proof of full acceptance.
+
 ## Current implementation status
 
 | Area | BlocksAdder 1.0.0 implementation |

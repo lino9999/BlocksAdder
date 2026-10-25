@@ -1,5 +1,7 @@
 # World content
 
+Development version 1.1.0-SNAPSHOT replaces the preview's one-click custom-block removal described below with [timed mining](mining.md). Automatic ore/decorator/native-tree population is documented in [world-generation.md](world-generation.md), and full skeletal entity/player rigs in [entity-models.md](entity-models.md). Remaining paragraphs retain the original world service schema; preview-specific limitations should be read with those newer modules.
+
 World content uses public Bukkit APIs: a real collision block where needed, `ItemDisplay` for its model, and `Interaction` for furniture or crops. It does not reserve vanilla block-state palettes, modify Minecraft internals or depend on packet libraries. An installed resource pack supplies custom visuals. Custom blocks have full-block collision; furniture can have a full-block collision or no collision. Arbitrary model-shaped collision is not implemented.
 
 ## Blocks

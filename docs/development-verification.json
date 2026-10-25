@@ -1,0 +1,238 @@
+{
+  "recorded_at": "2026-10-25T09:20:09.568126+00:00",
+  "historical_release_report_unchanged": true,
+  "visual_checks": "User-owned; graphical clients are not controlled by the agent.",
+  "runs": [
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "8406fdf0b8c01606b3d75b4bae947609c22d5edd57a1bb6150ed655c06f77adb",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[08:12:10] [Server thread/INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=74 failed=0 packets={resets=2, cracks=11, bossbars=30, packs=1}",
+      "scope": [
+        "legacy recipe schemas and exact potion predicates",
+        "original top-level crop models/items and generated hidden stages",
+        "native mining requests, timing, tools, durability and abort",
+        "block permission suffixes and protection",
+        "skeletal player disguise visibility lifecycle",
+        "stats, HUD and resource-pack request packets",
+        "native player-input driving, carrier/seat following and fuel",
+        "movement cancellation, stopping, dismount and removal",
+        "native sneaking attack cancellation and permitted vehicle removal",
+        "bone-meal growth, creative consumption, protection and persisted stages"
+      ],
+      "local_log": ".work/player-server/console.log"
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "8406fdf0b8c01606b3d75b4bae947609c22d5edd57a1bb6150ed655c06f77adb",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[08:12:51 INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=74 failed=0 packets={resets=2, cracks=11, bossbars=30, packs=1}",
+      "scope": [
+        "legacy recipe schemas and exact potion predicates",
+        "original top-level crop models/items and generated hidden stages",
+        "native mining requests, timing, tools, durability and abort",
+        "block permission suffixes and protection",
+        "skeletal player disguise visibility lifecycle",
+        "stats, HUD and resource-pack request packets",
+        "native player-input driving, carrier/seat following and fuel",
+        "movement cancellation, stopping, dismount and removal",
+        "native sneaking attack cancellation and permitted vehicle removal",
+        "bone-meal growth, creative consumption, protection and persisted stages"
+      ],
+      "local_log": ".work/player-paper-server/console.log"
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "d6f644b67a95be7ae4ade876df7e51ba3f597d949213608c01b7bb7f093fdc08",
+      "passed": true,
+      "assertions": 84,
+      "summary": "[08:23:49] [Server thread/INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=84 failed=0 packets={resets=2, cracks=11, bossbars=32, packs=1}",
+      "scope": "Prior74-assertion native-player scenario plus ordinary vanilla item action, original crop loot interaction/break/age/tool/protection and exact amounts.",
+      "local_log": ".work/player-server/console.log"
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "d6f644b67a95be7ae4ade876df7e51ba3f597d949213608c01b7bb7f093fdc08",
+      "passed": true,
+      "assertions": 84,
+      "summary": "[08:25:28 INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=84 failed=0 packets={resets=2, cracks=11, bossbars=31, packs=1}",
+      "scope": "Prior74-assertion native-player scenario plus ordinary vanilla item action, original crop loot interaction/break/age/tool/protection and exact amounts.",
+      "local_log": ".work/player-paper-server/console.log"
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "c336c70a7c0f16c62ebd536f4b2c28fcf707782ecf4ead05e5a8e4a6a6d1f2b2",
+      "passed": true,
+      "assertions": 96,
+      "scope": "Earlier native player scenario plus configuration preview, cross-namespace recipe edits, stale-plan rejection, exact rollback and repeated-command confirmation.",
+      "notes": "Historical targeted result retained from the earlier completed run."
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "8bab9fae98db23610de3d3cd149761d19cbe44372c824bbb403b65bd3dbde9cc",
+      "passed": true,
+      "assertions": 104,
+      "scope": "Earlier 96 cases plus actual native tile NBT loot, exact numeric types, missing data, matching and nonmatching native chest breaks.",
+      "notes": "Historical targeted result retained from the earlier completed run. The optional camera SDK listener emitted an unsupported FLYING warning, fixed in later source."
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "protocollib_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "passed": true,
+      "assertions": 141,
+      "summary": "[09:59:04] [Server thread/INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=141 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 104 native player checks",
+        "original crop random-tick, elapsed probability, moisture and weather policy",
+        "actual zero random ticks, near-player growth, thunder, rain, snow and distant-player suppression",
+        "equipment JSON, exact texture and metadata copying, explicit asset precedence and missing/path errors",
+        "stage-specific rectangular interaction bounds and native growth updates",
+        "crop spacing, cached area density, reload persistence and count release"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-server/console.log"
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "c336c70a7c0f16c62ebd536f4b2c28fcf707782ecf4ead05e5a8e4a6a6d1f2b2",
+      "passed": true,
+      "assertions": 96,
+      "scope": "Earlier native player scenario plus configuration preview, cross-namespace recipe edits, stale-plan rejection, exact rollback and repeated-command confirmation.",
+      "notes": "Historical targeted result retained from the earlier completed run."
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "8bab9fae98db23610de3d3cd149761d19cbe44372c824bbb403b65bd3dbde9cc",
+      "passed": true,
+      "assertions": 104,
+      "scope": "Earlier 96 cases plus actual native tile NBT loot, exact numeric types, missing data, matching and nonmatching native chest breaks.",
+      "notes": "Historical targeted result retained from the earlier completed run. The optional camera SDK listener emitted an unsupported FLYING warning, fixed in later source."
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 21,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "protocollib_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "passed": true,
+      "assertions": 141,
+      "summary": "[10:05:31 INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=141 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 104 native player checks",
+        "original crop random-tick, elapsed probability, moisture and weather policy",
+        "actual zero random ticks, near-player growth, thunder, rain, snow and distant-player suppression",
+        "equipment JSON, exact texture and metadata copying, explicit asset precedence and missing/path errors",
+        "stage-specific rectangular interaction bounds and native growth updates",
+        "crop spacing, cached area density, reload persistence and count release"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-paper-server/console.log"
+    }
+  ],
+  "typed_nbt_endpoints": [
+    {
+      "server": "spigot21",
+      "sha256": "8bab9fae98db23610de3d3cd149761d19cbe44372c824bbb403b65bd3dbde9cc",
+      "passed": true,
+      "summary": "[09:14:59] [Server thread/INFO]: [BlocksAdderNbtProbe] BLOCKSADDER_NBT_VERIFICATION: PASS passed=25 failed=0",
+      "library_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac"
+    },
+    {
+      "server": "paper263",
+      "sha256": "8bab9fae98db23610de3d3cd149761d19cbe44372c824bbb403b65bd3dbde9cc",
+      "passed": true,
+      "summary": "[09:17:44 INFO]: [BlocksAdderNbtProbe] BLOCKSADDER_NBT_VERIFICATION: PASS passed=25 failed=0",
+      "library_sha256": "c1d0f351d316bc812ee81c4b686f97caa656d2cf4a06f771b655da4afbf0ab8e"
+    }
+  ],
+  "not_full_parity": true,
+  "artifact_scope": "Hashes refer to the exact tested artifacts. Subsequent source edits need appropriate verification.",
+  "recent_core_endpoints": [
+    {
+      "name": "spigot-1.21.11",
+      "cycle": 1,
+      "seconds": 13.4,
+      "exit": 0,
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "pass": true,
+      "marker": true,
+      "summary": "status=PASS\npassed=134\nfailed=0\nserver=4598-Spigot-56165ca-d74c5d8 (MC: 1.21.11 Unobfuscated)\n",
+      "errors": [],
+      "java": 25,
+      "scope": "Core/API/recipe/pack/HTTP/validation and complete restart persistence; ProtocolLib absent."
+    },
+    {
+      "name": "spigot-1.21.11",
+      "cycle": 2,
+      "seconds": 12.6,
+      "exit": 0,
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "pass": true,
+      "marker": true,
+      "summary": "status=PASS\npassed=134\nfailed=0\nserver=4598-Spigot-56165ca-d74c5d8 (MC: 1.21.11 Unobfuscated)\n",
+      "errors": [],
+      "java": 25,
+      "scope": "Core/API/recipe/pack/HTTP/validation and complete restart persistence; ProtocolLib absent."
+    },
+    {
+      "name": "paper-26.3",
+      "cycle": 1,
+      "seconds": 14.5,
+      "exit": 0,
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "pass": true,
+      "marker": true,
+      "summary": "status=PASS\npassed=134\nfailed=0\nserver=26.3-218-1b9bf5c (MC: 26.3)\n",
+      "errors": [
+        "\u001b[31;1m[10:08:26 ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt: ",
+        "com.sun.jna.platform.win32.Win32Exception: Parametro non corretto."
+      ],
+      "java": 25,
+      "scope": "Core/API/recipe/pack/HTTP/validation and complete restart persistence; ProtocolLib absent."
+    },
+    {
+      "name": "paper-26.3",
+      "cycle": 2,
+      "seconds": 14.4,
+      "exit": 0,
+      "jar_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+      "pass": true,
+      "marker": true,
+      "summary": "status=PASS\npassed=135\nfailed=0\nserver=26.3-218-1b9bf5c (MC: 26.3)\n",
+      "errors": [
+        "\u001b[31;1m[10:08:41 ERROR]: [oshi.driver.windows.registry.HkeyPerformanceDataUtil] Unable to locate English counter names in registry Perflib 009. Counters may need to be rebuilt: ",
+        "com.sun.jna.platform.win32.Win32Exception: Parametro non corretto."
+      ],
+      "java": 25,
+      "scope": "Core/API/recipe/pack/HTTP/validation and complete restart persistence; ProtocolLib absent."
+    }
+  ],
+  "host_runtime_incident": {
+    "runtime": "Microsoft OpenJDK 21.0.7+6 (Prism delta)",
+    "server": "Spigot 1.21.11",
+    "candidate_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
+    "result": "First core process passed. Second process suffered EXCEPTION_ACCESS_VIOLATION in ntdll.dll during validation, leaving an intentionally invalid fixture enabled. The JVM executable subsequently returned OS Access denied even for java -version. This is not recorded as a passed restart.",
+    "recovery": "Disabled the stale invalid fixture; repeated both core starts with the existing Java25 runtime. Both passed. No host security settings changed."
+  }
+}

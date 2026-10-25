@@ -6,6 +6,7 @@ author: Lino
 description: Data-driven custom items, blocks, furniture, crops, recipes and resource packs.
 website: https://github.com/lino9999/BlocksAdder
 load: POSTWORLD
+softdepend: [ProtocolLib]
 commands:
   blocksadder:
     description: Main BlocksAdder command
@@ -44,6 +45,13 @@ permissions:
     description: All BlocksAdder administration permissions.
     default: op
     children:
+      blocksadder.model: true
+      blocksadder.disguise: true
+      blocksadder.undisguise: true
+      blocksadder.liquid: true
+      blocksadder.fire: true
+      blocksadder.vehicle: true
+      blocksadder.config: true
       blocksadder.help: true
       blocksadder.info: true
       blocksadder.browse: true
@@ -145,4 +153,55 @@ permissions:
   blocksadder.others:
     default: op
   blocksadder.pack.build:
+    default: op
+  blocksadder.model:
+    default: op
+  blocksadder.disguise:
+    default: op
+  blocksadder.undisguise:
+    default: op
+  blocksadder.liquid:
+    default: op
+  blocksadder.fire:
+    default: op
+  blocksadder.liquid.place:
+    default: true
+  blocksadder.liquid.pickup:
+    default: true
+  blocksadder.liquid.break:
+    default: true
+  blocksadder.fire.place:
+    default: true
+  blocksadder.fire.break:
+    default: true
+  blocksadder.vehicle:
+    default: op
+  blocksadder.vehicle.ride:
+    default: true
+  blocksadder.vehicle.place:
+    default: true
+  blocksadder.vehicle.break:
+    default: op
+  blocksadder.crop.fertilize:
+    default: true
+  blocksadder.config:
+    default: op
+    children:
+      blocksadder.config.item.delete: true
+      blocksadder.config.item.disable: true
+      blocksadder.config.namespace.delete: true
+      blocksadder.config.namespace.disable: true
+      blocksadder.config.recipes.delete: true
+      blocksadder.config.recipes.disable: true
+  blocksadder.config.item.delete:
+    default: op
+  blocksadder.config.item.disable:
+    default: op
+  blocksadder.config.namespace.delete:
+    default: op
+  blocksadder.config.namespace.disable:
+    default: op
+  blocksadder.config.recipes.delete:
+    default: op
+  blocksadder.config.recipes.disable:
     default: op

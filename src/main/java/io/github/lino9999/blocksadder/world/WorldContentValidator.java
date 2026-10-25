@@ -39,7 +39,11 @@ public final class WorldContentValidator {
             number(config, "height", 1, 0.1, 4, context);
             if (kind == ContentKind.FURNITURE) number(config, "seat-height", 0.4, -0.5, 3, context);
             if (kind == ContentKind.CROP) {
+                io.github.lino9999.blocksadder.crop.CropGrowthPolicy.parse(config);
+                io.github.lino9999.blocksadder.crop.CropLayout.parse(config);
                 number(config, "growth-seconds", 240, 1, 2592000, context);
+                number(config, "min-light", 0, 0, 15, context);
+                number(config, "bonemeal-multiplier", 0.2, 0, 16, context);
                 if (config.contains("stages") && !config.isList("stages")) fail(context, "stages must be a list of item identifiers");
                 for (String stage : config.getStringList("stages")) {
                     if (registry.find(stage).isEmpty()) fail(context, "unknown or ambiguous stage item " + stage);
@@ -87,6 +91,11 @@ public final class WorldContentValidator {
         }
         number(config, "experience", 0, 0, 1000000, context);
         validateDrops(config, registry, context);
+        String model = config.getString("model");
+        if (model != null && !model.isBlank()) {
+            var candidates = registry.sections("models").keySet().stream().filter(value -> value.equals(model) || !model.contains(":") && value.endsWith(":" + model)).limit(2).toList();
+            if (candidates.size() != 1) fail(context, "unknown or ambiguous model " + model);
+        }
     }
 
     private static void validateTree(String id, ConfigurationSection config, ContentRegistry registry) {

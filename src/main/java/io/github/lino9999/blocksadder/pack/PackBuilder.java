@@ -24,6 +24,7 @@ import java.util.zip.ZipOutputStream;
 
 public final class PackBuilder {
     private static final Set<String> EXTENSIONS = Set.of("json", "png", "ogg", "ttf", "otf", "mcmeta", "vsh", "fsh", "glsl", "txt");
+    private static final Set<String> ASSET_DIRECTORIES = Set.of("textures", "models", "items", "font", "sounds", "equipment", "atlases", "blockstates", "shaders", "lang", "particles");
     private final Path root;
 
     public PackBuilder(Path root) {
@@ -31,6 +32,10 @@ public final class PackBuilder {
     }
 
     public PackArtifact build(ContentRegistry registry, long maxBytes) throws IOException {
+        return build(registry, maxBytes, false);
+    }
+
+    public PackArtifact build(ContentRegistry registry, long maxBytes, boolean rewriteSounds) throws IOException {
         Map<String, byte[]> entries = new TreeMap<>();
         add(entries, "pack.mcmeta", Map.of("pack", Map.of("description", "BlocksAdder custom content by Lino", "min_format", 75, "max_format", 97)));
         for (var item : registry.items()) {
@@ -39,14 +44,32 @@ public final class PackBuilder {
             ContentId.parse(texture);
             String generated = "assets/" + model.namespace() + "/models/item/" + model.value() + ".json";
             String itemModel = "assets/" + model.namespace() + "/items/" + model.value() + ".json";
-            Object definition = Map.of("parent", item.options().getString("model-parent", "minecraft:item/generated"), "textures", Map.of("layer0", texture));
+            Map<String, String> layers = new LinkedHashMap<>();
+            List<String> textures = item.options().getStringList("textures");
+            if (textures.isEmpty()) layers.put("layer0", texture);
+            else for (int layer = 0; layer < textures.size(); layer++) {
+                ContentId.parse(textures.get(layer));
+                layers.put("layer" + layer, textures.get(layer));
+            }
+            ConfigurationSection textureMap = item.options().getConfigurationSection("model-textures");
+            if (textureMap != null) {
+                layers.clear();
+                for (String key : textureMap.getKeys(false)) {
+                    String value = textureMap.getString(key);
+                    ContentId.parse(value);
+                    layers.put(key, value);
+                }
+            }
+            Object definition = Map.of("parent", item.options().getString("model-parent", "minecraft:item/generated"), "textures", layers);
             if (item.options().contains("block")) {
                 String blockTexture = item.options().getString("block.texture", texture);
                 ContentId.parse(blockTexture);
                 definition = Map.of("parent", "minecraft:block/cube_all", "textures", Map.of("all", blockTexture));
             }
             add(entries, generated, definition);
-            add(entries, itemModel, Map.of("model", Map.of("type", "minecraft:model", "model", model.namespace() + ":item/" + model.value())));
+            String source = item.options().getString("model-source", model.namespace() + ":item/" + model.value());
+            ContentId.parse(source);
+            add(entries, itemModel, Map.of("model", Map.of("type", "minecraft:model", "model", source)));
         }
         Map<String, List<Object>> fonts = new TreeMap<>();
         new TreeMap<>(registry.sections("font_images")).forEach((id, config) -> {
@@ -78,8 +101,15 @@ public final class PackBuilder {
             sounds.computeIfAbsent(key.namespace(), ignored -> new TreeMap<>()).put(key.value(), sound);
         });
         sounds.forEach((namespace, definitions) -> add(entries, "assets/" + namespace + "/sounds.json", definitions));
+        io.github.lino9999.blocksadder.model.ModelAssetCompiler.append(entries, registry, root);
+        io.github.lino9999.blocksadder.blockstate.NativeBlockAssetCompiler.append(entries, registry, root);
+        io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendModels(entries, registry, root);
         copyAssets(entries, root.resolve("contents"), maxBytes);
         copyAssets(entries, root.resolve("resourcepack"), maxBytes);
+        EquipmentAssetCompiler.append(entries, registry);
+        io.github.lino9999.blocksadder.sound.SoundAssetCompiler.append(entries, registry, rewriteSounds);
+        io.github.lino9999.blocksadder.blockstate.NativeBlockAssetCompiler.appendBlockstates(entries, registry, root);
+        io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendBlockstates(entries, registry, root);
         long size = entries.values().stream().mapToLong(bytes -> bytes.length).sum();
         if (size > maxBytes) throw new IOException("Resource pack exceeds the configured uncompressed size limit.");
         Path output = root.resolve("pack");
@@ -114,8 +144,17 @@ public final class PackBuilder {
                 String relative = directory.relativize(path).toString().replace('\\', '/');
                 int marker = relative.indexOf("resourcepack/");
                 if (directory.endsWith("contents")) {
-                    if (marker < 0) continue;
-                    relative = relative.substring(marker + "resourcepack/".length());
+                    String[] parts = relative.split("/", 3);
+                    if (parts.length < 3) continue;
+                    String namespace = parts[0];
+                    new ContentId(namespace, "validation");
+                    if (marker >= 0) {
+                        relative = relative.substring(marker + "resourcepack/".length());
+                        if (!relative.startsWith("assets/") && ASSET_DIRECTORIES.contains(relative.split("/", 2)[0])) relative = "assets/" + namespace + "/" + relative;
+                    } else {
+                        if (!ASSET_DIRECTORIES.contains(parts[1])) continue;
+                        relative = "assets/" + namespace + "/" + parts[1] + "/" + parts[2];
+                    }
                 }
                 if (!relative.startsWith("assets/") && !relative.equals("pack.png")) continue;
                 if (relative.contains("..") || relative.contains(":")) throw new IOException("Invalid resource pack member: " + relative);

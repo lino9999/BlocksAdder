@@ -39,6 +39,9 @@ public final class PackService implements Listener, AutoCloseable {
     private HttpServer server;
     private ExecutorService httpWorkers;
     private final Semaphore downloads = new Semaphore(8);
+    private java.util.function.BooleanSupplier soundRewrites = () -> false;
+
+    public void setSoundRewrites(java.util.function.BooleanSupplier soundRewrites) { this.soundRewrites = java.util.Objects.requireNonNull(soundRewrites); }
 
     public PackService(JavaPlugin plugin, Supplier<ContentRegistry> registry) {
         this.plugin = plugin;
@@ -73,9 +76,10 @@ public final class PackService implements Listener, AutoCloseable {
         if (!building.compareAndSet(false, true)) return CompletableFuture.failedFuture(new IllegalStateException("A resource pack build is already running."));
         ContentRegistry snapshot = registry.get();
         long limit = maxBytes;
+        boolean rewriteSounds = soundRewrites.getAsBoolean();
         return CompletableFuture.supplyAsync(() -> {
             try {
-                PackArtifact result = new PackBuilder(plugin.getDataFolder().toPath()).build(snapshot, limit);
+                PackArtifact result = new PackBuilder(plugin.getDataFolder().toPath()).build(snapshot, limit, rewriteSounds);
                 hostedBytes = Files.readAllBytes(result.path());
                 artifact = result;
                 return result;
