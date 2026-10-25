@@ -1,0 +1,51 @@
+[CENTER][SIZE=7][B][COLOR=#22b8cf]BlocksAdder[/COLOR][/B][/SIZE]
+[SIZE=4]Custom Items • Blocks • Furniture • Crops • Resource Packs[/SIZE]
+[B]By Lino | Spigot & Paper | Minecraft Java 1.21.11–26.3[/B]
+[URL=https://github.com/lino9999/BlocksAdder/releases]Download[/URL] • [URL=https://github.com/lino9999/BlocksAdder]Source Code[/URL] • [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/configuration.md]Documentation[/URL][/CENTER]
+
+[SIZE=5][B]Build your server's custom content[/B][/SIZE]
+BlocksAdder lets you define namespaced Minecraft items, decorative blocks, interactive furniture, growing crops, crafting recipes and player HUDs in YAML. Generate a resource pack and bring your content to ordinary Minecraft Java clients.
+
+[SIZE=5][B]What you can create[/B][/SIZE]
+[LIST]
+[*][B]Custom items:[/B] modern item models, names and lore, model data, stack sizes, durability, enchantments, attributes, armor colors, food and equipment assets.
+[*][B]Custom blocks:[/B] display models with collision, protected placement/removal and persistent chunk data.
+[*][B]Furniture:[/B] interaction hitboxes, optional collision and seats.
+[*][B]Crops:[/B] growth stages, farmland requirements, harvesting and configurable produce.
+[*][B]Nine recipe types:[/B] shaped, shapeless, furnace, blasting, smoking, campfire, stonecutting, smithing and anvil.
+[*][B]Player features:[/B] persistent stats, regeneration, bossbar/actionbar HUDs, right-click actions, cooldowns and simple gesture/effect timelines.
+[*][B]World features:[/B] configured living mobs, equipment, custom drops, fishing loot and manually generated trees.
+[*][B]Fonts and sounds:[/B] bitmap glyphs, permission-aware chat/sign/book aliases, custom audio definitions and sound commands.
+[*][B]Resource-pack tools:[/B] modern model generation, asset merging, stable ZIP output and hashes, external hosting or optional built-in HTTP delivery.
+[*][B]Administration:[/B] paginated item catalog, recipe previews, per-command permissions, content validation and reload rollback.
+[/LIST]
+
+[SIZE=5][B]Get started[/B][/SIZE]
+[LIST=1]
+[*]Install the release JAR in your server's plugins folder and restart.
+[*]Review the generated example content and config.yml.
+[*]Run [B]/ba validate[/B] and [B]/ba pack build[/B].
+[*]Host the generated ZIP, configure resource-pack.url, then run [B]/ba reload[/B].
+[*]Use [B]/ba pack send[/B], [B]/ba browse[/B] and [B]/ba get blocksadder:crystal_block[/B].
+[/LIST]
+
+[SIZE=5][B]Commands at a glance[/B][/SIZE]
+[CODE]/ba help
+/ba browse [category] [player]
+/ba get <item> [amount]
+/ba give <player> <item> [amount] [silent]
+/ba recipe <item> [player]
+/ba inspect
+/ba validate
+/ba reload
+/ba pack <build|send|hash> [player|all][/CODE]
+The complete command and permission reference is in the documentation tab and [URL=https://github.com/lino9999/BlocksAdder#commands-and-permissions]README[/URL]. Main aliases: [B]/blocksadder[/B], [B]/ba[/B], [B]/badd[/B]. Administration permission: [B]blocksadder.admin[/B].
+
+[SIZE=5][B]Requirements[/B][/SIZE]
+Spigot or Paper for Minecraft Java 1.21.11–26.3. Java 21 for 1.21.11; Java 25 for 26.x. No mandatory plugin dependencies. Custom visuals require the generated resource pack. Folia and Bedrock packs are not supported. Exact executed server checks are published in the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/verification.md]verification report[/URL].
+
+[SIZE=5][B]Current release scope[/B][/SIZE]
+This is an initial independent implementation. Custom blocks currently break with one protected click. Full-body skeletal models, player disguises, controlled vehicles, custom fluid/fire simulation, automatic world population and dedicated third-party adapters remain unimplemented. Simple effect timelines provide swings, particles and sounds. Headless verification does not certify client rendering or all player interactions. See the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/feature-parity.md]feature comparison[/URL] before migration.
+
+[B]Open source • English messages • Public Bukkit API • No activation server or telemetry[/B]
+Report reproducible issues at [URL=https://github.com/lino9999/BlocksAdder/issues]GitHub Issues[/URL], including server build, Java version, relevant YAML and logs.

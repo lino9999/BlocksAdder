@@ -1,0 +1,8 @@
+Generated with the built-in imagegen tool.
+
+Use case: logo-brand. Square SpigotMC plugin icon for BlocksAdder by Lino.
+Minimalist crisp pixel art: one original isometric voxel cube with a small clear
+plus sign at the upper-right. Sharp square pixel edges, restrained teal/cyan
+palette, dark navy outline and background. Centered bold silhouette with space
+around it, readable as a tiny forum icon. No letters, words, watermark,
+Minecraft logo, photographic textures or blur. Original independent design.

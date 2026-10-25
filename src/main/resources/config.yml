@@ -1,0 +1,18 @@
+resource-pack:
+  build-on-startup: true
+  auto-apply: false
+  required: false
+  url: ''
+  max-uncompressed-mb: 128
+  host:
+    enabled: false
+    bind: '0.0.0.0'
+    port: 8163
+world:
+  enabled: true
+  max-content-per-chunk: 128
+  max-loaded-content: 100000
+  max-entities-per-chunk: 32
+  display-view-range: 1.0
+  growth-check-ticks: 100
+  growth-batch-size: 128

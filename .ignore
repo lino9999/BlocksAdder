@@ -1,0 +1,9 @@
+Plugin Originale/
+.work/
+target/
+.git/
+.idea/
+.vscode/
+*.log
+*.jar
+*.zip

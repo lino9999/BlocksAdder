@@ -1,0 +1,148 @@
+name: BlocksAdder
+version: ${project.version}
+main: io.github.lino9999.blocksadder.BlocksAdderPlugin
+api-version: '1.21.11'
+author: Lino
+description: Data-driven custom items, blocks, furniture, crops, recipes and resource packs.
+website: https://github.com/lino9999/BlocksAdder
+load: POSTWORLD
+commands:
+  blocksadder:
+    description: Main BlocksAdder command
+    usage: /<command> help
+    aliases: [ba, badd]
+  baget:
+    description: Receive a custom item
+    usage: /<command>
+    aliases: [bget]
+  bagive:
+    description: Give a custom item
+    usage: /<command>
+    aliases: [bgive]
+  bapack:
+    description: Build or send the resource pack
+    usage: /<command>
+    aliases: [bpack]
+  babrowse:
+    description: Browse custom items
+    usage: /<command>
+    aliases: [bbrowse]
+  bareload:
+    description: Reload content
+    usage: /<command>
+    aliases: [breload]
+  barecipe:
+    description: Show a custom recipe
+    usage: /<command>
+    aliases: [brecipe]
+  bainspect:
+    description: Inspect a held custom item
+    usage: /<command>
+    aliases: [binspect]
+permissions:
+  blocksadder.admin:
+    description: All BlocksAdder administration permissions.
+    default: op
+    children:
+      blocksadder.help: true
+      blocksadder.info: true
+      blocksadder.browse: true
+      blocksadder.recipe: true
+      blocksadder.glyph: true
+      blocksadder.pack: true
+      blocksadder.hud: true
+      blocksadder.emote: true
+      blocksadder.use: true
+      blocksadder.glyphs: true
+      blocksadder.place: true
+      blocksadder.break: true
+      blocksadder.interact: true
+      blocksadder.category.*: true
+      blocksadder.get: true
+      blocksadder.give: true
+      blocksadder.remove: true
+      blocksadder.drop: true
+      blocksadder.inspect: true
+      blocksadder.modeldata: true
+      blocksadder.block: true
+      blocksadder.repair: true
+      blocksadder.rename: true
+      blocksadder.durability: true
+      blocksadder.color: true
+      blocksadder.reload: true
+      blocksadder.validate: true
+      blocksadder.stat: true
+      blocksadder.tree: true
+      blocksadder.entity: true
+      blocksadder.sound: true
+      blocksadder.totem: true
+      blocksadder.others: true
+      blocksadder.pack.build: true
+  blocksadder.help:
+    default: true
+  blocksadder.info:
+    default: true
+  blocksadder.browse:
+    default: true
+  blocksadder.recipe:
+    default: true
+  blocksadder.glyph:
+    default: true
+  blocksadder.pack:
+    default: true
+  blocksadder.hud:
+    default: true
+  blocksadder.emote:
+    default: true
+  blocksadder.use:
+    default: true
+  blocksadder.glyphs:
+    default: true
+  blocksadder.place:
+    default: true
+  blocksadder.break:
+    default: true
+  blocksadder.interact:
+    default: true
+  blocksadder.category.*:
+    default: true
+  blocksadder.get:
+    default: op
+  blocksadder.give:
+    default: op
+  blocksadder.remove:
+    default: op
+  blocksadder.drop:
+    default: op
+  blocksadder.inspect:
+    default: op
+  blocksadder.modeldata:
+    default: op
+  blocksadder.block:
+    default: op
+  blocksadder.repair:
+    default: op
+  blocksadder.rename:
+    default: op
+  blocksadder.durability:
+    default: op
+  blocksadder.color:
+    default: op
+  blocksadder.reload:
+    default: op
+  blocksadder.validate:
+    default: op
+  blocksadder.stat:
+    default: op
+  blocksadder.tree:
+    default: op
+  blocksadder.entity:
+    default: op
+  blocksadder.sound:
+    default: op
+  blocksadder.totem:
+    default: op
+  blocksadder.others:
+    default: op
+  blocksadder.pack.build:
+    default: op

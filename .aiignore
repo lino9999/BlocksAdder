@@ -1,0 +1,7 @@
+Plugin Originale/
+.work/
+target/
+.git/
+*.jar
+*.zip
+*.log

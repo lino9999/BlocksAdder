@@ -1,0 +1,167 @@
+namespace: blocksadder
+
+items:
+  crystal:
+    material: AMETHYST_SHARD
+    display-name: '&bCrystal'
+    lore:
+      - '&7A bright crafting ingredient.'
+    texture: minecraft:item/amethyst_shard
+    category: materials
+    model-data: 10001
+  crystal_block:
+    material: PAPER
+    display-name: '&bCrystal Block'
+    lore:
+      - '&7Place a solid decorative block.'
+    category: building
+    texture: minecraft:block/amethyst_block
+    block:
+      material: BARRIER
+      texture: minecraft:block/amethyst_block
+      display: true
+  crystal_chair:
+    material: PAPER
+    display-name: '&bCrystal Display'
+    lore:
+      - '&7Place an interactive decoration.'
+    category: furniture
+    texture: minecraft:item/amethyst_shard
+    furniture:
+      width: 0.8
+      height: 1.0
+      scale: 1.0
+      seat: true
+  crystal_pickaxe:
+    material: DIAMOND_PICKAXE
+    display-name: '&bCrystal Pickaxe'
+    category: tools
+    texture: minecraft:item/diamond_pickaxe
+    model-parent: minecraft:item/handheld
+    durability: 2000
+    enchantments:
+      minecraft:efficiency: 3
+  berry:
+    material: SWEET_BERRIES
+    display-name: '&dCrystal Berry'
+    category: farming
+    texture: minecraft:item/sweet_berries
+    food:
+      nutrition: 4
+      saturation: 3.0
+  crystal_seed:
+    material: PAPER
+    display-name: '&aCrystal Seeds'
+    category: farming
+    texture: minecraft:block/wheat_stage0
+    crop:
+      stages:
+        - blocksadder:crystal_seed
+        - blocksadder:crystal_sprout
+        - blocksadder:crystal_crop
+      growth-seconds: 120
+      requires-farmland: true
+  crystal_sprout:
+    material: PAPER
+    display-name: '&aCrystal Sprout'
+    category: farming
+    texture: minecraft:block/wheat_stage3
+  crystal_crop:
+    material: PAPER
+    display-name: '&aMature Crystal Crop'
+    category: farming
+    texture: minecraft:block/wheat_stage7
+  energy_token:
+    material: GLOWSTONE_DUST
+    display-name: '&eEnergy Token'
+    category: consumables
+    texture: minecraft:item/glowstone_dust
+    actions:
+      right-click:
+        consume: 1
+        cooldown: 5
+        message: '&eEnergy restored.'
+        sound: minecraft:entity.experience_orb.pickup
+        stats:
+          blocksadder:energy: 10
+
+categories:
+  materials:
+    title: Materials
+  building:
+    title: Building
+  furniture:
+    title: Furniture
+  tools:
+    title: Tools
+  farming:
+    title: Farming
+  consumables:
+    title: Consumables
+
+recipes:
+  crystal_block:
+    type: shaped
+    result: blocksadder:crystal_block
+    shape:
+      - CC
+      - CC
+    ingredients:
+      C: blocksadder:crystal
+  crystal:
+    type: shapeless
+    result: blocksadder:crystal
+    amount: 4
+    ingredients:
+      - blocksadder:crystal_block
+  crystal_pickaxe:
+    type: shaped
+    result: blocksadder:crystal_pickaxe
+    shape:
+      - CCC
+      - ' S '
+      - ' S '
+    ingredients:
+      C: blocksadder:crystal
+      S: minecraft:stick
+
+stats:
+  energy:
+    min: 0
+    max: 100
+    default: 50
+
+huds:
+  energy:
+    stat: blocksadder:energy
+    title: '&bEnergy: {value}/{max}'
+    type: bossbar
+    color: BLUE
+    style: SOLID
+    visible-by-default: false
+
+entities:
+  crystal_guardian:
+    type: ZOMBIE
+    display-name: '&bCrystal Guardian'
+    attributes:
+      minecraft:max_health: 40
+
+trees:
+  oak:
+    trunk: OAK_LOG
+    leaves: OAK_LEAVES
+    height: 5
+    radius: 2
+
+emotes:
+  celebrate:
+    duration: 30
+    frames:
+      - at: 0
+        swing: true
+        particle: HAPPY_VILLAGER
+        sound: minecraft:entity.player.levelup
+      - at: 10
+        swing: true
+        particle: HAPPY_VILLAGER
