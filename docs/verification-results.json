@@ -247,5 +247,5 @@
     }
   ],
   "interactive_client_checks": "NOT_RUN",
-  "temporary_test_files": "Removed after recording results at the user request."
+  "temporary_test_files": "Remain locally in ignored .work because automatic approval review rejected directory cleanup and individual test JAR deletion with blocked by policy. Never committed or released."
 }
