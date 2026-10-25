@@ -75,7 +75,7 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | `/ba tree <id>` | `blocksadder.tree` | Generate a configured tree at your position. |
 | `/ba entity spawn <id> [player]` | `blocksadder.entity` | Spawn a configured living entity. |
 | `/ba entity remove <UUID>` | `blocksadder.entity` | Remove a loaded tagged custom entity. |
-| `/ba emote <id\|stop> [player]` | `blocksadder.emote` | Start or stop a simple effect timeline. |
+| `/ba emote <id\|list\|info\|stop\|stop-now> [player]` | `blocksadder.emote` | Inspect, play or stop a skeletal emote, existing rig clip or frame-effect timeline. |
 | `/ba sound <sound> <player> [volume] [pitch]` | `blocksadder.sound` | Play a namespaced sound. |
 | `/ba totem <player>` | `blocksadder.totem` | Play the vanilla totem effect. |
 

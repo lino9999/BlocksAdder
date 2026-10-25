@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-25T09:20:09.568126+00:00",
+  "recorded_at": "2026-10-25T09:28:33.001732+00:00",
   "historical_release_report_unchanged": true,
   "visual_checks": "User-owned; graphical clients are not controlled by the agent.",
   "runs": [
@@ -148,6 +148,76 @@
       ],
       "plugin_event_errors": [],
       "local_log": ".work/player-protocol-paper-server/console.log"
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 25,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "e21383f851e5403c8e504a0fcbfad747202d7d1e1ea00728f9a6d608810b5400",
+      "protocollib_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "passed": true,
+      "assertions": 142,
+      "summary": "[10:19:57] [Server thread/INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=142 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 141 native player cases",
+        "legacy FIRE normalization retains a real nested sound configuration section"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-server/console.log",
+      "later_change": "Checkpoint commit adds unknown skeletal-emote fallback handling; its dedicated acceptance is recorded separately."
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 25,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "e21383f851e5403c8e504a0fcbfad747202d7d1e1ea00728f9a6d608810b5400",
+      "protocollib_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "passed": true,
+      "assertions": 142,
+      "summary": "[10:21:25 INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=142 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 141 native player cases",
+        "legacy FIRE normalization retains a real nested sound configuration section"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-paper-server/console.log",
+      "later_change": "Checkpoint commit adds unknown skeletal-emote fallback handling; its dedicated acceptance is recorded separately."
+    },
+    {
+      "server": "Spigot 1.21.11",
+      "java": 25,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "dfc9e3408e79fb43fa1bacd5419b602db39ee24e4b5a31cd5474a6ecdcbd7f27",
+      "passed": true,
+      "assertions": 146,
+      "summary": "[10:26:14] [Server thread/INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=146 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 142 native player cases",
+        "non-default placement face",
+        "face persistence across reload",
+        "version-one placement migration with upward face",
+        "invalid face rejected before any world mutation"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-server/console.log"
+    },
+    {
+      "server": "Paper 1.21.11 build 132",
+      "java": 25,
+      "plugin_version": "1.1.0-SNAPSHOT",
+      "jar_sha256": "dfc9e3408e79fb43fa1bacd5419b602db39ee24e4b5a31cd5474a6ecdcbd7f27",
+      "passed": true,
+      "assertions": 146,
+      "summary": "[10:27:47 INFO]: [BlocksAdderPlayerProbe] BLOCKSADDER_PLAYER_VERIFICATION: PASS passed=146 failed=0 packets={resets=2, cracks=11, bossbars=56, packs=1}",
+      "scope": [
+        "prior 142 native player cases",
+        "non-default placement face",
+        "face persistence across reload",
+        "version-one placement migration with upward face",
+        "invalid face rejected before any world mutation"
+      ],
+      "plugin_event_errors": [],
+      "local_log": ".work/player-protocol-paper-server/console.log"
     }
   ],
   "typed_nbt_endpoints": [
@@ -234,5 +304,51 @@
     "candidate_sha256": "71832cd7ea183869e27628d43b8da370afa64c6714976b0902e2a1af4d8363e0",
     "result": "First core process passed. Second process suffered EXCEPTION_ACCESS_VIOLATION in ntdll.dll during validation, leaving an intentionally invalid fixture enabled. The JVM executable subsequently returned OS Access denied even for java -version. This is not recorded as a passed restart.",
     "recovery": "Disabled the stale invalid fixture; repeated both core starts with the existing Java25 runtime. Both passed. No host security settings changed."
+  },
+  "sound_endpoint_checks": {
+    "java_note": "Host OS began rejecting pre-existing Java 21 executable with AccessDenied. All final sound probes used pre-existing Java 25, --release 21 production bytecode. Earlier suites independently verified Java 21 compatibility.",
+    "results": [
+      {
+        "endpoint": "spigot-protocol",
+        "java": 25,
+        "passed": 36,
+        "failed": 0,
+        "client": "two protocol 1.21.11 clients",
+        "packet_errors": 0,
+        "jar_sha256": "baca3f96ea59fd7694a8d7c133eae82bd126d99ef09a40f63032b7eb2ed6f48a",
+        "log": ".work\\sound-server-spigot-protocol-verified\\console.log"
+      },
+      {
+        "endpoint": "paper-protocol",
+        "java": 25,
+        "passed": 36,
+        "failed": 0,
+        "client": "two protocol 1.21.11 clients",
+        "packet_errors": 0,
+        "jar_sha256": "ed0350ccade191cc9f6ade06ed399c6003ec75b7f57a776a62613f30d5484e16",
+        "log": ".work\\sound-server-paper-protocol-verified\\console.log"
+      },
+      {
+        "endpoint": "spigot-plain",
+        "java": 25,
+        "passed": 28,
+        "failed": 0,
+        "client": "two protocol 1.21.11 clients",
+        "packet_errors": 0,
+        "jar_sha256": "6bf8bc784c6a1354c42b201a80212c2f395e33bffe7d3a1d7d923a7aca50e0e8",
+        "log": ".work\\sound-server-spigot-plain-verified\\console.log"
+      },
+      {
+        "endpoint": "paper263-protocol",
+        "java": 25,
+        "passed": 8,
+        "failed": 0,
+        "client": "none (linkage/compiler only)",
+        "packet_errors": 0,
+        "jar_sha256": "a95a1f1ae109a1ff05286ea3c9282950a543cea3e5db9ef7bf10b8b2aea62ab3",
+        "log": ".work\\sound-server-paper263-protocol-verified\\console.log"
+      }
+    ],
+    "scope": "Same full member payload across endpoints, as recorded in docs/block-sounds.md; archive ZIP metadata differs."
   }
 }

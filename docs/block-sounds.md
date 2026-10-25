@@ -32,4 +32,15 @@ Static observations come from supplied JAR SHA-256 `cedc3ff88d57fb303e865b017d8e
 
 ## Verification
 
-Final endpoint results and artifact hashes are recorded after the isolated checks complete. The user owns rendered pack and audible Minecraft acceptance; automated packet checks establish event names and parameters without claiming listening tests. Temporary server/client fixtures remain ignored under `.work/`.
+Final isolated checks on 2026-10-25 used the same complete JAR member payload on every endpoint:
+
+| Endpoint | ProtocolLib | Scope | Passed | Failed |
+| --- | --- | --- | ---: | ---: |
+| Spigot 1.21.11 | 5.5.0 snapshot | Two real protocol clients, compiler and server events | 36 | 0 |
+| Paper 1.21.11 build 132 | 5.5.0 snapshot | Two real protocol clients, compiler and server events | 36 | 0 |
+| Spigot 1.21.11 | Absent | Two real protocol clients and non-muting fallback | 28 | 0 |
+| Paper 26.3 build 218 | 5.5.0 snapshot | Adapter packet-layout capability, compiler and validation | 8 | 0 |
+
+No final sound adapter exceptions appeared. Real wire checks cover third-party named/entity sounds, preserved seed/category/position/volume/pitch, unregistered custom sounds, stop packets with and without categories, category-only stops, all five custom cues, sneaking, ordinary vanilla digging/placement/breaking and cancellation. The true absent-category fixture uses a public SDK packet because Bukkit's one-argument stop method already chooses MASTER. Paper 26.3 checks establish API linkage and adapter self-tests; no 26.3 client wire or listening result is claimed.
+
+All final sound processes used the existing Java 25 runtime and Java 21 bytecode. The host OS had begun rejecting the existing Java 21 executable with AccessDenied; no host security settings were changed. Earlier independent core and module runs established Java 21 startup. Exact hashes, SDK variants and logs are retained in ignored `.work/sound-results.json`. Later root changes require the final combined artifact's regression. The user owns rendered pack and audible Minecraft acceptance; automated packet checks establish event names and parameters without claiming listening tests. Temporary server/client fixtures remain ignored under `.work/`.

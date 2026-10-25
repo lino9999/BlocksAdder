@@ -44,7 +44,7 @@ final class ItemComponents {
             var tag =
                     enabled
                             ? Bukkit.getTag(
-                                    "damage_type",
+                                    org.bukkit.tag.DamageTypeTags.REGISTRY_DAMAGE_TYPES,
                                     NamespacedKey.minecraft("is_fire"),
                                     DamageType.class)
                             : null;

@@ -123,8 +123,13 @@ final class PlayerModelEmotes implements Listener, AutoCloseable {
 
     private void applySpeed(Session session) {
         ModelEmoteDefinition definition = session.definition;
-        session.appliedWalk = definition.canMove() ? definition.walkSpeed() : 0f;
-        session.appliedFly = definition.canMove() ? definition.flySpeed() : 0f;
+        if (definition.canMove()) {
+            session.appliedWalk = definition.walkSpeed();
+            session.appliedFly = definition.flySpeed();
+        } else {
+            session.appliedWalk = 0f;
+            session.appliedFly = 0f;
+        }
         if (session.appliedWalk != null) session.player.setWalkSpeed(session.appliedWalk);
         if (session.appliedFly != null) session.player.setFlySpeed(session.appliedFly);
         if (definition.flight()) { session.player.setAllowFlight(true); session.player.setFlying(true); }

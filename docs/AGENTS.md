@@ -8,6 +8,7 @@ Read this file and the relevant document before searching the repository. Produc
 - `content/`: validated namespaced definitions and registry snapshots.
 - `item/`: item creation and persistent identity. `ConsumableSupport` adapts the differing public Spigot/Paper consumable APIs; do not replace it with a direct Spigot-only call.
 - `world/`: custom block, display furniture, entity and crop lifecycle.
+- `world/WorldFurniture`: furniture footprint/render/interaction bridge. Placement records retain face/yaw; version two reads version one with face UP. Footprint protection uses `allowFurnitureCell` inside the guarded native-place context.
 - `blockstate/`: reserved state allocation and native block model compilation; `WorldBlockStates` connects placement/persistence to this adapter.
 - `mining/`: timed mining, tool/tier rules, progress and native start/abort lifecycle.
 - `model/`: skeletal rigs, Blockbench/legacy imports, animations, viewers and player disguises.

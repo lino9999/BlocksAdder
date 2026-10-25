@@ -436,12 +436,15 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
                         : event.isShiftClick() ? event.getCurrentItem() : null;
         if (armorSlot && event.getHotbarButton() >= 0)
             moved = player.getInventory().getItem(event.getHotbarButton());
+        if (armorSlot && event.getClick() == org.bukkit.event.inventory.ClickType.SWAP_OFFHAND)
+            moved = player.getInventory().getItemInOffHand();
         if (cannotWear(moved)
                 && (armorSlot
                         || event.isShiftClick()
                                 && event.getClickedInventory() == player.getInventory()
                                 && event.getView().getTopInventory().getType()
-                                        == org.bukkit.event.inventory.InventoryType.CRAFTING)) {
+                                        == org.bukkit.event.inventory.InventoryType.CRAFTING
+                                && emptyEquipmentSlot(player, moved))) {
             event.setCancelled(true);
             return;
         }
@@ -470,6 +473,14 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
         return items.definition(stack)
                 .map(item -> !item.options().getBoolean("specific_properties.armor.can_wear", true))
                 .orElse(false);
+    }
+
+    private boolean emptyEquipmentSlot(Player player, ItemStack stack) {
+        if (stack == null || !stack.hasItemMeta()) return false;
+        EquipmentSlot slot = stack.getItemMeta().getEquippable().getSlot();
+        if (slot != EquipmentSlot.HEAD && slot != EquipmentSlot.CHEST && slot != EquipmentSlot.LEGS && slot != EquipmentSlot.FEET) return false;
+        ItemStack equipped = player.getInventory().getItem(slot);
+        return equipped == null || equipped.getType().isAir();
     }
 
     private void refresh(Player player) {

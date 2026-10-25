@@ -179,6 +179,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     public boolean place(Location location, String id, Player player, BlockFace face) {
         requireServerThread();
+        if (face == null || !face.isCartesian()) throw new IllegalArgumentException("Placement face must be one of the six block faces.");
         Optional<ItemDefinition> definition = registry.get().find(id);
         if (definition.isPresent()) {
             String placementId = definition.get().options().getString("crop.placement-id");
@@ -211,7 +212,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         }
         PlacedContent placed = new PlacedContent(BlockPosition.of(target), canonicalId, kind.get(),
                 Math.round(location.getYaw() / 90.0f) * 90.0f, target.getBlockData().getAsString(), 0,
-                kind.get() == ContentKind.CROP ? nextGrowth(settings) : 0);
+                kind.get() == ContentKind.CROP ? nextGrowth(settings) : 0, face);
         try {
             register(placed);
             render(placed);
@@ -241,6 +242,13 @@ public final class WorldContentService implements Listener, AutoCloseable {
         if (placed == null || !consistent(placed)) return "No custom content at this location.";
         return placed.id() + " | " + placed.kind().name().toLowerCase(Locale.ROOT) + " | " + placed.position().coordinates()
                 + (placed.kind() == ContentKind.CROP ? " | stage " + placed.stage() : "");
+    }
+
+    public Optional<BlockFace> placementFace(Location location) {
+        requireServerThread();
+        if (location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return Optional.empty();
+        PlacedContent placed = loaded.get(BlockPosition.of(location));
+        return placed == null || !consistent(placed) ? Optional.empty() : Optional.of(placed.face());
     }
 
     public int count() {
@@ -640,6 +648,12 @@ public final class WorldContentService implements Listener, AutoCloseable {
             syntheticPlacement = false;
         }
         return !event.isCancelled() && event.canBuild();
+    }
+
+    public boolean allowFurnitureCell(Block target, BlockState previous, Player player, String id) {
+        requireServerThread();
+        if (!target.equals(previous.getBlock())) throw new IllegalArgumentException("Furniture protection snapshot must match its target block.");
+        return player == null || allowPlaceEvent(target, previous, player, id);
     }
 
     private boolean allowBreakEvent(PlacedContent placed, Player player) {
