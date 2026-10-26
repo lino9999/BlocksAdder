@@ -114,6 +114,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             var manager = getServer().getPluginManager();
             manager.registerEvents(world, this);
             manager.registerEvents(world.cropDestruction(), this);
+            manager.registerEvents(world.cropViews(), this);
             manager.registerEvents(nativeBlocks, this);
             manager.registerEvents(blockBehavior, this);
             manager.registerEvents(sounds, this);
@@ -240,6 +241,8 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     public RecipeService recipes() { return recipes; }
     public GameplayService gameplay() { return gameplay; }
     public WorldContentService worldContent() { return world; }
+    @Override public io.github.lino9999.blocksadder.crop.CropViewService.Mode plantView(Player player) { return world.cropViews().mode(player); }
+    @Override public void plantView(Player player, io.github.lino9999.blocksadder.crop.CropViewService.Mode mode) { world.cropViews().mode(player, mode); }
     public PackService packs() { return packs; }
     public MiningService mining() { return mining; }
     public ModelService models() { return models; }

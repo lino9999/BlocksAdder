@@ -23,7 +23,7 @@ Natural growth visits the bounded loaded-crop queue. It does not load chunks to 
 
 ## Evidence and remaining work
 
-Static inspection of the supplied archive's `co` and `sk` classes established bone-meal advancement based on maximum age times a multiplier, creative-item preservation, stage models and light limits. This implementation was written independently. `avg_seconds_per_stage`, `min_light` and `multipliers.bonemeal` aliases work inside an item crop section.
+Static inspection of the supplied archive's `co` and `sk` classes established bone-meal advancement based on maximum age times a multiplier, creative-item preservation, stage models and light limits. This implementation was written independently. Current `crop` records use the canonical settings listed above; the former flat-document alias normalizer has been removed.
 
 The original top-level `crops` schema supports separate seed/crop identities, `models_by_items`, `models_by_textures`, generated hidden stages, maximum age, original bone-meal/light/timing aliases and vanilla/custom soil matching. Texture stages generate their declared model parent and texture slot.
 
@@ -43,7 +43,7 @@ Preparation emits both the crop-destruction event and the existing cancellable c
 
 Managed supporting blocks propagate crop protection and drop suppression through the same removal plan. Rewards are emitted after the backing data and placement record are committed. Original crops without any configured loot table do not invent a default seed reward; where a table exists, the original seed-fallback flag still applies. Lava may subsequently burn non-fireproof dropped items through ordinary Minecraft behavior.
 
-Density-dependent viewer rendering and billboard variants remain parity requirements. Moving furniture footprints, all combinations of stacked custom supports and reentrant source-event reloads still require dedicated acceptance.
+Density-dependent viewer rendering, personal visibility and facing variants are implemented in the independent [plant-view service](crop-views.md), with separate current-format evidence. Moving furniture footprints, all combinations of stacked custom supports and reentrant source-event reloads still require dedicated acceptance.
 
 Actual protocol-player scenarios on Spigot 1.21.11 and Paper 1.21.11 passed 141 assertions each, including the earlier gameplay cases, crop weather/random-tick/player-proximity behavior, rectangular stage hitboxes, spacing, density, reload and count release. Exact candidate hashes and scope are recorded in [development-verification.json](development-verification.json). Rendered appearance is reserved for the user's own checks.
 

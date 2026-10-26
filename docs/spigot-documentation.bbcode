@@ -92,11 +92,16 @@ These server settings belong in config.yml. Run /ba pack build and upload the ex
 /ba give <player> <item> [amount] [silent]
 /ba recipe <item> [player]
 /ba inspect
+/ba plants <auto|full|hide|status> [player]
 /ba validate
 /ba reload
 /ba pack <build|send|hash> [player|all][/CODE]
 Main aliases: /blocksadder, /ba and /badd. The [URL=https://github.com/lino9999/BlocksAdder#commands-and-permissions]complete README table[/URL] covers administration, model/skin, emote, liquid/fire, vehicle, generation, HUD/stat, sound, glyph, durability/color and configuration commands with their individual permissions. blocksadder.admin grants administration; ordinary building uses blocksadder.place, blocksadder.break and blocksadder.use. Controlling another player's supported features requires blocksadder.others.
 Configuration commands preview the selected edits, require repeating the same command, reject stale previews and restore previous bytes on activation failure where recovery succeeds.
+
+[SIZE=5][B]Personal plant detail[/B][/SIZE]
+Use /ba plants auto for distance-based crowd detail, full for normal models within the range/cap, hide to hide crops and their interaction helpers, and status to read the saved preference. blocksadder.plants is granted by default; targeting someone else requires blocksadder.others. Hidden plants continue natural/API growth, but native clicks cannot harvest or fertilize them.
+Server settings under plants.view control radius, maximum, crowded-at, thin-after, card-after, field-of-view and shared per-tick work/time budgets. Crop settings may supply visuals.far-stages and visuals.facing for matching stage models that face the camera. The [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/crop-views.md]plant-view guide[/URL] includes a complete bundle example and generated-card asset settings. Visual checks belong to the user.
 
 [SIZE=5][B]Verification and independent implementation[/B][/SIZE]
 [B]Visual checks are performed by the user.[/B] Headless tests validate server behavior and generated data, while protocol scenarios exercise specific native player actions. They do not establish full functional parity or every rendering combination. Read [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/development-verification.md]development verification[/URL] for exact artifact/version scopes.

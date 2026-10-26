@@ -21,7 +21,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Custom items:** stable namespaced identity, modern item models, float model data, names/lore, stack limits, durability, enchantments, attributes, leather colors, food and equipment models.
 - **Custom blocks:** collision blocks with display models, persistent placement indexes, protected placement/removal and configurable chunk limits.
 - **Furniture:** display models, interaction hitboxes, optional collision, seats and cleanup on unload or reload.
-- **Crops:** configurable model stages, loaded-chunk growth, farmland requirements, repeat harvesting and custom produce.
+- **Crops:** configurable model stages, loaded-chunk growth, farmland requirements, repeat harvesting, custom produce and [personal distance/detail settings](docs/crop-views.md).
 - **Recipes:** shaped, shapeless, furnace, blasting, smoking, campfire, stonecutting, smithing and anvil recipes with exact custom ingredients.
 - **Player content:** persistent bounded stats, regeneration, bossbar/actionbar HUDs, item actions, cooldowns, potion effects and simple gesture/particle/sound timelines.
 - **Font images and audio:** bitmap font providers, permission-aware chat/sign/book aliases, custom sound definitions and sound/totem commands.
@@ -86,6 +86,7 @@ The development branch additionally provides these commands; they are absent fro
 | Command | Permission | Purpose |
 | --- | --- | --- |
 | `/ba model list` | `blocksadder.model` | List skeletal models. |
+| `/ba plants <auto\|full\|hide\|status> [player]` | `blocksadder.plants` | Choose personal crop visibility and distance detail; another player requires `blocksadder.others`. |
 | `/ba model attach <model> <entity UUID>` | `blocksadder.model` | Attach a model to a loaded entity. |
 | `/ba model play <rig UUID> <animation\|stop> [loop]` | `blocksadder.model` | Control skeletal animation. |
 | `/ba model detach\|info\|bones <rig UUID>` | `blocksadder.model` | Remove or inspect a rig. |

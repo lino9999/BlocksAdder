@@ -22,6 +22,7 @@ Read this file and the relevant document before searching the repository. Produc
 - `recipe/`: exact custom recipe ingredients and registration.
 - `loot/`: shared conditional crop and block loot plans; normal block rewards are additive, explosion matches replace the base drop.
 - `crop/`: validated growth probabilities and stage hitbox layouts; world lifecycle owns their loaded indexes.
+- `crop/CropViewService` and `CropViewPolicy`: incremental per-player resident crop selection, default-hidden helpers, nearest caps, crowd detail and lazy facing displays. Read `docs/crop-views.md`. Keep visibility changes on the server thread, and unregister the exact placement before root helper removal. `CropCardAssets` generates only owned default geometry; explicit assets take precedence.
 - `sound/`: custom block cues, resource-pack aliases and optional ProtocolLib packet rewriting.
 - `integration/`: optional typed tile-NBT conditions, with ProtocolLib classes isolated in `integration/protocol/`.
 - `gameplay/`: player stats, HUDs, glyphs, loot and actions.

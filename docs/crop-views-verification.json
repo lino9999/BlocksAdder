@@ -1,0 +1,153 @@
+{
+  "recorded_at": "2026-10-26T10:05:58.872539+00:00",
+  "plugin_version": "1.1.0-SNAPSHOT",
+  "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+  "player_runs": [
+    {
+      "server": "Spigot 1.21.11",
+      "java": 21,
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "passed": true,
+      "assertions": 86,
+      "summary": "[11:05:34] [Server thread/INFO]: [CropViewProbe] CROP_VIEW_VERIFICATION: PASS passed=86 failed=0",
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/crop-view-spigot.log",
+      "scope": "Two connected protocol 1.21.11 clients; native spawn/removal packets and reconnect, public API/command/lifecycle cases, policy and generated-asset data. ProtocolLib absent."
+    },
+    {
+      "server": "Paper 1.21.11 build132",
+      "java": 21,
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "passed": true,
+      "assertions": 86,
+      "summary": "[11:04:37 INFO]: [CropViewProbe] CROP_VIEW_VERIFICATION: PASS passed=86 failed=0",
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/crop-view-paper.log",
+      "scope": "Two connected protocol 1.21.11 clients; native spawn/removal packets and reconnect, public API/command/lifecycle cases, policy and generated-asset data. ProtocolLib absent."
+    }
+  ],
+  "player_assertions": 172,
+  "bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:01:04] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-spigot-1.21.11.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:01:23 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-paper-1.21.11.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:01:37 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-paper-26.1.1.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:01:51 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-paper-26.1.2.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:02:01] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-spigot-26.1.2.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:02:19] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-spigot-26.2.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:02:32 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-paper-26.2.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:02:44] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-spigot-26.3.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+      "summary": "[11:02:57 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/matrix-candidates/23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6/bundle-paper-26.3.log",
+      "assertions": 45
+    }
+  ],
+  "bundle_assertions": 405,
+  "scope": [
+    "nearest bounded selection with automatic/full/hidden personal modes",
+    "independent player visibility and native entity spawn/removal state",
+    "distance thinning including negative coordinates and crowd hysteresis",
+    "pure-policy field-of-view and elevated/near exemptions",
+    "validated range/cap/budget values and far-stage/facing references",
+    "lazy per-stage facing models and full-mode normal models",
+    "generated hidden series cards and independently generated two-sided pack geometry",
+    "permission-aware own/other commands and completion",
+    "hidden native event interaction and attack rejection",
+    "growth/reload helper disposal and current far-stage identity",
+    "one-operation round-robin scheduling eventually serves both players",
+    "unused card reclamation",
+    "actual chunk unload and persistent reload without duplicate helpers",
+    "actual protocol reconnect retains preference and resumes detail",
+    "complete placement/helper cleanup"
+  ],
+  "corrected_fixture_attempt": {
+    "candidate_sha256": "23ec5a564cbf26f33d0d7709f1d25842103eda29f568fe133bc816631120fcc6",
+    "server": "Paper 1.21.11 build132",
+    "summary": "Earlier 81-check run passed 77 and failed four chunk-unload assertions.",
+    "cause": "The fixture waited 50 ticks, while the isolated Paper configuration delay-chunk-unloads-by was 10s. It was corrected to wait 260 ticks before asserting actual unload. No production change was made for this fixture correction."
+  },
+  "notes": [
+    "Native player scenarios use actual protocol 1.21.11 connections, not a graphical client.",
+    "The 26.x bundle matrix is core/format API acceptance, not native player crop-view acceptance on 26.x.",
+    "Generated JSON is verified as data; rendered appearance remains the user's visual check.",
+    "Reference JAR was never executed. Full functional reconstruction remains active.",
+    "Temporary probes and disposable servers are ignored and excluded from publication; prior cleanup was rejected by automatic approval review."
+  ]
+}

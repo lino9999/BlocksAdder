@@ -15,7 +15,7 @@ Use the public interface in `io.github.lino9999.blocksadder.api`. Declare Blocks
 | Definitions and items | `definitions()`, `find(id)`, `createItem(id, amount)`, `identify(ItemStack)` |
 | World content | `identify(Block)`, `place(location, id, player)`, `removeBlock(location, player, drops)`, `spawnEntity(location, id)` |
 | Liquid and fire | `placeLiquid`, `placeFire`, `identifyEnvironment` |
-| Crops | `growCrop(location, stages, player)` |
+| Crops | `growCrop(location, stages, player)`, `plantView(player)`, `plantView(player, mode)` |
 | Stats | `stat(player, id)`, `stat(player, id, value)` |
 | Skeletal models | `attachModel`, `playAnimation`, `detachModel`, `modelVariable`, `modelVariables` |
 | Player models | `disguise`, `undisguise`, `playEmote`, `stopEmote`, `emoteState` |
@@ -26,6 +26,8 @@ Use the public interface in `io.github.lino9999.blocksadder.api`. Declare Blocks
 Placement and removal report whether an operation committed. Protection and custom-event cancellation can reject an operation. Model and vehicle instances use UUIDs; they differ from definition IDs. The `player` argument supplies player permission/protection context where supported. Null represents a server-initiated operation and does not bypass cancellable custom events.
 
 Crop growth clamps to maturity and emits `CustomCropGrowEvent` with cause `API`. It preserves the current stage on cancellation or failed regeneration. Player emote commands/API route skeletal definitions to the model controller and retain frame-effect timelines for existing content. `stop-now`/immediate stop skips an optional end animation. Skeletal emote status is available through `emoteState`.
+
+`plantView` reads or persists `CropViewService.Mode.AUTO`, `FULL` or `HIDDEN`. It schedules incremental per-player crop visibility; it does not synchronously render every crop or change its saved growth. The API setter trusts the calling integration; command permissions are enforced by the command adapter. See [plant views](crop-views.md) for caps, budgets and hidden interactions.
 
 `CustomCropDestroyEvent` exposes natural destruction separately from growth and harvesting. Cancelling it protects the crop and its native source operation where applicable. Skin APIs select existing player or configured texture profiles without implicit profile-update network requests. Live skin shader/runtime acceptance remains tracked in the model guide.
 

@@ -80,6 +80,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private final ChunkContentStore store;
     private final io.github.lino9999.blocksadder.loot.ContentLootService contentLoot;
     private final io.github.lino9999.blocksadder.crop.CropDestructionService cropDestruction;
+    private final io.github.lino9999.blocksadder.crop.CropViewService cropViews;
     private final Map<BlockPosition, Integer> pendingCropRemovals = new HashMap<>();
     private final Set<BlockPosition> furnitureTransitions = new java.util.HashSet<>();
     private final NamespacedKey helperKey;
@@ -149,6 +150,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         this.items = items;
         this.contentLoot = new io.github.lino9999.blocksadder.loot.ContentLootService(registry, items);
         this.cropDestruction = new io.github.lino9999.blocksadder.crop.CropDestructionService(plugin, this);
+        this.cropViews = new io.github.lino9999.blocksadder.crop.CropViewService(plugin, this::removeHelper);
         this.store = new ChunkContentStore(plugin);
         this.helperKey = new NamespacedKey(plugin, "world_helper");
         this.entityKey = new NamespacedKey(plugin, "entity_id");
@@ -172,6 +174,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         cropLayouts = Map.copyOf(layouts);
         if (growthTask != null) growthTask.cancel();
         flushAndClear();
+        cropViews.reload();
         closed = false;
         for (World world : Bukkit.getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) load(chunk);
@@ -184,6 +187,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     public void validate(ContentRegistry candidate) {
         requireServerThread();
         WorldContentValidator.validate(candidate);
+        io.github.lino9999.blocksadder.crop.CropViewService.validate(candidate, plugin.getConfig());
         contentLoot.validate(candidate);
     }
 
@@ -195,6 +199,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         if (growthTask != null) growthTask.cancel();
         growthTask = null;
         flushAndClear();
+        cropViews.close();
     }
 
     public boolean place(Location location, String id, Player player) {
@@ -479,6 +484,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         if (closed || event.getHand() != EquipmentSlot.HAND || event.getClickedBlock() == null
                 || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
         PlacedContent clicked = managed(event.getClickedBlock());
+        if (clicked != null && clicked.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())) { event.setCancelled(true); return; }
         if (event.getAction() == Action.LEFT_CLICK_BLOCK && clicked != null) {
             if (clicked.kind() == ContentKind.BLOCK) return;
             event.setCancelled(true);
@@ -575,6 +581,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         event.setCancelled(true);
         if (event.getDamager() instanceof Player player) {
             PlacedContent placed = loaded.get(position);
+            if (placed != null && placed.kind() == ContentKind.CROP && !cropViews.interactive(player)) return;
             if (placed != null && placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), player, event.getEntity())) return;
             if (placed != null) breakContent(placed, player, false, false);
         }
@@ -587,6 +594,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         PlacedContent placed = position == null ? null : loaded.get(position);
         if (placed == null) return;
         event.setCancelled(true);
+        if (placed.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())) return;
         if (placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), event.getPlayer(), event.getRightClicked())) return;
         if (placed.kind() == ContentKind.CROP && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE_MEAL) fertilize(placed, event.getPlayer());
         else if (placed.kind() == ContentKind.CROP) harvest(placed, event.getPlayer());
@@ -868,6 +876,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     public io.github.lino9999.blocksadder.crop.CropDestructionService cropDestruction() { return cropDestruction; }
+    public io.github.lino9999.blocksadder.crop.CropViewService cropViews() { return cropViews; }
     public boolean syntheticBreak() { return syntheticBreak; }
     public boolean syntheticPlacement() { return syntheticPlacement; }
 
@@ -1203,37 +1212,44 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             List<String> stages = config.getStringList("stages");
             if (!stages.isEmpty()) modelId = stages.get(Math.min(placed.stage(), stages.size() - 1));
         }
-        if (config.getBoolean("display", true) && (placed.kind() != ContentKind.BLOCK || blockStates == null || blockStates.usesDisplay(placed.id()))) {
-            String selectedModel = modelId;
-            Location displayLocation = origin.clone().add(0.5, config.getDouble("offset-y", 0.5), 0.5);
-            displayLocation.setYaw(placed.yaw());
-            origin.getWorld().spawn(displayLocation, ItemDisplay.class, display -> {
-                display.setItemStack(resolveItem(selectedModel, 1));
-                display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
-                float scale = (float) Math.clamp(config.getDouble("scale", 1), 0.01, 16);
-                Transformation transformation = display.getTransformation();
-                transformation.getScale().set(scale);
-                display.setTransformation(transformation);
-                display.setViewRange((float) Math.clamp(plugin.getConfig().getDouble("world.display-view-range", 1), 0.1, 4));
-                display.setShadowRadius(0);
-                display.setShadowStrength(0);
-                display.setInvulnerable(true);
-                markHelper(display, placed);
-            });
-        }
+        ItemDisplay normal = null;
+        List<Entity> interactions = new ArrayList<>();
+        if (config.getBoolean("display", true) && (placed.kind() != ContentKind.BLOCK || blockStates == null || blockStates.usesDisplay(placed.id()))) normal = spawnContentDisplay(placed, config, modelId, false);
         if (placed.kind() != ContentKind.BLOCK || placed.blockData().equals("minecraft:air")) {
             var layout = placed.kind() == ContentKind.CROP ? cropLayouts.get(placed.id()) : null;
             var tiles = layout == null ? List.of(new io.github.lino9999.blocksadder.crop.CropLayout.Tile(0, 0, config.getDouble("width", 1), config.getDouble("height", 1))) : layout.shape(placed.stage()).tiles();
-            for (var tile : tiles) origin.getWorld().spawn(origin.clone().add(.5 + tile.x(), 0, .5 + tile.z()), Interaction.class, interaction -> {
+            for (var tile : tiles) interactions.add(origin.getWorld().spawn(origin.clone().add(.5 + tile.x(), 0, .5 + tile.z()), Interaction.class, interaction -> {
                 interaction.setInteractionWidth((float) tile.width());
                 interaction.setInteractionHeight((float) tile.height());
                 interaction.setResponsive(true);
                 markHelper(interaction, placed);
-            });
+            }));
+        }
+        if (placed.kind() == ContentKind.CROP) {
+            List<String> far = config.getStringList("visuals.far-stages");
+            String selected = far.isEmpty() ? modelId : far.get(Math.min(placed.stage(), far.size() - 1));
+            cropViews.register(origin, normal, interactions, () -> spawnContentDisplay(placed, config, selected, true));
         }
     }
 
+    private ItemDisplay spawnContentDisplay(PlacedContent placed, ConfigurationSection config, String model, boolean card) {
+        Location location = placed.position().location().add(.5, config.getDouble("offset-y", .5), .5);
+        location.setYaw(placed.yaw());
+        return location.getWorld().spawn(location, ItemDisplay.class, display -> {
+            display.setItemStack(resolveItem(model, 1));
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.FIXED);
+            display.setBillboard(card ? io.github.lino9999.blocksadder.crop.CropViewService.facing(config) : org.bukkit.entity.Display.Billboard.FIXED);
+            Transformation transformation = display.getTransformation();
+            transformation.getScale().set((float) Math.clamp(config.getDouble("scale", 1), .01, 16));
+            display.setTransformation(transformation);
+            display.setViewRange((float) Math.clamp(plugin.getConfig().getDouble("world.display-view-range", 1), .1, 4));
+            display.setShadowRadius(0); display.setShadowStrength(0); display.setInvulnerable(true);
+            markHelper(display, placed);
+        });
+    }
+
     private void markHelper(Entity entity, PlacedContent placed) {
+        if (placed.kind() == ContentKind.CROP) entity.setVisibleByDefault(false);
         entity.setPersistent(false);
         entity.setGravity(false);
         entity.getPersistentDataContainer().set(helperKey, PersistentDataType.STRING, placed.id());
@@ -1243,6 +1259,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private void removeHelpers(PlacedContent placed) {
+        if (placed.kind() == ContentKind.CROP) cropViews.unregister(placed.position().location());
         for (UUID uuid : List.copyOf(placed.helpers())) {
             Entity entity = helperEntities.get(uuid);
             if (entity != null) removeHelper(entity);

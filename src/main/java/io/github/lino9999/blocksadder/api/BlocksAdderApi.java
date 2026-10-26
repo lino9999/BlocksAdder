@@ -32,6 +32,8 @@ public interface BlocksAdderApi {
     boolean mountVehicle(Player player, java.util.UUID vehicle);
     double vehicleFuel(java.util.UUID vehicle, double value);
     boolean growCrop(Location location, int stages, Player player);
+    io.github.lino9999.blocksadder.crop.CropViewService.Mode plantView(Player player);
+    void plantView(Player player, io.github.lino9999.blocksadder.crop.CropViewService.Mode mode);
     double modelVariable(java.util.UUID modelInstance, String name, double value);
     java.util.Map<String, Double> modelVariables(java.util.UUID modelInstance);
     boolean modelCamera(java.util.UUID modelInstance, Player viewer, double distance);

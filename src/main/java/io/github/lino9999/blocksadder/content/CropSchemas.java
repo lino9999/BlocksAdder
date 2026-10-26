@@ -21,6 +21,7 @@ final class CropSchemas {
             ConfigurationSection crop = new MemoryConfiguration();
             copy(source, crop);
             crop.set("stages", stages(items, id, source, age));
+            cards(items, id, source, crop, age);
             crop.set("seed-item", seed.id().toString());
             crop.set("content-id", id.toString());
             crop.set("original-schema", true);
@@ -83,6 +84,34 @@ final class CropSchemas {
         ItemDefinition result = items.get(id);
         if (result == null) throw new IllegalArgumentException("Unknown crop item: " + id);
         return result;
+    }
+
+    private static void cards(Map<String, ItemDefinition> items, ContentId id, ConfigurationSection source, ConfigurationSection crop, int age) {
+        ConfigurationSection cards = source.getConfigurationSection("cards");
+        if (cards == null) {
+            if (source.contains("cards")) throw new IllegalArgumentException("Plant cards require a settings section: " + id);
+            return;
+        }
+        if (!java.util.Set.of("texture-prefix", "parent", "slot").containsAll(cards.getKeys(false))) throw new IllegalArgumentException("Unknown plant card setting: " + id);
+        String prefix = cards.getString("texture-prefix");
+        if (prefix == null || prefix.isBlank()) throw new IllegalArgumentException("Plant card texture prefix is required: " + id);
+        prefix = reference(id.namespace(), prefix.replaceAll("\\.png$", ""));
+        String parent = reference(id.namespace(), cards.getString("parent", "blocksadder:block/plant_card"));
+        String slot = cards.getString("slot", "plant");
+        if (!slot.matches("[a-zA-Z0-9_]+")) throw new IllegalArgumentException("Invalid plant card texture slot: " + id);
+        if (parent.equals("blocksadder:block/plant_card") && !slot.equals("plant")) throw new IllegalArgumentException("The built-in plant card requires the plant texture slot: " + id);
+        List<String> far = new ArrayList<>();
+        for (int stage = 0; stage <= age; stage++) {
+            ContentId generated = new ContentId(id.namespace(), "_crops/" + id.value() + "/card/" + stage);
+            ConfigurationSection options = new MemoryConfiguration();
+            options.set("hidden", true); options.set("model-parent", parent);
+            options.set("texture", prefix + stage); options.set("model-textures." + slot, prefix + stage);
+            ContentId.parse(prefix + stage);
+            ItemDefinition item = new ItemDefinition(generated, Material.PAPER, id.value() + " card " + stage, List.of(), 0, generated.toString(), "internal", options);
+            if (items.putIfAbsent(generated.toString(), item) != null) throw new IllegalArgumentException("Generated plant card conflicts with an item: " + generated);
+            far.add(generated.toString());
+        }
+        crop.set("visuals.far-stages", List.copyOf(far));
     }
 
     private static String reference(String namespace, String value) {

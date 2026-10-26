@@ -24,6 +24,8 @@ The current report is [distribution-audit.json](distribution-audit.json). A pass
 
 Historical release reports retain their exact artifacts and original audit scope. The later [world-action audit](world-actions-audit.json) also compares short readable message literals from JVM constants, rather than only longer messages. It found no shared readable message literals. Common single-word/API identifiers and JVM string-concatenation recipe markers remain outside that text-message classification.
 
+The [plant-view audit](crop-views-audit.json) applies the same checks to the later candidate containing 330 own-package classes and three YAML resources. All copied-file, branding, readable-message and declared command/permission collision lists are empty. Its per-player renderer is independently organized around a resident chunk index, incremental nearest-candidate queues and directly owned normal/facing display lifecycles. This records a concrete source/distribution boundary rather than claiming every algorithm's authorship can be inferred from byte differences.
+
 ## Distribution preparation
 
 The JAR contains project classes and three independently authored YAML resources. Bukkit/Spigot and optional ProtocolLib dependencies remain provided dependencies, with their own authorship. Administrator-supplied pack assets are not redistributed by this repository. Publishing a content pack requires rights to all of its assets.

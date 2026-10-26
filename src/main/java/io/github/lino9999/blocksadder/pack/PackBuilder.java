@@ -106,6 +106,7 @@ public final class PackBuilder {
         io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendModels(entries, registry, root);
         copyAssets(entries, root.resolve("contents"), maxBytes);
         copyAssets(entries, root.resolve("resourcepack"), maxBytes);
+        io.github.lino9999.blocksadder.crop.CropCardAssets.append(entries, registry);
         EquipmentAssetCompiler.append(entries, registry);
         io.github.lino9999.blocksadder.model.PlayerEquipmentModels.append(entries, registry);
         io.github.lino9999.blocksadder.model.PlayerSkinAssets.append(entries, registry, root);

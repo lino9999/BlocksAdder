@@ -59,6 +59,7 @@ permissions:
       blocksadder.glyph: true
       blocksadder.pack: true
       blocksadder.hud: true
+      blocksadder.plants: true
       blocksadder.emote: true
       blocksadder.use: true
       blocksadder.glyphs: true
@@ -99,6 +100,9 @@ permissions:
   blocksadder.pack:
     default: true
   blocksadder.hud:
+    default: true
+  blocksadder.plants:
+    description: Choose personal plant detail and visibility.
     default: true
   blocksadder.emote:
     default: true

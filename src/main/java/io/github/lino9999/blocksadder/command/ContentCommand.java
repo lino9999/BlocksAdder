@@ -19,7 +19,7 @@ import java.util.Map;
 
 public final class ContentCommand implements TabExecutor {
     private static final Map<String, String> SHORTCUTS = Map.of("baget", "get", "bagive", "give", "bapack", "pack", "babrowse", "browse", "bareload", "reload", "barecipe", "recipe", "bainspect", "inspect");
-    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem", "model", "disguise", "undisguise", "liquid", "fire", "vehicle", "config");
+    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem", "model", "disguise", "undisguise", "liquid", "fire", "vehicle", "config", "plants");
     private final BlocksAdderPlugin plugin;
     private final CatalogMenu menus;
     private final AdvancedContentCommands advanced;
@@ -114,6 +114,19 @@ public final class ContentCommand implements TabExecutor {
                     else Text.send(sender, "Font images: " + String.join(", ", plugin.content().sections("font_images").keySet().stream().sorted().toList()));
                 }
                 case "stat" -> stat(sender, args);
+                case "plants" -> {
+                    usage(args, 2, "plants <auto|full|hide|status> [player]");
+                    Player actor = args.length > 2 ? online(args[2], sender) : player(sender);
+                    var mode = switch (args[1].toLowerCase(Locale.ROOT)) {
+                        case "auto" -> io.github.lino9999.blocksadder.crop.CropViewService.Mode.AUTO;
+                        case "full" -> io.github.lino9999.blocksadder.crop.CropViewService.Mode.FULL;
+                        case "hide" -> io.github.lino9999.blocksadder.crop.CropViewService.Mode.HIDDEN;
+                        case "status" -> plugin.plantView(actor);
+                        default -> throw new IllegalArgumentException("Use plants auto, full, hide or status.");
+                    };
+                    if (!args[1].equalsIgnoreCase("status")) plugin.plantView(actor, mode);
+                    Text.send(sender, actor.getName() + " plant view: " + mode.name().toLowerCase(Locale.ROOT) + ".");
+                }
                 case "hud" -> {
                     usage(args, 3, "hud <show|hide> <hud> [player]");
                     if (!args[1].equalsIgnoreCase("show") && !args[1].equalsIgnoreCase("hide")) throw new IllegalArgumentException("Use show or hide.");
@@ -339,6 +352,7 @@ public final class ContentCommand implements TabExecutor {
     private void help(CommandSender sender) {
         Text.send(sender, "&bBlocksAdder &7by Lino");
         Text.send(sender, "/ba browse [category] [player] | recipe <item> [player] | glyph [id]");
+        if (sender.hasPermission("blocksadder.plants")) Text.send(sender, "/ba plants <auto|full|hide|status> [player]");
         if (!sender.hasPermission("blocksadder.get")) return;
         Text.send(sender, "/ba get <item> [amount] | give <player> <item> [amount] [silent]");
         Text.send(sender, "/ba remove <player> <item> [amount] [silent] | drop <item> <player|x y z world> [amount]");
@@ -375,6 +389,7 @@ public final class ContentCommand implements TabExecutor {
                     if (args.length == 4) choices.addAll(plugin.content().sections("stats").keySet());
                 }
                 case "hud" -> { if (args.length == 2) choices.addAll(List.of("show", "hide")); if (args.length == 3) choices.addAll(plugin.content().sections("huds").keySet()); }
+                case "plants" -> { if (args.length == 2) choices.addAll(List.of("auto", "full", "hide", "status")); if (args.length == 3) choices.addAll(Bukkit.getOnlinePlayers().stream().filter(actor -> actor.equals(sender) || sender.hasPermission("blocksadder.others")).map(Player::getName).toList()); }
                 case "tree" -> choices.addAll(plugin.content().sections("trees").keySet());
                 case "glyph" -> choices.addAll(plugin.content().sections("font_images").keySet());
                 case "emote" -> { choices.addAll(List.of("list", "info", "stop", "stop-now")); choices.addAll(plugin.content().sections("emotes").keySet()); }

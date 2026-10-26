@@ -27,6 +27,17 @@ environment:
 crops:
   max-in-area: 1000
   area-radius: 32
+plants:
+  view:
+    radius: 32
+    maximum: 1400
+    crowded-at: 233
+    thin-after: 8
+    card-after: 10
+    field-of-view: 0
+    work-per-tick: 2048
+    millis-per-tick: 3
+    refresh-ticks: 10
 models:
   max-active-rigs: 128
   max-total-bones: 4096
