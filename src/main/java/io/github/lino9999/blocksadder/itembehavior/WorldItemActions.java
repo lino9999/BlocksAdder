@@ -38,6 +38,7 @@ final class WorldItemActions implements ContentActionHook {
         }
         ItemStack current = player == null ? null : player.getInventory().getItemInMainHand();
         ItemStack expected = current == null ? null : current.clone();
+        int expectedSlot = player == null ? -1 : player.getInventory().getHeldItemSlot();
         boolean wear = player != null && block && items.identify(expected).isPresent()
                 && registry.get().find(event.getContentId()).map(item -> item.options().getDouble("block.hardness", .5) != 0).orElse(false);
         if (!event.isCancelled() && source != null) source.fire();
@@ -48,12 +49,13 @@ final class WorldItemActions implements ContentActionHook {
                 requireThread();
                 if (committed) return;
                 committed = true;
+                behaviors.breakCommitted(event);
                 if (source != null) source.committed = true;
-                if (!wear || player.getGameMode() != GameMode.SURVIVAL) return;
+                if (!wear || player.getGameMode() != GameMode.SURVIVAL || player.getInventory().getHeldItemSlot() != expectedSlot) return;
                 ItemStack held = player.getInventory().getItemInMainHand();
                 if (!held.equals(expected)) return;
                 ItemStack updated = held.clone();
-                if (ItemWear.durability(player, items, updated, 1) && player.getInventory().getItemInMainHand().equals(expected)) {
+                if (ItemWear.durability(player, items, updated, 1) && player.getInventory().getHeldItemSlot() == expectedSlot && player.getInventory().getItemInMainHand().equals(expected)) {
                     player.getInventory().setItemInMainHand(updated);
                     if (!updated.getType().isAir() && updated.getAmount() > 0) delayed.forEach(snapshot -> snapshot.afterWear(expected, updated));
                 }

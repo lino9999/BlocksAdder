@@ -77,6 +77,6 @@ The ordinary action `permission`, `delay` and `flow` fields apply. Delays are in
 
 ## Evidence boundary
 
-The retained static string inventory identifies the reference feature families for replacing blocks/furniture and multiple-block breaking. BlocksAdder implements its own `world_change` compiler, choice type, ownership authority and guarded editor; no decompiled implementation class or external configuration alias is translated. Multiple-block breaking remains separate work in the parity tracker.
+The retained static string inventory identifies the reference feature families for replacing blocks/furniture and multiple-block breaking. BlocksAdder implements its own `world_change` compiler, choice type, ownership authority and guarded editor; no decompiled implementation class or external configuration alias is translated. Protected multiple-block mining uses the separate independently configured [world_sweep action](area-mining.md).
 
 Verification distinguishes actual native main/offhand/furnishing inputs from public API, preparation, failure-injection and tile-state cases. The user owns rendered appearance checks. Exact candidate and endpoint results are recorded with the development verification evidence; a green scoped suite does not establish full functional parity.

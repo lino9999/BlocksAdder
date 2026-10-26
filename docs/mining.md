@@ -31,3 +31,9 @@ The supplied artifact's block schema parser (`itemsadder/m/si`) reads hardness, 
 Temporary protocol clients connected as two actual offline test players to isolated Spigot 1.21.11 and Paper 1.21.11 servers. Each run passed 34 assertions: correct/incorrect tools and tier, progress factors, native start/abort messages, delayed completion, held-tool wear, break-protection cancellation, model disguise/visibility restoration, stat clamping, bossbar delivery and resource-pack request delivery. The client observed positive block-crack stages and resets. A test-client startup issue was fixed by sending Minecraft's normal player-loaded acknowledgement; no production mining restriction was weakened.
 
 These early tests verify gameplay requests and server/network state, not rendered crack textures, visual models, perceived latency or every animation/anti-cheat interaction. The current preview-6 JAR subsequently passed the expanded 56-check held-break/mining suite on Spigot/Paper 1.21.11 and all seven available 26.x builds, including native 26.2/26.3 protocols. See [native 26.x verification](native-26x-verification.md) for exact endpoints and method. The user owns appearance checks; broader feature reconstruction remains in progress.
+
+## Area mining
+
+Held block-break plans can queue a protected native/custom region through [world_sweep](area-mining.md). The origin retains ordinary mining timing; additional cells use the shared budget, source expectations and individual tool/protection/reward rules described in that guide.
+
+Owned durability writes retain the source stack and hotbar slot across damage/break callbacks. A listener replacing the source or selecting an equal tool in another slot cannot redirect the charge or overwrite that inventory slot. Manual wear for non-native-material items uses a cloned candidate and commits only when its retained equipment source still matches.

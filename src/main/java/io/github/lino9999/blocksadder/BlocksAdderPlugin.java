@@ -70,6 +70,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             world.setBlockBehavior(blockBehavior);
             packs = new PackService(this, () -> content);
             mining = new MiningService(this, () -> content, items, world);
+            world.setExtraBreaker(mining::breakExtra);
             models = new ModelService(this, () -> content, items);
             world.setHelperTarget(models::targetOf);
             world.setEntityCleanup(entity -> models.byEntity(entity).ifPresent(models::detach));

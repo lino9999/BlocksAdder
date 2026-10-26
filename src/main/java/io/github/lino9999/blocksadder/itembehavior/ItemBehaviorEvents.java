@@ -191,8 +191,13 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
                 || items.identify(stack).isEmpty()
                 || !(stack.getItemMeta() instanceof Damageable damageable)
                 || !damageable.hasMaxDamage()) return;
-        if (ItemWear.durability(player, items, stack, 1))
-            player.getInventory().setItem(slot, stack);
+        ItemStack expected = stack.clone();
+        ItemStack updated = stack.clone();
+        int heldSlot = player.getInventory().getHeldItemSlot();
+        if (ItemWear.durability(player, items, updated, 1)
+                && (slot != EquipmentSlot.HAND || player.getInventory().getHeldItemSlot() == heldSlot)
+                && expected.equals(player.getInventory().getItem(slot)))
+            player.getInventory().setItem(slot, updated);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

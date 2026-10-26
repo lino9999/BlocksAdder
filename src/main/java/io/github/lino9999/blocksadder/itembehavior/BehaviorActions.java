@@ -39,6 +39,7 @@ final class BehaviorActions {
                     "play_totem_animation",
                     "replace_properties",
                     "world_change",
+                    "world_sweep",
                     "execute_commands",
                     "shoot_particle",
                     "play_particle",
@@ -65,6 +66,7 @@ final class BehaviorActions {
         java.util.Set<String> fields =
                 switch (family) {
                     case "world_change" -> java.util.Set.of("match", "into");
+                    case "world_sweep" -> java.util.Set.of("region", "frame", "select");
                     case "cancel" -> java.util.Set.of();
                     case "feed" -> java.util.Set.of("amount", "saturation");
                     case "play_sound", "stop_sound" ->
@@ -108,6 +110,11 @@ final class BehaviorActions {
                     && !java.util.Set.of("permission", "delay", "flow").contains(key))
                 throw error(item, "Unsupported action field: " + family + "/" + key);
         return switch (family) {
+            case "world_sweep" -> {
+                SweepRegion region = SweepRegion.parse(item, c, service.registry());
+                String permission = c.getString("permission", "");
+                yield context -> service.sweep(region, permission, context);
+            }
             case "world_change" -> {
                 var match = io.github.lino9999.blocksadder.world.WorldChoice.parse(service.registry(), item.id().namespace(), required(c, "match"));
                 var into = io.github.lino9999.blocksadder.world.WorldChoice.parse(service.registry(), item.id().namespace(), required(c, "into"));

@@ -10,6 +10,7 @@ public interface ItemWorldAccess {
     boolean syntheticBreak();
     Optional<Target> target(Block block);
     Optional<Target> target(Entity entity);
+    default boolean extraBreak(Block block, org.bukkit.entity.Player player) { return false; }
     default boolean change(Location location, io.github.lino9999.blocksadder.world.WorldChoice match,
             io.github.lino9999.blocksadder.world.WorldChoice into, org.bukkit.entity.Player player, java.util.function.BooleanSupplier source) { return false; }
 

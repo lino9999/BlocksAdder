@@ -106,6 +106,19 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private final Set<BlockPosition> blockTransitions = new java.util.HashSet<>();
     private final WorldBlockEditor blockEditor = new WorldBlockEditor();
     private java.util.function.Predicate<Block> externalOwnership = block -> false;
+    private java.util.function.BiPredicate<Player, Block> extraBreaker = (player, block) -> false;
+
+    public void setExtraBreaker(java.util.function.BiPredicate<Player, Block> breaker) { requireServerThread(); extraBreaker = java.util.Objects.requireNonNull(breaker); }
+
+    @Override public boolean extraBreak(Block block, Player player) {
+        requireServerThread();
+        if (closed || player == null || !player.isOnline() || player.isDead() || !player.hasPermission("blocksadder.break")
+                || !player.getWorld().equals(block.getWorld()) || player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.CREATIVE
+                || !block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4) || externalOwnership.test(block)) return false;
+        var target = managed(block);
+        if (target != null) return target.kind() == ContentKind.BLOCK && extraBreaker.test(player, block);
+        return !block.getType().isAir() && !block.isLiquid() && block.getType().getHardness() >= 0 && player.breakBlock(block);
+    }
 
     public void setExternalOwnership(java.util.function.Predicate<Block> ownership) { requireServerThread(); externalOwnership = java.util.Objects.requireNonNull(ownership); }
     private java.util.function.Function<Entity, Optional<Entity>> helperTarget = entity -> Optional.empty();

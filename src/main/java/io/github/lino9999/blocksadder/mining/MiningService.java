@@ -113,6 +113,25 @@ public final class MiningService implements Listener, AutoCloseable {
 
     public int activeCount() { return sessions.size(); }
 
+    public boolean breakExtra(Player player, Block block) {
+        requireThread();
+        if (!player.isOnline() || player.isDead() || !player.getWorld().equals(block.getWorld())
+                || !block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)
+                || !player.hasPermission("blocksadder.break") || player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.CREATIVE) return false;
+        String id = world.identify(block).orElse(null);
+        if (id == null || world.kind(block).orElse(null) != io.github.lino9999.blocksadder.world.ContentKind.BLOCK) return false;
+        MiningProfile profile = profiles.get(id);
+        ItemStack tool = player.getInventory().getItemInMainHand().clone();
+        int slot = player.getInventory().getHeldItemSlot();
+        boolean correct = profile == null || profile.correctTool(tool, items);
+        if (profile != null && (profile.unbreakable() || profile.denyWrongTool() && !correct)) return false;
+        boolean removed = world.breakPlaced(block.getLocation(), player, profile == null || !profile.correctToolDrops() || correct);
+        if (removed && player.getGameMode() == GameMode.SURVIVAL && items.identify(tool).isEmpty()
+                && (profile == null || profile.hardness() > 0) && player.getInventory().getHeldItemSlot() == slot
+                && player.getInventory().getItemInMainHand().equals(tool)) damageTool(player);
+        return removed;
+    }
+
     public void cancel(Player player) {
         Session session = sessions.remove(player.getUniqueId());
         if (session != null) cracks(player, session, 0);
@@ -177,7 +196,10 @@ public final class MiningService implements Listener, AutoCloseable {
             }
             if (session.progress >= 1) {
                 cancel(player);
-                if (world.breakPlaced(session.block.getLocation(), player, !profile.correctToolDrops() || correct)) damageTool(player);
+                ItemStack expected = tool.clone();
+                int slot = player.getInventory().getHeldItemSlot();
+                if (world.breakPlaced(session.block.getLocation(), player, !profile.correctToolDrops() || correct)
+                        && player.getInventory().getHeldItemSlot() == slot && player.getInventory().getItemInMainHand().equals(expected)) damageTool(player);
             } else {
                 int stage = Math.min(9, (int) (session.progress * 10));
                 if (stage != session.stage) {
@@ -213,7 +235,9 @@ public final class MiningService implements Listener, AutoCloseable {
     }
 
     private void damageTool(Player player) {
+        int slot = player.getInventory().getHeldItemSlot();
         ItemStack held = player.getInventory().getItemInMainHand();
+        ItemStack expected = held.clone();
         if (items.identify(held).isPresent()) return;
         if (!(held.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable meta) || meta.isUnbreakable()) return;
         int max = meta.hasMaxDamage() ? meta.getMaxDamage() : held.getType().getMaxDurability();
@@ -223,11 +247,12 @@ public final class MiningService implements Listener, AutoCloseable {
         if (java.util.concurrent.ThreadLocalRandom.current().nextInt(level + 1) != 0) return;
         var event = new org.bukkit.event.player.PlayerItemDamageEvent(player, held, 1);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled() || event.getDamage() <= 0) return;
+        if (event.isCancelled() || event.getDamage() <= 0 || player.getInventory().getHeldItemSlot() != slot || !player.getInventory().getItemInMainHand().equals(expected)) return;
         if ((long) meta.getDamage() + event.getDamage() >= max) {
             var broken = held.clone();
-            held.setAmount(held.getAmount() - 1);
             Bukkit.getPluginManager().callEvent(new org.bukkit.event.player.PlayerItemBreakEvent(player, broken));
+            if (player.getInventory().getHeldItemSlot() != slot || !player.getInventory().getItemInMainHand().equals(expected)) return;
+            held.setAmount(held.getAmount() - 1);
         } else {
             meta.setDamage(meta.getDamage() + event.getDamage());
             held.setItemMeta(meta);

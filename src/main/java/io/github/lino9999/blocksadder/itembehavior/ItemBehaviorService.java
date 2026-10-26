@@ -113,6 +113,7 @@ public final class ItemBehaviorService implements AutoCloseable {
     private final Stats stats;
     private final BehaviorActions compiler;
     private final WorldItemActions worldActions;
+    private final WorldSweeps sweeps;
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
     private final Map<UUID, Map<String, Event>> admitted = new HashMap<>();
     private final Map<UUID, Set<BukkitTask>> jobs = new HashMap<>();
@@ -141,6 +142,11 @@ public final class ItemBehaviorService implements AutoCloseable {
     public java.util.Optional<ItemWorldAccess.Target> worldTarget(Location anchor) { return worldAccess == null ? java.util.Optional.empty() : worldAccess.target(anchor.getBlock()); }
     boolean hasPlan(String id, String trigger) { Definition definition = definitions.get(id); return definition != null && definition.plans().containsKey(trigger); }
     ContentRegistry registry() { return registry.get(); }
+    boolean sweep(SweepRegion region, String permission, Context context) {
+        Definition definition = items.identify(context.stack()).map(definitions::get).orElse(null);
+        return definition != null && sweeps.request(region, context, () -> permission(context.player(), permission) && permission(context.player(), definition.permission()));
+    }
+    void breakCommitted(io.github.lino9999.blocksadder.api.event.CustomContentBreakEvent event) { sweeps.committed(event); }
     boolean changeWorld(io.github.lino9999.blocksadder.world.WorldChoice match, io.github.lino9999.blocksadder.world.WorldChoice into, Context context) {
         ItemStack initial = context.stack();
         if (worldAccess == null || initial == null || initial.getType().isAir()) return false;
@@ -157,6 +163,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         this.stats = stats;
         this.compiler = new BehaviorActions(this, items);
         this.worldActions = new WorldItemActions(this, registry, items);
+        this.sweeps = new WorldSweeps(plugin, () -> worldAccess);
     }
 
     public void validate() {
@@ -240,6 +247,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         if (events == null) {
             events = new ItemBehaviorEvents(this, items, plugin);
             Bukkit.getPluginManager().registerEvents(events, plugin);
+            Bukkit.getPluginManager().registerEvents(sweeps, plugin);
         }
         events.reset();
     }
@@ -281,6 +289,8 @@ public final class ItemBehaviorService implements AutoCloseable {
                     if (config == null)
                         throw BehaviorActions.error(
                                 item, "Action must be a section: " + path + "/" + actionId);
+                    if (family.equals("world_sweep") && (!path.equals("block_break") || config.getInt("delay", 0) > 0))
+                        throw BehaviorActions.error(item, "Area breaking requires an immediate block_break action.");
                     if (family.equals("execute_commands"))
                         steps.addAll(compiler.commands(item, actionId, config));
                     else
@@ -561,6 +571,7 @@ public final class ItemBehaviorService implements AutoCloseable {
     }
 
     private void cancelJobs() {
+        sweeps.reset();
         jobs.values().forEach(tasks -> tasks.forEach(BukkitTask::cancel));
         jobs.clear();
     }
@@ -568,6 +579,7 @@ public final class ItemBehaviorService implements AutoCloseable {
     @Override
     public void close() {
         cancelJobs();
+        HandlerList.unregisterAll(sweeps);
         cooldowns.clear();
         admitted.clear();
         definitions = Map.of();
