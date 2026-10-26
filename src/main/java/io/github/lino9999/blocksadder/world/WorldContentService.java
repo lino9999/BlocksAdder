@@ -99,6 +99,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private WorldBlockBehavior blockBehavior;
     private WorldFurniture furniture;
     private io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions;
+    private final io.github.lino9999.blocksadder.environment.RemovalPlans removalPlans;
     private final Map<BlockPosition, long[]> actionRevisions = new java.util.WeakHashMap<>();
     private final Set<BlockPosition> activeUses = new java.util.HashSet<>();
     private java.util.function.Function<Entity, Optional<Entity>> helperTarget = entity -> Optional.empty();
@@ -133,7 +134,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         return location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) || !consistent(placed)
                 ? Optional.empty() : Optional.of(new io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target(placed.id(), placed.kind(), location,
                         () -> !closed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && loaded.get(placed.position()) == placed && consistent(placed),
-                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position()) && location.getBlock().getType().isAir()));
+                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position()) && location.getBlock().getType().isAir(),
+                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position())));
     }
     private java.util.function.Consumer<Entity> entityCleanup = entity -> {};
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds = io.github.lino9999.blocksadder.sound.ContentSoundSink.NONE;
@@ -164,6 +166,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         this.registry = registry;
         this.items = items;
         this.contentLoot = new io.github.lino9999.blocksadder.loot.ContentLootService(registry, items);
+        this.removalPlans = new io.github.lino9999.blocksadder.environment.RemovalPlans(plugin, items);
         this.cropDestruction = new io.github.lino9999.blocksadder.crop.CropDestructionService(plugin, this);
         this.cropViews = new io.github.lino9999.blocksadder.crop.CropViewService(plugin, this::removeHelper);
         this.store = new ChunkContentStore(plugin);
@@ -176,6 +179,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         if (!furnitureTransitions.isEmpty()) throw new IllegalStateException("World content cannot reload during a furniture replacement.");
         cropDestruction.close();
         contentLoot.reload();
+        removalPlans.reload(registry.get());
         Map<String, io.github.lino9999.blocksadder.crop.CropGrowthPolicy> policies = new HashMap<>();
         Map<String, io.github.lino9999.blocksadder.crop.CropLayout> layouts = new HashMap<>();
         for (ItemDefinition definition : registry.get().items()) {
@@ -204,12 +208,14 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         WorldContentValidator.validate(candidate);
         io.github.lino9999.blocksadder.crop.CropViewService.validate(candidate, plugin.getConfig());
         contentLoot.validate(candidate);
+        removalPlans.validate(candidate);
     }
 
     @Override
     public void close() {
         requireServerThread();
         cropDestruction.close();
+        removalPlans.close();
         closed = true;
         if (growthTask != null) growthTask.cancel();
         growthTask = null;
@@ -479,6 +485,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onChunkUnload(ChunkUnloadEvent event) {
+        removalPlans.unload(event.getChunk());
         ChunkPosition key = ChunkPosition.of(event.getChunk());
         Map<BlockPosition, PlacedContent> placements = chunks.remove(key);
         cropCounts.remove(key);
@@ -926,6 +933,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     public io.github.lino9999.blocksadder.crop.CropDestructionService cropDestruction() { return cropDestruction; }
+    public io.github.lino9999.blocksadder.environment.RemovalPlans removalPlans() { return removalPlans; }
     public io.github.lino9999.blocksadder.crop.CropViewService cropViews() { return cropViews; }
     public boolean syntheticBreak() { return syntheticBreak; }
     public boolean syntheticPlacement() { return syntheticPlacement; }
@@ -956,6 +964,9 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         var event = new CustomContentBreakEvent(location, placed.id(), ContentKind.CROP, player, false);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() || closed || loaded.get(placed.position()) != placed) return Optional.empty();
+        var environment = actionTarget(placed).map(target -> removalPlans.prepare(target,
+                io.github.lino9999.blocksadder.api.event.CustomContentEnvironmentEvent.Cause.valueOf(cause.name()), player)).orElse(null);
+        if (environment == null || !environment.allowed() || closed || loaded.get(placed.position()) != placed || !consistent(placed)) return Optional.empty();
         var trigger = switch (cause) {
             case WATER -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.WATER;
             case LAVA -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.LAVA;
@@ -977,6 +988,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
                 unregister(placed);
                 clearBacking(placed);
                 save(placed.position().chunk());
+                environment.committed(drops && permittedDrops);
                 if (!drops || !permittedDrops) return;
                 if (plan.configured() && !plan.successful() && definition.options().getBoolean("crop.drop_seed_if_immature", true))
                     location.getWorld().dropItemNaturally(location.clone().add(.5, .5, .5), items.create(definition.options().getString("crop.seed-item", placed.id()), 1));
@@ -1023,6 +1035,9 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         event.setDropItems(dropItems);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
+        var environment = explosion ? actionTarget(placed).map(target -> removalPlans.prepare(target,
+                io.github.lino9999.blocksadder.api.event.CustomContentEnvironmentEvent.Cause.EXPLOSION, player)).orElse(null) : null;
+        if (explosion && (environment == null || !environment.allowed() || closed || loaded.get(placed.position()) != placed || !consistent(placed))) return false;
         CropRemoval supportedCrop = null;
         Block above = placed.position().location().getBlock().getRelative(BlockFace.UP);
         if (placed.kind() != ContentKind.CROP && vulnerableCrop(above)) {
@@ -1074,6 +1089,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         save(placed.position().chunk());
         if (attempt != null) attempt.committed();
         if (supportedCrop != null) supportedCrop.commit(allowedDrops);
+        if (environment != null) environment.committed(allowedDrops);
         for (ItemStack reward : rewards) dropLocation.getWorld().dropItemNaturally(dropLocation, reward);
         if (drops && cropPlan != null && cropPlan.configured()) contentLoot.execute(cropPlan, placed.position().location(), player);
         if (blockPlan != null && blockPlan.matched()) contentLoot.execute(blockPlan, placed.position().location(), player);

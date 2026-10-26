@@ -36,7 +36,7 @@ entries:
 | `world.remove` | Player-initiated managed removal after native/custom protection and supported-crop preparation, before the backing block or placement changes. |
 | `world.harvest` | Protected crop harvest before its stage/reward update. This is separate from removing the crop. |
 
-Bare-handed players can activate placed plans. Held-item `block_break` plans continue to execute independently for custom blocks. Physical plans do not charge tool wear or consume the representation of the placed item. Server-initiated removal with a null player does not invent a player action context. Natural crop destruction and dedicated environmental/protection integrations have their own acceptance scope.
+Bare-handed players can activate placed plans. Held-item `block_break` plans continue to execute independently for custom blocks. Physical plans do not charge tool wear or consume the representation of the placed item. Server-initiated removal with a null player does not invent a player action context. Natural crop destruction and custom-block explosions use separate [environmental removal rules](environment-removal.md), including actor-free committed effects and prevention.
 
 ## Protection and identity
 
@@ -60,4 +60,4 @@ If a placed plan replaces the held tool, committed custom wear only applies when
 
 The [world-plan verification](world-plans-verification.json) records exact artifacts and separate native/API cases. Actual protocol use packets exercise block use, furniture use/seating and crop harvesting. Additional cases cover permissions, cancellation, same-ID callbacks, reentrant use, delayed source identity, replacement-tool wear and validation. The prior tool-wear regression is retained as a failed development candidate, not counted as successful verification.
 
-These are independently implemented domain events based on observed feature requirements. External trigger/configuration names and original binary API compatibility are not provided. The [held interaction bridge](held-world-interactions.md) now coordinates native hand/helper/model inputs. Wider integration acceptance, environmental source events, world replacement/multiple-break actions, providers and projectiles remain in the development tracker. Rendered appearance is checked by the user.
+These are independently implemented domain events based on observed feature requirements. External trigger/configuration names and original binary API compatibility are not provided. The [held interaction bridge](held-world-interactions.md) coordinates native hand/helper/model inputs. Environmental removal has its own rules and verification scope. Wider integration acceptance, remaining environmental combinations, world replacement/multiple-break actions, providers and projectiles remain in the development tracker. Rendered appearance is checked by the user.
