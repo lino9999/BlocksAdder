@@ -130,8 +130,15 @@ public final class ItemBehaviorService implements AutoCloseable {
         return worldAccess != null && (worldAccess.syntheticBreak() || worldAccess.target(event.getBlock()).isPresent());
     }
 
+    public boolean managedInteraction(org.bukkit.event.player.PlayerInteractEvent event) {
+        return worldAccess != null && event.getClickedBlock() != null && worldAccess.target(event.getClickedBlock()).isPresent();
+    }
+    boolean managedEntity(org.bukkit.entity.Entity entity) { return worldAccess != null && worldAccess.target(entity).isPresent(); }
+    public void interactEntity(org.bukkit.event.player.PlayerInteractEntityEvent event) { if (events != null) events.interactEntity(event); }
+    public void attack(org.bukkit.event.entity.EntityDamageByEntityEvent event) { if (events != null) events.attackHeld(event); }
+
     public ContentActionHook contentActions() { return worldActions; }
-    java.util.Optional<ItemWorldAccess.Target> worldTarget(Location anchor) { return worldAccess == null ? java.util.Optional.empty() : worldAccess.target(anchor.getBlock()); }
+    public java.util.Optional<ItemWorldAccess.Target> worldTarget(Location anchor) { return worldAccess == null ? java.util.Optional.empty() : worldAccess.target(anchor.getBlock()); }
     boolean hasPlan(String id, String trigger) { Definition definition = definitions.get(id); return definition != null && definition.plans().containsKey(trigger); }
 
     public ItemBehaviorService(
@@ -381,11 +388,12 @@ public final class ItemBehaviorService implements AutoCloseable {
         Map<String, Event> invocation =
                 admitted.computeIfAbsent(
                         context.player().getUniqueId(), ignored -> new HashMap<>());
-        boolean sameEvent = context.event() != null && invocation.get(id) == context.event();
+        Event admission = context.admissionEvent() == null ? context.event() : context.admissionEvent();
+        boolean sameEvent = admission != null && invocation.get(id) == admission;
         if (!sameEvent && now - state.getOrDefault(id, Long.MIN_VALUE / 2) < 0
                 || now - state.getOrDefault(id + "/" + trigger, Long.MIN_VALUE / 2) < 0)
             return false;
-        if (context.event() != null) invocation.put(id, context.event());
+        if (admission != null) invocation.put(id, admission);
         int ticks = definition.cooldown();
         if (definition.cooldown() > 0) state.put(id, now + definition.cooldown() * 50000000L);
         if (plan.cooldown() > 0) state.put(id + "/" + trigger, now + plan.cooldown() * 50000000L);
@@ -627,7 +635,11 @@ public final class ItemBehaviorService implements AutoCloseable {
             Supplier<ItemStack> getter,
             Consumer<ItemStack> setter,
             ItemStack fallback,
-            List<ExpectedStack> wearSnapshots) {
+            List<ExpectedStack> wearSnapshots,
+            Event admissionEvent) {
+        Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback, List<ExpectedStack> wearSnapshots) {
+            this(player, target, location, event, getter, setter, fallback, wearSnapshots, null);
+        }
         Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback) {
             this(player, target, location, event, getter, setter, fallback, null);
         }

@@ -86,9 +86,7 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
     }
 
     void interact(PlayerInteractEvent event) {
-        if (event.getHand() == null
-                || event.useItemInHand() == Event.Result.DENY
-                        && event.useInteractedBlock() == Event.Result.DENY) return;
+        if (event.getHand() == null || event.useItemInHand() == Event.Result.DENY) return;
         String side =
                 event.getAction().name().startsWith("LEFT_CLICK")
                         ? "left"
@@ -122,8 +120,18 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onAttack(EntityDamageByEntityEvent event) {
+        if (!service.managedEntity(event.getEntity())) attackHeld(event);
+        if (event.getEntity() instanceof Player player) {
+            LivingEntity attacker = event.getDamager() instanceof LivingEntity living ? living : null;
+            for (EquipmentSlot slot : SLOTS)
+                service.fire(slot == EquipmentSlot.HAND ? "holding_item.player_damaged_by_entity" : slot == EquipmentSlot.OFF_HAND ? "holding_item_offhand.player_damaged_by_entity" : "equipped_armor_item.player_damaged_by_entity",
+                        ItemBehaviorService.Context.held(player, slot, attacker, player.getLocation(), event));
+        }
+    }
+
+    void attackHeld(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            if (event.getEntity() instanceof ItemFrame frame)
+            if (event.getEntity() instanceof ItemFrame frame && !service.managedEntity(frame))
                 service.fire(
                         "item_frame.remove_item",
                         new ItemBehaviorService.Context(
@@ -142,19 +150,6 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
                                 event.getEntity() instanceof LivingEntity living ? living : null,
                                 event.getEntity().getLocation(),
                                 event));
-        }
-        if (event.getEntity() instanceof Player player) {
-            LivingEntity attacker =
-                    event.getDamager() instanceof LivingEntity living ? living : null;
-            for (EquipmentSlot slot : SLOTS)
-                service.fire(
-                        slot == EquipmentSlot.HAND
-                                ? "holding_item.player_damaged_by_entity"
-                                : slot == EquipmentSlot.OFF_HAND
-                                        ? "holding_item_offhand.player_damaged_by_entity"
-                                        : "equipped_armor_item.player_damaged_by_entity",
-                        ItemBehaviorService.Context.held(
-                                player, slot, attacker, player.getLocation(), event));
         }
     }
 
@@ -228,9 +223,14 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityInteract(PlayerInteractEntityEvent event) {
+        if (service.managedEntity(event.getRightClicked())) return;
+        interactEntity(event);
+    }
+
+    void interactEntity(PlayerInteractEntityEvent event) {
         var target = event.getRightClicked();
         service.fire(
-                target instanceof ItemFrame ? "item_frame.put_item" : "interact.entity",
+                target instanceof ItemFrame && !service.managedEntity(target) ? "item_frame.put_item" : "interact.entity",
                 ItemBehaviorService.Context.held(
                         event.getPlayer(),
                         event.getHand(),

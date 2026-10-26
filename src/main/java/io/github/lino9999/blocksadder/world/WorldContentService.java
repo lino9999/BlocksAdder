@@ -101,6 +101,9 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions;
     private final Map<BlockPosition, long[]> actionRevisions = new java.util.WeakHashMap<>();
     private final Set<BlockPosition> activeUses = new java.util.HashSet<>();
+    private java.util.function.Function<Entity, Optional<Entity>> helperTarget = entity -> Optional.empty();
+
+    public void setHelperTarget(java.util.function.Function<Entity, Optional<Entity>> target) { requireServerThread(); helperTarget = java.util.Objects.requireNonNull(target); }
 
     public void setActions(io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions) { requireServerThread(); this.actions = java.util.Objects.requireNonNull(actions); }
 
@@ -112,8 +115,14 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     @Override public Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> target(Entity entity) {
         requireServerThread();
-        BlockPosition position = entity == null ? null : helpers.get(entity.getUniqueId());
-        return actionTarget(closed || position == null ? null : loaded.get(position));
+        return actionTarget(managedEntity(entity));
+    }
+
+    private PlacedContent managedEntity(Entity entity) {
+        if (closed || entity == null) return null;
+        BlockPosition position = helpers.get(entity.getUniqueId());
+        if (position == null) position = helperTarget.apply(entity).map(host -> helpers.get(host.getUniqueId())).orElse(null);
+        return position == null ? null : loaded.get(position);
     }
 
     private Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> actionTarget(PlacedContent placed) {
@@ -487,18 +496,25 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
-        if (closed || event.getHand() != EquipmentSlot.HAND || event.getClickedBlock() == null
-                || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
+        if (closed || event.getHand() == null || event.getClickedBlock() == null || event.useInteractedBlock() == Event.Result.DENY) return;
         PlacedContent clicked = managed(event.getClickedBlock());
+        ItemStack source = event.getPlayer().getInventory().getItem(event.getHand()).clone();
+        boolean heldPrepared = false;
         if (clicked != null && clicked.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())) { event.setCancelled(true); return; }
         if (event.getAction() == Action.LEFT_CLICK_BLOCK && clicked != null) {
+            if (!canBreak(clicked.position().location(), event.getPlayer()) || loaded.get(clicked.position()) != clicked) { event.setCancelled(true); return; }
+            if (actions != null) actions.beforeHeldInteract(event);
+            if (event.useInteractedBlock() == Event.Result.DENY || loaded.get(clicked.position()) != clicked || !consistent(clicked)) { event.setCancelled(true); return; }
+            if (event.getHand() != EquipmentSlot.HAND) return;
             if (clicked.kind() == ContentKind.BLOCK) return;
             event.setCancelled(true);
             breakContent(clicked, event.getPlayer(), false, false);
             return;
         }
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && clicked != null) {
-            if (!prepareUse(clicked, event.getPlayer(), event.getHand(), null)) { event.setCancelled(true); return; }
+            if (!prepareUse(clicked, event.getPlayer(), event.getHand(), null, event)) { event.setCancelled(true); return; }
+            heldPrepared = true;
+            if (event.getHand() != EquipmentSlot.HAND) { event.setUseInteractedBlock(Event.Result.DENY); return; }
             if (clicked.kind() == ContentKind.BLOCK && !event.getPlayer().isSneaking() && furniture != null && event.getPlayer().hasPermission("blocksadder.use")
                     && event.getPlayer().getGameMode() != GameMode.SPECTATOR && furniture.interact(clicked.position().location(), event.getPlayer(), null)) {
                 event.setCancelled(true);
@@ -518,16 +534,20 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
                 return;
             }
         }
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) return;
-        ItemDefinition definition = items.definition(event.getItem()).orElse(null);
+        if (event.getHand() != EquipmentSlot.HAND || event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getItem() == null) return;
+        ItemDefinition definition = items.definition(source).orElse(null);
         if (definition == null || kind(definition).isEmpty()) return;
+        if (!heldPrepared && actions != null) actions.beforeHeldInteract(event);
+        if (event.useItemInHand() == Event.Result.DENY || event.useInteractedBlock() == Event.Result.DENY || !event.getPlayer().getInventory().getItemInMainHand().equals(source)) { event.setCancelled(true); return; }
         event.setCancelled(true);
         Location target = event.getClickedBlock().getRelative(event.getBlockFace()).getLocation();
         target.setYaw(event.getPlayer().getLocation().getYaw() + 180);
         if (place(target, definition.id().toString(), event.getPlayer(), event.getBlockFace()) && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             ItemStack hand = event.getPlayer().getInventory().getItemInMainHand();
-            hand.setAmount(hand.getAmount() - 1);
-            event.getPlayer().getInventory().setItemInMainHand(hand);
+            if (hand.equals(source)) {
+                ItemStack updated = hand.clone(); updated.setAmount(updated.getAmount() - 1);
+                event.getPlayer().getInventory().setItemInMainHand(updated);
+            }
         }
     }
 
@@ -583,27 +603,30 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityAttack(EntityDamageByEntityEvent event) {
-        BlockPosition position = helpers.get(event.getEntity().getUniqueId());
-        if (position == null) return;
-        event.setCancelled(true);
+        PlacedContent placed = managedEntity(event.getEntity());
+        if (placed == null) return;
         if (event.getDamager() instanceof Player player) {
-            PlacedContent placed = loaded.get(position);
-            if (placed != null && placed.kind() == ContentKind.CROP && !cropViews.interactive(player)) return;
-            if (placed != null && placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), player, event.getEntity())) return;
-            if (placed != null) breakContent(placed, player, false, false);
+            if (placed.kind() == ContentKind.CROP && !cropViews.interactive(player)
+                    || placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), player, event.getEntity())
+                    || !canBreak(placed.position().location(), player) || loaded.get(placed.position()) != placed) { event.setCancelled(true); return; }
+            if (actions != null) actions.beforeHeldAttack(event);
+            if (event.isCancelled() || loaded.get(placed.position()) != placed || !consistent(placed)) { event.setCancelled(true); return; }
+            event.setCancelled(true);
+            breakContent(placed, player, false, false);
+            return;
         }
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityInteract(PlayerInteractEntityEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND) return;
-        BlockPosition position = helpers.get(event.getRightClicked().getUniqueId());
-        PlacedContent placed = position == null ? null : loaded.get(position);
+        PlacedContent placed = managedEntity(event.getRightClicked());
         if (placed == null) return;
+        if (placed.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())
+                || placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), event.getPlayer(), event.getRightClicked())) { event.setCancelled(true); return; }
+        boolean allowed = prepareUse(placed, event.getPlayer(), event.getHand(), event.getRightClicked(), event);
         event.setCancelled(true);
-        if (placed.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())) return;
-        if (placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), event.getPlayer(), event.getRightClicked())) return;
-        if (!prepareUse(placed, event.getPlayer(), event.getHand(), event.getRightClicked())) return;
+        if (!allowed || event.getHand() != EquipmentSlot.HAND) return;
         if (placed.kind() == ContentKind.CROP && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE_MEAL) fertilize(placed, event.getPlayer());
         else if (placed.kind() == ContentKind.CROP) harvest(placed, event.getPlayer());
         else if (!interactFurniture(placed, event.getPlayer(), event.getRightClicked()) && event.getPlayer().isSneaking()) breakContent(placed, event.getPlayer(), false, false);
@@ -728,6 +751,10 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private boolean prepareUse(PlacedContent placed, Player player, EquipmentSlot hand, Entity clicked) {
+        return prepareUse(placed, player, hand, clicked, null);
+    }
+
+    private boolean prepareUse(PlacedContent placed, Player player, EquipmentSlot hand, Entity clicked, Event nativeEvent) {
         if (closed || !consistent(placed) || pendingCropRemovals.containsKey(placed.position()) || furnitureTransitions.contains(placed.position())
                 || !player.hasPermission("blocksadder.use") || player.getGameMode() == GameMode.SPECTATOR) return false;
         ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
@@ -737,7 +764,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         var event = new io.github.lino9999.blocksadder.api.event.CustomContentInteractEvent(placed.position().location(), placed.id(), placed.kind(), player, hand, clicked);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled() || closed || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
-        return (actions == null || actions.beforeUse(event)) && !event.isCancelled() && !closed && loaded.get(placed.position()) == placed && consistent(placed);
+        return (actions == null || actions.beforeUse(event, nativeEvent)) && !event.isCancelled() && !closed && loaded.get(placed.position()) == placed && consistent(placed);
         } finally { activeUses.remove(placed.position()); }
     }
 
@@ -1110,16 +1137,18 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private void fertilize(PlacedContent placed, Player player) {
+        ItemStack source = player.getInventory().getItemInMainHand().clone();
+        if (source.getType() != Material.BONE_MEAL) return;
         ItemDefinition crop = registry.get().find(placed.id()).orElse(null);
         if (crop == null || !player.hasPermission("blocksadder.crop.fertilize") || player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.ADVENTURE) return;
         ConfigurationSection config = settings(crop, ContentKind.CROP);
         int maximum = Math.max(1, config.getStringList("stages").size() - 1);
         int stages = (int) Math.ceil(maximum * config.getDouble("bonemeal-multiplier", 0.2));
         if (config.getBoolean("bonemeal", true) && stages > 0 && growCrop(placed.position().location(), stages, io.github.lino9999.blocksadder.api.event.CustomCropGrowEvent.Cause.BONE_MEAL, player)) {
-            if (player.getGameMode() != GameMode.CREATIVE) {
+            if (player.getGameMode() != GameMode.CREATIVE && player.getInventory().getItemInMainHand().equals(source)) {
                 ItemStack hand = player.getInventory().getItemInMainHand();
-                hand.setAmount(hand.getAmount() - 1);
-                player.getInventory().setItemInMainHand(hand);
+                ItemStack updated = hand.clone(); updated.setAmount(updated.getAmount() - 1);
+                player.getInventory().setItemInMainHand(updated);
             }
             placed.position().location().getWorld().spawnParticle(org.bukkit.Particle.HAPPY_VILLAGER, placed.position().location().add(0.5, 0.5, 0.5), 8, 0.3, 0.4, 0.3, 0);
         }

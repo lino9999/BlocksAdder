@@ -32,7 +32,7 @@ entries:
     settings: {material: BARRIER, display: false, hardness: 0.3}
 ```
 
-These are pre-removal action plans, not a committed-removal notification API: later failures can still stop a mutation, and arbitrary configured effects cannot be rolled back. The custom event itself is also a preparation event. The held-item break bridge covers custom blocks. Separate [placed-content plans](world-plans.md) now cover physical use/removal/harvest sources; complete held-item interaction routing and provider/projectile families remain open.
+These are pre-removal action plans, not a committed-removal notification API: later failures can still stop a mutation, and arbitrary configured effects cannot be rolled back. The custom event itself is also a preparation event. The held-item break bridge covers custom blocks. Separate [placed-content plans](world-plans.md) cover physical use/removal/harvest sources, and the [held interaction bridge](held-world-interactions.md) coordinates native hand/entity/model inputs. Provider/projectile families and wider integration acceptance remain open.
 
 Candidate `621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed` passed 56 connected-player/API/protocol checks on each Spigot/Paper 1.21.11 endpoint with Java 21 and no ProtocolLib. The preceding independent preview failed 17 overlapping assertions in the same scenario. The same candidate passed 405 bundle/core checks across nine builds. Exact scopes are in [world-actions-verification.json](world-actions-verification.json), alongside its [distribution audit](world-actions-audit.json). Native-player behavior on 26.x is not established by the bundle matrix.
 

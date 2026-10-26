@@ -28,6 +28,8 @@ The [plant-view audit](crop-views-audit.json) applies the same checks to the lat
 
 The later [placed-plan audit](world-plans-audit.json) covers 332 own-package classes with the same empty collision lists. Its independently named `world.use/remove/harvest` plans use read-only physical representations, root preparation events and weak revision markers for delayed identity. No reference trigger alias or implementation class is introduced by this domain bridge. Behavioral results are separate in [world-plans-verification.json](world-plans-verification.json).
 
+The [held-routing audit](held-world-audit.json) covers 333 own-package classes and retains empty copied-file, branding, command, permission and readable-message collision lists. Its native-event handoff, cached model ownership resolution, shared admission token and source comparisons extend the independently designed service architecture. The runtime [regression report](held-world-verification.json) compares earlier BlocksAdder behavior, never execution of the reference artifact.
+
 ## Distribution preparation
 
 The JAR contains project classes and three independently authored YAML resources. Bukkit/Spigot and optional ProtocolLib dependencies remain provided dependencies, with their own authorship. Administrator-supplied pack assets are not redistributed by this repository. Publishing a content pack requires rights to all of its assets.

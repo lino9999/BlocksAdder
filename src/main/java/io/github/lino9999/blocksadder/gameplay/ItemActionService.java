@@ -70,7 +70,26 @@ final class ItemActionService implements Listener, AutoCloseable {
     }
 
     void setWorldAccess(io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess world) { behaviors.setWorldAccess(world); }
-    io.github.lino9999.blocksadder.itembehavior.ContentActionHook contentActions() { return behaviors.contentActions(); }
+    io.github.lino9999.blocksadder.itembehavior.ContentActionHook contentActions() {
+        var physical = behaviors.contentActions();
+        return new io.github.lino9999.blocksadder.itembehavior.ContentActionHook() {
+            @Override public BreakAttempt beforeBreak(io.github.lino9999.blocksadder.api.event.CustomContentBreakEvent event) { return physical.beforeBreak(event); }
+            @Override public boolean beforeUse(io.github.lino9999.blocksadder.api.event.CustomContentInteractEvent event) { return physical.beforeUse(event); }
+            @Override public boolean beforeUse(io.github.lino9999.blocksadder.api.event.CustomContentInteractEvent event, Event nativeEvent) {
+                var source = behaviors.worldTarget(event.getLocation());
+                if (nativeEvent instanceof PlayerInteractEvent block) {
+                    use(block);
+                    if (block.useInteractedBlock() == Event.Result.DENY) event.setCancelled(true);
+                } else if (nativeEvent instanceof org.bukkit.event.player.PlayerInteractEntityEvent entity) {
+                    behaviors.interactEntity(entity);
+                    if (entity.isCancelled()) event.setCancelled(true);
+                }
+                return !event.isCancelled() && source.isPresent() && source.get().current().getAsBoolean() && (event.getHand() != EquipmentSlot.HAND || physical.beforeUse(event, nativeEvent));
+            }
+            @Override public void beforeHeldInteract(PlayerInteractEvent event) { use(event); }
+            @Override public void beforeHeldAttack(org.bukkit.event.entity.EntityDamageByEntityEvent event) { behaviors.attack(event); }
+        };
+    }
 
     void validate() {
         load(false);
@@ -194,12 +213,19 @@ final class ItemActionService implements Listener, AutoCloseable {
     }
 
     public void onUse(PlayerInteractEvent event) {
+        if (behaviors.managedInteraction(event)) return;
+        use(event);
+    }
+
+    private void use(PlayerInteractEvent event) {
+        ItemStack original = event.getHand() == EquipmentSlot.HAND ? event.getPlayer().getInventory().getItemInMainHand().clone() : null;
         behaviors.interact(event);
         if (event.getHand() != EquipmentSlot.HAND
                 || event.useItemInHand() == Event.Result.DENY
                 || event.getAction() != Action.RIGHT_CLICK_AIR
                         && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
-        ItemStack stack = event.getItem();
+        ItemStack stack = event.getPlayer().getInventory().getItemInMainHand();
+        if (!stack.equals(original)) return;
         String id = items.identify(stack).orElse(null);
         ItemAction action = id == null ? null : actions.get(id);
         if (action == null) return;
@@ -237,8 +263,11 @@ final class ItemActionService implements Listener, AutoCloseable {
                         });
         if (!action.sound().isBlank()) player.playSound(player.getLocation(), action.sound(), 1, 1);
         if (!action.message().isBlank()) Text.send(player, glyphs.expand(action.message()));
-        if (action.consume() > 0 && player.getGameMode() != GameMode.CREATIVE)
-            stack.setAmount(stack.getAmount() - action.consume());
+        if (action.consume() > 0 && player.getGameMode() != GameMode.CREATIVE && player.getInventory().getItemInMainHand().equals(original)) {
+            ItemStack updated = stack.clone();
+            updated.setAmount(updated.getAmount() - action.consume());
+            player.getInventory().setItemInMainHand(updated);
+        }
     }
 
     void remove(Player player) {

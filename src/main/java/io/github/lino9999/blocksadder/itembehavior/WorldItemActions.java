@@ -62,9 +62,13 @@ final class WorldItemActions implements ContentActionHook {
     }
 
     @Override public boolean beforeUse(CustomContentInteractEvent event) {
+        return beforeUse(event, null);
+    }
+
+    @Override public boolean beforeUse(CustomContentInteractEvent event, org.bukkit.event.Event nativeEvent) {
         requireThread();
         WorldSource source = source(event.getContentId(), "world.use", event.getPlayer(), event.getLocation(), event);
-        if (!event.isCancelled() && source != null) source.fire();
+        if (!event.isCancelled() && source != null) source.fire(nativeEvent);
         return !event.isCancelled();
     }
 
@@ -86,9 +90,12 @@ final class WorldItemActions implements ContentActionHook {
             representation = items.create(target.id(), 1);
         }
         void fire() {
+            fire(null);
+        }
+        void fire(org.bukkit.event.Event admission) {
             behaviors.fire(trigger, new ItemBehaviorService.Context(player, null, target.anchor(), event,
                     () -> target.current().getAsBoolean() || committed && trigger.equals("world.remove") && target.vacant().getAsBoolean() ? representation.clone() : null,
-                    stack -> { throw new IllegalStateException("Placed-content actions cannot edit an inventory source."); }));
+                    stack -> { throw new IllegalStateException("Placed-content actions cannot edit an inventory source."); }, null, null, admission));
         }
     }
 
