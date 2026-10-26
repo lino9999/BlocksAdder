@@ -73,7 +73,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public final class WorldContentService implements Listener, AutoCloseable {
+public final class WorldContentService implements Listener, AutoCloseable, io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess {
     private final JavaPlugin plugin;
     private final Supplier<ContentRegistry> registry;
     private final ItemService items;
@@ -97,6 +97,28 @@ public final class WorldContentService implements Listener, AutoCloseable {
     private WorldBlockStates blockStates;
     private WorldBlockBehavior blockBehavior;
     private WorldFurniture furniture;
+    private io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions;
+
+    public void setActions(io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions) { requireServerThread(); this.actions = java.util.Objects.requireNonNull(actions); }
+
+    @Override public Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> target(Block block) {
+        requireServerThread();
+        PlacedContent placed = closed || block == null ? null : managed(block);
+        return actionTarget(placed);
+    }
+
+    @Override public Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> target(Entity entity) {
+        requireServerThread();
+        BlockPosition position = entity == null ? null : helpers.get(entity.getUniqueId());
+        return actionTarget(closed || position == null ? null : loaded.get(position));
+    }
+
+    private Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> actionTarget(PlacedContent placed) {
+        if (placed == null) return Optional.empty();
+        Location location = placed.position().location();
+        return location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) || !consistent(placed)
+                ? Optional.empty() : Optional.of(new io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target(placed.id(), placed.kind(), location));
+    }
     private java.util.function.Consumer<Entity> entityCleanup = entity -> {};
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds = io.github.lino9999.blocksadder.sound.ContentSoundSink.NONE;
     private java.util.function.BiPredicate<Location, String> nativeTreeGenerator;
@@ -528,7 +550,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         }
         event.setCancelled(true);
         if (placed.kind() == ContentKind.BLOCK && event.getPlayer().getGameMode() != GameMode.CREATIVE) return;
-        breakContent(placed, event.getPlayer(), false, true);
+        breakContent(placed, event.getPlayer(), false, true, event.isDropItems());
     }
 
     private void vanillaLoot(BlockBreakEvent event) {
@@ -738,11 +760,12 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     private boolean allowPlaceEvent(Block target, BlockState previous, Player player, String id) {
         BlockPlaceEvent event = new BlockPlaceEvent(target, previous, target.getRelative(BlockFace.DOWN), items.create(id, 1), player, true, EquipmentSlot.HAND);
+        boolean previousSynthetic = syntheticPlacement;
         syntheticPlacement = true;
         try {
             Bukkit.getPluginManager().callEvent(event);
         } finally {
-            syntheticPlacement = false;
+            syntheticPlacement = previousSynthetic;
         }
         return !event.isCancelled() && event.canBuild();
     }
@@ -753,16 +776,19 @@ public final class WorldContentService implements Listener, AutoCloseable {
         return player == null || allowPlaceEvent(target, previous, player, id);
     }
 
-    private boolean allowBreakEvent(PlacedContent placed, Player player) {
-        if (player == null) return true;
+    private record BreakProtection(boolean allowed, boolean drops) {}
+
+    private BreakProtection breakProtection(PlacedContent placed, Player player) {
+        if (player == null) return new BreakProtection(true, true);
         BlockBreakEvent event = new BlockBreakEvent(placed.position().location().getBlock(), player);
+        boolean previousSynthetic = syntheticBreak;
         syntheticBreak = true;
         try {
             Bukkit.getPluginManager().callEvent(event);
         } finally {
-            syntheticBreak = false;
+            syntheticBreak = previousSynthetic;
         }
-        return !event.isCancelled();
+        return new BreakProtection(!event.isCancelled(), event.isDropItems());
     }
 
     public boolean canBreak(Location location, Player player) {
@@ -771,7 +797,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         return placed != null && consistent(placed) && player.hasPermission("blocksadder.break")
                 && player.getGameMode() != GameMode.ADVENTURE && player.getGameMode() != GameMode.SPECTATOR
                 && registry.get().find(placed.id()).map(item -> contentPermission(player, item, placed.kind(), "break")).orElse(false)
-                && allowBreakEvent(placed, player);
+                && breakProtection(placed, player).allowed();
     }
 
     public boolean breakPlaced(Location location, Player player, boolean dropItems) {
@@ -931,10 +957,13 @@ public final class WorldContentService implements Listener, AutoCloseable {
         if (player != null && (!player.hasPermission("blocksadder.break") || player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.ADVENTURE)) return false;
         ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
         if (player != null && definition != null && !contentPermission(player, definition, placed.kind(), "break")) return false;
-        if (!protectionAlreadyChecked && !allowBreakEvent(placed, player)) return false;
+        BreakProtection protection = protectionAlreadyChecked ? new BreakProtection(true, true) : breakProtection(placed, player);
+        if (!protection.allowed()) return false;
+        dropItems &= protection.drops();
         CustomContentBreakEvent event = new CustomContentBreakEvent(placed.position().location(), placed.id(), placed.kind(), player, harvest);
+        event.setDropItems(dropItems);
         Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) return false;
+        if (event.isCancelled() || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
         CropRemoval supportedCrop = null;
         Block above = placed.position().location().getBlock().getRelative(BlockFace.UP);
         if (placed.kind() != ContentKind.CROP && vulnerableCrop(above)) {
@@ -943,6 +972,9 @@ public final class WorldContentService implements Listener, AutoCloseable {
             supportedCrop = prepared.get();
         }
         try {
+        if (loaded.get(placed.position()) != placed || !consistent(placed)) return false;
+        var attempt = actions == null ? null : actions.beforeBreak(event);
+        if (event.isCancelled() || attempt != null && !attempt.allowed() || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
         boolean configuredDrops = definition == null || placed.kind() != ContentKind.BLOCK || definition.options().getBoolean("block.drop-when-mined", true);
         boolean override = false;
         if (!configuredDrops && player != null && definition != null && placed.kind() == ContentKind.BLOCK) {
@@ -961,6 +993,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
             placed.nextGrowth(nextGrowth(settings(definition, ContentKind.CROP)));
             render(placed);
             save(placed.position().chunk());
+            if (attempt != null) attempt.committed();
             return true;
         }
         Location dropLocation = placed.position().location().add(0.5, 0.5, 0.5);
@@ -980,6 +1013,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         unregister(placed);
         clearBacking(placed);
         save(placed.position().chunk());
+        if (attempt != null) attempt.committed();
         if (supportedCrop != null) supportedCrop.commit(allowedDrops);
         for (ItemStack reward : rewards) dropLocation.getWorld().dropItemNaturally(dropLocation, reward);
         if (drops && cropPlan != null && cropPlan.configured()) contentLoot.execute(cropPlan, placed.position().location(), player);

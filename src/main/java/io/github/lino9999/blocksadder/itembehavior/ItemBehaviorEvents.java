@@ -170,6 +170,7 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
+        if (service.managedBreak(event)) return;
         service.fire(
                 "block_break",
                 ItemBehaviorService.Context.held(
@@ -182,6 +183,7 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreakWear(BlockBreakEvent event) {
+        if (service.managedBreak(event)) return;
         if (event.getBlock().getType().getHardness() != 0)
             customWear(event.getPlayer(), EquipmentSlot.HAND);
     }

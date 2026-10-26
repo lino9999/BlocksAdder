@@ -22,6 +22,8 @@ The audit executes neither JAR. It hashes every nonempty archive member, parses 
 
 The current report is [distribution-audit.json](distribution-audit.json). A passing result establishes those specific checks only. Different bytes and class names cannot establish independent authorship of every algorithm; source provenance and review remain relevant. It also does not prove every behavior or rendering mode works. Those acceptance requirements remain in [parity-progress.md](parity-progress.md).
 
+Historical release reports retain their exact artifacts and original audit scope. The later [world-action audit](world-actions-audit.json) also compares short readable message literals from JVM constants, rather than only longer messages. It found no shared readable message literals. Common single-word/API identifiers and JVM string-concatenation recipe markers remain outside that text-message classification.
+
 ## Distribution preparation
 
 The JAR contains project classes and three independently authored YAML resources. Bukkit/Spigot and optional ProtocolLib dependencies remain provided dependencies, with their own authorship. Administrator-supplied pack assets are not redistributed by this repository. Publishing a content pack requires rights to all of its assets.

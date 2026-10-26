@@ -7,8 +7,11 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public interface ContentActionHook {
-    boolean beforeBreak(CustomContentBreakEvent event);
-    void committedBreak(CustomContentBreakEvent event);
-    boolean beforeInteract(PlayerInteractEvent event, String id, ContentKind kind, Location anchor);
-    boolean beforeEntityInteract(PlayerInteractEntityEvent event, String id, ContentKind kind, Location anchor);
+    interface BreakAttempt {
+        boolean allowed();
+        void committed();
+    }
+    BreakAttempt beforeBreak(CustomContentBreakEvent event);
+    default boolean beforeInteract(PlayerInteractEvent event, String id, ContentKind kind, Location anchor) { return true; }
+    default boolean beforeEntityInteract(PlayerInteractEntityEvent event, String id, ContentKind kind, Location anchor) { return true; }
 }

@@ -98,7 +98,7 @@ def main():
                 if forbidden.search(line):
                     traces.append({'member': name, 'line': number, 'value': line})
     common_messages = sorted(value for value in literals & original_literals
-                             if len(value) >= 24 and re.search(r'[A-Za-z]{3}\s+[A-Za-z]{3}', value))
+                             if len(value) >= 6 and re.search(r'[A-Za-z]{3}\s+[A-Za-z]{3}', value))
     permissions = sorted(manifest_keys(manifest, 'permissions') & manifest_keys(original_manifest, 'permissions'))
     commands = sorted(manifest_keys(manifest, 'commands') & manifest_keys(original_manifest, 'commands'))
     command_surface = manifest_keys(manifest, 'commands') | manifest_aliases(manifest)
@@ -118,7 +118,8 @@ def main():
         'shared_declared_permissions': permissions,
         'shared_declared_commands': commands,
         'shared_command_or_alias_names': aliases,
-        'shared_long_message_literals': common_messages,
+        'shared_readable_message_literals': common_messages,
+        'shared_long_message_literals': [value for value in common_messages if len(value) >= 24],
         'analysis_or_test_inputs_in_jar': leaked_inputs,
         'bundled_yaml_files': sorted(name for name in candidate if name.endswith(('.yml', '.yaml'))),
         'limitations': [

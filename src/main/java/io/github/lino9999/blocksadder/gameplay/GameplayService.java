@@ -45,6 +45,9 @@ public final class GameplayService implements Listener, AutoCloseable {
         glyphs.reload();
     }
 
+    public void setWorldAccess(io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess world) { actions.setWorldAccess(world); }
+    public io.github.lino9999.blocksadder.itembehavior.ContentActionHook contentActions() { return actions.contentActions(); }
+
     public void validate(ContentRegistry candidate) {
         GameplayService validation = new GameplayService(plugin, () -> candidate, new ItemService(plugin, () -> candidate));
         validation.actions.validate();

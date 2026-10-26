@@ -214,6 +214,7 @@ public final class MiningService implements Listener, AutoCloseable {
 
     private void damageTool(Player player) {
         ItemStack held = player.getInventory().getItemInMainHand();
+        if (items.identify(held).isPresent()) return;
         if (!(held.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable meta) || meta.isUnbreakable()) return;
         int max = meta.hasMaxDamage() ? meta.getMaxDamage() : held.getType().getMaxDurability();
         if (max <= 0) return;

@@ -109,12 +109,25 @@ public final class ItemBehaviorService implements AutoCloseable {
     private final ItemService items;
     private final Stats stats;
     private final BehaviorActions compiler;
+    private final WorldItemActions worldActions;
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
     private final Map<UUID, Map<String, Event>> admitted = new HashMap<>();
     private final Map<UUID, Set<BukkitTask>> jobs = new HashMap<>();
     private final Set<String> active = new HashSet<>();
     private Map<String, Definition> definitions = Map.of();
     private ItemBehaviorEvents events;
+    private ItemWorldAccess worldAccess;
+
+    public void setWorldAccess(ItemWorldAccess worldAccess) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("World action connections require the server thread.");
+        this.worldAccess = java.util.Objects.requireNonNull(worldAccess);
+    }
+
+    boolean managedBreak(org.bukkit.event.block.BlockBreakEvent event) {
+        return worldAccess != null && (worldAccess.syntheticBreak() || worldAccess.target(event.getBlock()).isPresent());
+    }
+
+    public ContentActionHook contentActions() { return worldActions; }
 
     public ItemBehaviorService(
             JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items, Stats stats) {
@@ -123,6 +136,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         this.items = items;
         this.stats = stats;
         this.compiler = new BehaviorActions(this, items);
+        this.worldActions = new WorldItemActions(this, registry, items);
     }
 
     public void validate() {
@@ -403,7 +417,8 @@ public final class ItemBehaviorService implements AutoCloseable {
         UUID player = context.player().getUniqueId();
         Set<BukkitTask> pending = jobs.computeIfAbsent(player, ignored -> new HashSet<>());
         if (pending.size() >= 128) return;
-        ItemStack expected = context.stack() == null ? null : context.stack().clone();
+        ExpectedStack expected = new ExpectedStack(context.stack());
+        if (context.wearSnapshots() != null) context.wearSnapshots().add(expected);
         BukkitTask[] reference = new BukkitTask[1];
         reference[0] =
                 Bukkit.getScheduler()
@@ -415,10 +430,8 @@ public final class ItemBehaviorService implements AutoCloseable {
                                     ItemStack current = context.stack();
                                     if (!context.player().isOnline()
                                             || context.player().isDead()
-                                            || expected == null
                                             || current == null
-                                            || !expected.isSimilar(current)
-                                            || expected.getAmount() != current.getAmount()
+                                            || !expected.matches(current)
                                             || !permission(context.player(), step.permission()))
                                         return;
                                     if (context.target() != null
@@ -591,6 +604,13 @@ public final class ItemBehaviorService implements AutoCloseable {
         }
     }
 
+    static final class ExpectedStack {
+        private ItemStack stack;
+        ExpectedStack(ItemStack stack) { this.stack = stack == null ? null : stack.clone(); }
+        boolean matches(ItemStack actual) { return stack != null && stack.equals(actual); }
+        void afterWear(ItemStack before, ItemStack after) { if (matches(before)) stack = after.clone(); }
+    }
+
     record Context(
             Player player,
             LivingEntity target,
@@ -598,7 +618,11 @@ public final class ItemBehaviorService implements AutoCloseable {
             Event event,
             Supplier<ItemStack> getter,
             Consumer<ItemStack> setter,
-            ItemStack fallback) {
+            ItemStack fallback,
+            List<ExpectedStack> wearSnapshots) {
+        Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback) {
+            this(player, target, location, event, getter, setter, fallback, null);
+        }
         Context(
                 Player player,
                 LivingEntity target,

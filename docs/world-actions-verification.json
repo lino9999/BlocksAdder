@@ -1,0 +1,167 @@
+{
+  "recorded_at": "2026-10-26T09:19:27.482113+00:00",
+  "plugin_version": "1.1.0-SNAPSHOT",
+  "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+  "player_runs": [
+    {
+      "server": "Spigot1.21.11",
+      "java": 21,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "assertions": 56,
+      "passed": true,
+      "summary": "[10:08:37] [Server thread/INFO]: [WorldActionsProbe] WORLD_ACTIONS_VERIFICATION: PASS passed=56 failed=0",
+      "local_log": ".work/world-actions-server/console.log",
+      "scope": "Connected-player API cases and real native digging/swing packets; ProtocolLib absent."
+    },
+    {
+      "server": "Paper1.21.11 build132",
+      "java": 21,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "assertions": 56,
+      "passed": true,
+      "summary": "[10:09:06 INFO]: [WorldActionsProbe] WORLD_ACTIONS_VERIFICATION: PASS passed=56 failed=0",
+      "local_log": ".work/world-actions-paper-server/console.log",
+      "scope": "Connected-player API cases and real native digging/swing packets; ProtocolLib absent."
+    }
+  ],
+  "player_assertions": 112,
+  "bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:12:48] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:13:07 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:13:18 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2611/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:13:32 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:13:43] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:13:53] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:14:02 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:14:11] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot263/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed",
+      "summary": "[10:14:20 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper263/console.log",
+      "assertions": 45
+    }
+  ],
+  "bundle_assertions": 405,
+  "scope": [
+    "preflight has no held-item side effects",
+    "nested synthetic context restoration",
+    "late native/custom protection and item cancellation",
+    "one action and one wear charge per committed break",
+    "native-material and custom-material tools",
+    "vanilla tool wear and zero-hardness behavior",
+    "same-ID callback replacement and supported crop protection",
+    "damage cancellation and held-tool replacement",
+    "native drop suppression cannot be overridden by a custom callback",
+    "delayed source snapshots survive the owned wear write",
+    "replacement, exhaustion and reload still cancel delayed work"
+  ],
+  "regression_baseline": {
+    "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+    "passed": false,
+    "expected_regression_reproduced": true,
+    "summary": "[10:12:32] [Server thread/INFO]: [WorldActionsProbe] WORLD_ACTIONS_VERIFICATION: FAIL passed=39 failed=17",
+    "failed_assertions": [
+      "nested protection retains its outer synthetic context count=2.0 damage=2 damageEvents=2 drops=0",
+      "preflight executes no item action count=2.0 damage=2 damageEvents=2 drops=0",
+      "preflight consumes no durability count=2.0 damage=2 damageEvents=2 drops=0",
+      "committed API break executes exactly one action count=3.0 damage=3 damageEvents=3 drops=1",
+      "committed API break charges one custom durability count=3.0 damage=3 damageEvents=3 drops=1",
+      "late native protection has no item effects count=1.0 damage=1 damageEvents=1 drops=0",
+      "custom protection has no item effects count=2.0 damage=2 damageEvents=2 drops=0",
+      "replaced record invalidates outer break count=1.0 damage=1 damageEvents=1 drops=1",
+      "same-ID replacement preserves new record without effects count=1.0 damage=1 damageEvents=1 drops=1",
+      "supported crop rejects actions before execution count=1.0 damage=1 damageEvents=1 drops=0",
+      "damage write does not overwrite listener replacement count=1.0 damage=1 damageEvents=1 drops=0",
+      "custom callback cannot override native drop suppression count=1.0 damage=1 damageEvents=1 drops=1",
+      "native custom material action fires once count=2.0 damage=3 damageEvents=3 drops=1",
+      "native custom material wears once count=2.0 damage=3 damageEvents=3 drops=1",
+      "native custom pickaxe action fires once count=2.0 damage=1 damageEvents=1 drops=1",
+      "zero-hardness break fires one action without wear count=1.0 damage=1 damageEvents=1 drops=0",
+      "committed wear preserves delayed action source count=0.0 damage=1 damageEvents=1 drops=0"
+    ],
+    "local_log": ".work/world-actions-server-baseline/console.log",
+    "note": "This is the earlier independently built preview, not the supplied original plugin. Seventeen failing assertions overlap several defects; they are not seventeen separate bug claims."
+  },
+  "notes": [
+    "The two actual-player endpoints use protocol1.21.11; this does not certify native-player behavior on26.x.",
+    "The nine-build matrix covers bundle/core linkage and its stated API cases, not every gameplay feature.",
+    "Original artifacts and graphical clients were not executed.",
+    "Full functional reconstruction and interaction/provider/projectile families remain open."
+  ]
+}

@@ -1,5 +1,41 @@
 # Item components and event actions
 
+## Custom block action lifecycle
+
+`WorldItemActions` connects held-item `block_break` plans to custom block removal. Synthetic Bukkit protection checks and preliminary mining checks do not run the plans or charge custom tool wear. The root checks native/custom protection and supported-crop removal first, then runs the ordered item plan before mutation so its cancellation can veto the break. It checks the exact placement instance again afterward. A callback that removes and replaces the same ID cannot make the outer operation remove or reward the new placement.
+
+After removal is saved, a per-attempt callback applies one custom tool wear charge. Native-material custom tools use this same path; timed mining retains its separate vanilla-tool charge only for items without custom identity. Zero-hardness blocks skip wear. Damage-event cancellation and a listener replacing the held item are honored. Native drop suppression remains binding even when a later custom callback requests drops.
+
+Delayed actions retain a source snapshot. The known wear write updates only snapshots that still matched the tool immediately before that write. Replacement, exhaustion, configured source mutations and reload retain their cancellation behavior. This avoids treating the plugin's own successful durability update as an unrelated tool swap.
+
+The complete current-format example below increments a meter when the held pickaxe successfully reaches a permitted custom-block break:
+
+```yaml
+format: blocksadder/bundle-1
+bundle: quarry
+entries:
+  - key: work
+    kind: meter
+    settings: {min: 0, max: 1000, default: 0}
+  - key: pick
+    kind: artifact
+    item: {base: DIAMOND_PICKAXE, label: Quarry Pick, stack: 1}
+    traits:
+      durability: 100
+      mining: {speed: 8, tier: diamond}
+      events:
+        block_break:
+          increment_player_stat: {name: 'quarry:work', amount: 1}
+  - key: ore
+    kind: block
+    item: {base: PAPER, label: Quarry Ore}
+    settings: {material: BARRIER, display: false, hardness: 0.3}
+```
+
+These are pre-removal action plans, not a committed-removal notification API: later failures can still stop a mutation, and arbitrary configured effects cannot be rolled back. The custom event itself is also a preparation event. The held-item bridge currently covers custom blocks; owned furniture/crop interaction plans and additional provider/projectile families remain separate work.
+
+Candidate `621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed` passed 56 connected-player/API/protocol checks on each Spigot/Paper1.21.11 endpoint with Java21 and no ProtocolLib. The preceding independent preview failed17 overlapping assertions in the same scenario. The same candidate passed405 bundle/core checks across nine builds. Exact scopes are in [world-actions-verification.json](world-actions-verification.json), alongside its [distribution audit](world-actions-audit.json). Native-player behavior on26.x is not established by the bundle matrix.
+
 This is a development checkpoint for the independent reconstruction. It does not claim complete original-item parity. Original classes were inspected statically; the supplied plugin was never executed. Production code uses public Bukkit APIs. `ConsumableSupport` retains its cached Spigot/Paper food bridge.
 
 ## Observed schemas
@@ -21,7 +57,7 @@ The original `sv`, `so`, `ss`, `sz`, `tc` and `tb` parsers establish these field
 
 Equipment IDs and legacy armor rendering references resolve against the item's namespace. Original absolute weapon `attackDamage` and `attackSpeed` values subtract the player base values of 1 and 4 before creating additive modifiers. Other attribute operations retain their supplied values. Original incompatible armor materials are replaced with slot-matched leather; the original mismatched leather-slot behavior is deliberately corrected. Equipment pack compilation belongs to `EquipmentAssetCompiler`.
 
-Modern numeric `durability`, `attributes`, `enchantments`, `equipment-model`, food and right-click shortcut definitions remain available. Loader normalization retains the entire original durability section as `durability-options`; it must not flatten a current remaining value into a maximum.
+Numeric `durability`, `attributes`, `enchantments`, `equipment-model`, food and right-click shortcut bodies remain available inside a BlocksAdder bundle record's `traits`. Structured durability is read directly by the item adapter; the content loader does not normalize foreign documents. A remaining value must not be mistaken for a maximum. The observations above describe reference behavior, not an accepted complete external file format.
 
 ## Original food and consumable profiles
 

@@ -62,6 +62,8 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             recipes = new RecipeService(this, () -> content, items);
             gameplay = new GameplayService(this, () -> content, items);
             world = new WorldContentService(this, () -> content, items);
+            gameplay.setWorldAccess(world);
+            world.setActions(gameplay.contentActions());
             nativeBlocks = new NativeBlockService(this, () -> content, world);
             world.setBlockStates(nativeBlocks);
             blockBehavior = new BlockBehaviorService(this, () -> content, world);
