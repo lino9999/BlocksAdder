@@ -140,6 +140,14 @@ public final class ItemBehaviorService implements AutoCloseable {
     public ContentActionHook contentActions() { return worldActions; }
     public java.util.Optional<ItemWorldAccess.Target> worldTarget(Location anchor) { return worldAccess == null ? java.util.Optional.empty() : worldAccess.target(anchor.getBlock()); }
     boolean hasPlan(String id, String trigger) { Definition definition = definitions.get(id); return definition != null && definition.plans().containsKey(trigger); }
+    ContentRegistry registry() { return registry.get(); }
+    boolean changeWorld(io.github.lino9999.blocksadder.world.WorldChoice match, io.github.lino9999.blocksadder.world.WorldChoice into, Context context) {
+        ItemStack initial = context.stack();
+        if (worldAccess == null || initial == null || initial.getType().isAir()) return false;
+        ItemStack expected = initial.clone();
+        return worldAccess.change(context.location(), match, into, context.player(),
+                context.authority() == null ? () -> expected.equals(context.stack()) : context.authority());
+    }
 
     public ItemBehaviorService(
             JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items, Stats stats) {
@@ -636,7 +644,11 @@ public final class ItemBehaviorService implements AutoCloseable {
             Consumer<ItemStack> setter,
             ItemStack fallback,
             List<ExpectedStack> wearSnapshots,
-            Event admissionEvent) {
+            Event admissionEvent,
+            java.util.function.BooleanSupplier authority) {
+        Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback, List<ExpectedStack> wearSnapshots, Event admissionEvent) {
+            this(player, target, location, event, getter, setter, fallback, wearSnapshots, admissionEvent, null);
+        }
         Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback, List<ExpectedStack> wearSnapshots) {
             this(player, target, location, event, getter, setter, fallback, wearSnapshots, null);
         }
@@ -686,7 +698,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         }
 
         Context delayed() {
-            return new Context(player, target, location.clone(), null, getter, setter);
+            return new Context(player, target, location.clone(), null, getter, setter, null, null, null, authority);
         }
 
         static Context indexed(Player player, int slot, Event event) {

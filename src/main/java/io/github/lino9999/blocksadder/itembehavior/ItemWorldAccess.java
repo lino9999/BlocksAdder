@@ -10,14 +10,19 @@ public interface ItemWorldAccess {
     boolean syntheticBreak();
     Optional<Target> target(Block block);
     Optional<Target> target(Entity entity);
+    default boolean change(Location location, io.github.lino9999.blocksadder.world.WorldChoice match,
+            io.github.lino9999.blocksadder.world.WorldChoice into, org.bukkit.entity.Player player, java.util.function.BooleanSupplier source) { return false; }
 
-    record Target(String id, ContentKind kind, Location anchor, java.util.function.BooleanSupplier current, java.util.function.BooleanSupplier vacant, java.util.function.BooleanSupplier retired) {
+    record Target(String id, ContentKind kind, Location anchor, java.util.function.BooleanSupplier current, java.util.function.BooleanSupplier vacant, java.util.function.BooleanSupplier retired, java.util.function.BooleanSupplier present) {
         public Target(String id, ContentKind kind, Location anchor, java.util.function.BooleanSupplier current, java.util.function.BooleanSupplier vacant) {
-            this(id, kind, anchor, current, vacant, vacant);
+            this(id, kind, anchor, current, vacant, vacant, current);
+        }
+        public Target(String id, ContentKind kind, Location anchor, java.util.function.BooleanSupplier current, java.util.function.BooleanSupplier vacant, java.util.function.BooleanSupplier retired) {
+            this(id, kind, anchor, current, vacant, retired, current);
         }
         public Target {
             anchor = anchor.clone();
-            java.util.Objects.requireNonNull(current); java.util.Objects.requireNonNull(vacant); java.util.Objects.requireNonNull(retired);
+            java.util.Objects.requireNonNull(current); java.util.Objects.requireNonNull(vacant); java.util.Objects.requireNonNull(retired); java.util.Objects.requireNonNull(present);
         }
         @Override public Location anchor() { return anchor.clone(); }
     }

@@ -38,6 +38,7 @@ final class BehaviorActions {
                     "remove_potion_effect",
                     "play_totem_animation",
                     "replace_properties",
+                    "world_change",
                     "execute_commands",
                     "shoot_particle",
                     "play_particle",
@@ -63,6 +64,7 @@ final class BehaviorActions {
     Action compile(ItemDefinition item, String family, ConfigurationSection c) {
         java.util.Set<String> fields =
                 switch (family) {
+                    case "world_change" -> java.util.Set.of("match", "into");
                     case "cancel" -> java.util.Set.of();
                     case "feed" -> java.util.Set.of("amount", "saturation");
                     case "play_sound", "stop_sound" ->
@@ -106,6 +108,13 @@ final class BehaviorActions {
                     && !java.util.Set.of("permission", "delay", "flow").contains(key))
                 throw error(item, "Unsupported action field: " + family + "/" + key);
         return switch (family) {
+            case "world_change" -> {
+                var match = io.github.lino9999.blocksadder.world.WorldChoice.parse(service.registry(), item.id().namespace(), required(c, "match"));
+                var into = io.github.lino9999.blocksadder.world.WorldChoice.parse(service.registry(), item.id().namespace(), required(c, "into"));
+                if ((match.kind() == io.github.lino9999.blocksadder.world.ContentKind.FURNITURE || into.kind() == io.github.lino9999.blocksadder.world.ContentKind.FURNITURE)
+                        && match.kind() != into.kind()) throw error(item, "World changes keep furnishings within the furnishing family.");
+                yield context -> service.changeWorld(match, into, context);
+            }
             case "cancel" -> context -> context.cancel();
             case "feed" -> {
                 int amount = integer(c, "amount", 0, 0, 20);

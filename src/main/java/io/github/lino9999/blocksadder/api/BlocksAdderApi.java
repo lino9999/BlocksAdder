@@ -16,6 +16,7 @@ public interface BlocksAdderApi {
     Optional<String> identify(ItemStack item);
     Optional<String> identify(Block block);
     boolean place(Location location, String id, Player player);
+    boolean changeContent(Location location, String match, String replacement, Player player);
     Entity spawnEntity(Location location, String id);
     double stat(Player player, String id);
     double stat(Player player, String id, double value);

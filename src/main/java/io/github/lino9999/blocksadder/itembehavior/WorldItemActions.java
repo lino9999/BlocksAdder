@@ -95,7 +95,8 @@ final class WorldItemActions implements ContentActionHook {
         void fire(org.bukkit.event.Event admission) {
             behaviors.fire(trigger, new ItemBehaviorService.Context(player, null, target.anchor(), event,
                     () -> target.current().getAsBoolean() || committed && trigger.equals("world.remove") && target.vacant().getAsBoolean() ? representation.clone() : null,
-                    stack -> { throw new IllegalStateException("Placed-content actions cannot edit an inventory source."); }, null, null, admission));
+                    stack -> { throw new IllegalStateException("Placed-content actions cannot edit an inventory source."); }, null, null, admission,
+                    () -> target.present().getAsBoolean() || committed && trigger.equals("world.remove") && target.retired().getAsBoolean()));
         }
     }
 

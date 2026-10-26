@@ -13,7 +13,7 @@ Use the public interface in `io.github.lino9999.blocksadder.api`. Declare Blocks
 | Area | Methods |
 | --- | --- |
 | Definitions and items | `definitions()`, `find(id)`, `createItem(id, amount)`, `identify(ItemStack)` |
-| World content | `identify(Block)`, `place(location, id, player)`, `removeBlock(location, player, drops)`, `spawnEntity(location, id)` |
+| World content | `identify(Block)`, `place(location, id, player)`, `changeContent(location, match, replacement, player)`, `removeBlock(location, player, drops)`, `spawnEntity(location, id)` |
 | Liquid and fire | `placeLiquid`, `placeFire`, `identifyEnvironment` |
 | Crops | `growCrop(location, stages, player)`, `plantView(player)`, `plantView(player, mode)` |
 | Stats | `stat(player, id)`, `stat(player, id, value)` |
@@ -42,3 +42,5 @@ For native managed clicks, the root forwards the actual input event to the held 
 Custom break events prepare an operation; they are not committed-removal notifications. Held-item plans run after protection and supported-crop preparation, may still veto removal and are followed by an exact placement-instance check. Native `BlockBreakEvent.setDropItems(false)` cannot be re-enabled by a later custom callback. The internal `ContentActionHook.BreakAttempt` reports permission before mutation and applies custom tool wear once after saved removal. Its implementation belongs to BlocksAdder's service composition; integrations should use the documented world operations/events rather than replace that hook.
 
 `CustomContentEnvironmentEvent` prepares environmental crop removal or a custom-block explosion removal after existing protection. It exposes the anchor, content ID, kind, cause and optional real player. Cancellation vetoes the operation; it is not a committed notification. The independent [environment rules](environment-removal.md) execute their configured effects only after saved removal. The internal `RemovalPlans` receipts and `ItemWorldAccess.Target` predicates belong to service composition; integrations should observe the event and use documented world operations instead of constructing their own source guards.
+
+`changeContent` conditionally changes a matching native/custom block or furnishing and reports whether it committed. `CustomContentReplaceEvent` exposes the previous/next content IDs or native block-data strings. It retains cloned coordinates, optional actor and cancellation. Native break/place and custom placement protection remain binding. The [world-change guide](world-changes.md) specifies payload retention, rollback, physical ownership, temporary tickets and unsupported migration cases. This is a one-cell or protected furnishing replacement, not mining or a multi-block edit API.

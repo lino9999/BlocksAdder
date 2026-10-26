@@ -251,6 +251,14 @@ public final class FurnitureService implements WorldFurniture, Listener, AutoClo
                 track(owner, nextRuntime);
                 return true;
             }
+            @Override public boolean current() {
+                requireThread();
+                if (state != 1 || closed) return false;
+                for (var cell : target.keySet())
+                    if (!cell.loaded() || !owner.equals(cells.owner(cell.location().getBlock()))
+                            || cell.location().getBlock().getType() != Material.BARRIER) return false;
+                return true;
+            }
             @Override public void rollback() {
                 requireThread();
                 if (state != 1) return;

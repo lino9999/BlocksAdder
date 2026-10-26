@@ -102,6 +102,12 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private final io.github.lino9999.blocksadder.environment.RemovalPlans removalPlans;
     private final Map<BlockPosition, long[]> actionRevisions = new java.util.WeakHashMap<>();
     private final Set<BlockPosition> activeUses = new java.util.HashSet<>();
+    private final Set<BlockPosition> preparingChanges = new java.util.HashSet<>();
+    private final Set<BlockPosition> blockTransitions = new java.util.HashSet<>();
+    private final WorldBlockEditor blockEditor = new WorldBlockEditor();
+    private java.util.function.Predicate<Block> externalOwnership = block -> false;
+
+    public void setExternalOwnership(java.util.function.Predicate<Block> ownership) { requireServerThread(); externalOwnership = java.util.Objects.requireNonNull(ownership); }
     private java.util.function.Function<Entity, Optional<Entity>> helperTarget = entity -> Optional.empty();
 
     public void setHelperTarget(java.util.function.Function<Entity, Optional<Entity>> target) { requireServerThread(); helperTarget = java.util.Objects.requireNonNull(target); }
@@ -135,7 +141,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
                 ? Optional.empty() : Optional.of(new io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target(placed.id(), placed.kind(), location,
                         () -> !closed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && loaded.get(placed.position()) == placed && consistent(placed),
                         () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position()) && location.getBlock().getType().isAir(),
-                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position())));
+                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position()),
+                        () -> !closed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && loaded.get(placed.position()) == placed));
     }
     private java.util.function.Consumer<Entity> entityCleanup = entity -> {};
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds = io.github.lino9999.blocksadder.sound.ContentSoundSink.NONE;
@@ -176,7 +183,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     public void reload() {
         requireServerThread();
-        if (!furnitureTransitions.isEmpty()) throw new IllegalStateException("World content cannot reload during a furniture replacement.");
+        if (replacingContent()) throw new IllegalStateException("World content cannot reload while a replacement is committing.");
         cropDestruction.close();
         contentLoot.reload();
         removalPlans.reload(registry.get());
@@ -247,7 +254,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             String placementId = definition.get().options().getString("crop.placement-id");
             if (placementId != null) definition = registry.get().find(placementId);
         }
-        if (closed || definition.isEmpty() || location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
+        if (closed || definition.isEmpty() || location.getWorld() == null || blockTransitions.contains(BlockPosition.of(location)) || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
         Optional<ContentKind> kind = kind(definition.get());
         if (kind.isEmpty()) return false;
         Block target = location.getBlock();
@@ -501,6 +508,11 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         }
     }
 
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void captureReplacementPayload(org.bukkit.event.entity.ItemSpawnEvent event) { blockEditor.capture(event); }
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void captureReplacementExperience(org.bukkit.event.entity.EntitySpawnEvent event) { blockEditor.captureExperience(event); }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInteract(PlayerInteractEvent event) {
         if (closed || event.getHand() == null || event.getClickedBlock() == null || event.useInteractedBlock() == Event.Result.DENY) return;
@@ -571,6 +583,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
         if (syntheticBreak) return;
+        if (blockTransitions.contains(BlockPosition.of(event.getBlock()))) { event.setCancelled(true); return; }
         PlacedContent placed = managed(event.getBlock());
         if (placed == null) {
             PlacedContent above = loaded.get(BlockPosition.of(event.getBlock()).above());
@@ -838,6 +851,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     public boolean allowFurnitureCell(Block target, BlockState previous, Player player, String id) {
         requireServerThread();
         if (!target.equals(previous.getBlock())) throw new IllegalArgumentException("Furniture protection snapshot must match its target block.");
+        if (blockTransitions.contains(BlockPosition.of(target))) return false;
         return player == null || allowPlaceEvent(target, previous, player, id);
     }
 
@@ -872,23 +886,172 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     public boolean replacingFurniture() { requireServerThread(); return !furnitureTransitions.isEmpty(); }
+    public boolean replacingContent() { requireServerThread(); return !furnitureTransitions.isEmpty() || !blockTransitions.isEmpty(); }
+
+    @Override public boolean change(Location location, WorldChoice match, WorldChoice into, Player player, java.util.function.BooleanSupplier source) {
+        requireServerThread();
+        java.util.Objects.requireNonNull(match); java.util.Objects.requireNonNull(into); java.util.Objects.requireNonNull(source);
+        if (closed || location.getWorld() == null || !Double.isFinite(location.getX()) || !Double.isFinite(location.getY()) || !Double.isFinite(location.getZ())
+                || location.getY() < location.getWorld().getMinHeight() || location.getY() >= location.getWorld().getMaxHeight() || !plugin.getConfig().getBoolean("world.enabled", true)
+                || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
+        Block block = location.getBlock();
+        if (externalOwnership.test(block)) return false;
+        PlacedContent previous = managed(block);
+        if (!match.matches(block, previous) || previous != null && !consistent(previous)) return false;
+        if (player != null && (!player.isOnline() || !player.getWorld().equals(location.getWorld()) || player.getGameMode() == GameMode.SPECTATOR)) return false;
+        ItemDefinition oldDefinition = previous == null ? null : registry.get().find(previous.id()).orElse(null);
+        ItemDefinition nextDefinition = into.kind() == null ? null : registry.get().find(into.id()).orElse(null);
+        if (previous != null && oldDefinition == null || into.kind() != null && (nextDefinition == null || kind(nextDefinition).orElse(null) != into.kind())) return false;
+        boolean furnishing = previous != null && previous.kind() == ContentKind.FURNITURE;
+        if (player != null) {
+            if (furnishing) {
+                if (!player.hasPermission("blocksadder.use") || !contentPermission(player, oldDefinition, ContentKind.FURNITURE, "interact")) return false;
+            } else if (player.getGameMode() == GameMode.ADVENTURE || !player.hasPermission("blocksadder.break")
+                    || oldDefinition != null && !contentPermission(player, oldDefinition, previous.kind(), "break")
+                    || nextDefinition != null && !contentPermission(player, nextDefinition, into.kind(), "place")
+                    || (into.kind() != null || !into.data().getMaterial().isAir()) && !player.hasPermission("blocksadder.place")) return false;
+        }
+        BlockPosition position = previous == null ? BlockPosition.of(block) : previous.position();
+        if (preparingChanges.size() >= 32 || blockTransitions.contains(position) || !preparingChanges.add(position)) return false;
+        try {
+            if (!source.getAsBoolean()) return false;
+            if (previous != null && previous.kind() == ContentKind.FURNITURE)
+                return into.kind() == ContentKind.FURNITURE && replaceFurniture(position.location(), into.id(), player, source);
+            if (into.kind() == ContentKind.FURNITURE || previous != null && previous.kind() != ContentKind.BLOCK) return false;
+            return changeBlock(block, previous, into, player, source);
+        } finally { preparingChanges.remove(position); }
+    }
+
+    private boolean changeBlock(Block block, PlacedContent previous, WorldChoice into, Player player, java.util.function.BooleanSupplier source) {
+        BlockPosition position = BlockPosition.of(block);
+        ContentRegistry observed = registry.get();
+        var originalData = block.getBlockData().clone();
+        BlockFace face = previous == null ? player == null ? BlockFace.UP : player.getFacing().getOppositeFace() : previous.face();
+        float yaw = previous == null ? player == null ? 0 : player.getLocation().getYaw() : previous.yaw();
+        var nextData = into.kind() == null ? into.data() : placementData(into.id(), face, yaw);
+        if (into.kind() != null && previous == null) {
+            Map<BlockPosition, PlacedContent> chunk = chunks.get(position.chunk());
+            int limit = Math.max(1, plugin.getConfig().getInt("world.max-content-per-chunk", 128));
+            if (chunk != null && chunk.size() >= limit || loaded.size() >= Math.max(limit, plugin.getConfig().getInt("world.max-loaded-content", 100000))) return false;
+        }
+        if (!nextData.getMaterial().isAir() && !nextData.equals(originalData) && collidesWithLiving(block)) return false;
+        java.util.function.BooleanSupplier original = () -> !closed && registry.get() == observed && source.getAsBoolean()
+                && block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)
+                && !externalOwnership.test(block) && loaded.get(position) == previous && block.getBlockData().equals(originalData);
+        var replacementEvent = new io.github.lino9999.blocksadder.api.event.CustomContentReplaceEvent(block.getLocation(),
+                previous == null ? originalData.getAsString() : previous.id(), into.id(), player);
+        Bukkit.getPluginManager().callEvent(replacementEvent);
+        if (replacementEvent.isCancelled() || !original.getAsBoolean()) return false;
+        if (player != null && !originalData.getMaterial().isAir()) {
+            BlockBreakEvent protection = new BlockBreakEvent(block, player);
+            protection.setDropItems(false); protection.setExpToDrop(0);
+            boolean before = syntheticBreak; syntheticBreak = true;
+            try { Bukkit.getPluginManager().callEvent(protection); } finally { syntheticBreak = before; }
+            if (protection.isCancelled() || !original.getAsBoolean()) return false;
+        }
+        if (into.kind() != null) {
+            var placement = new CustomContentPlaceEvent(block.getLocation(), into.id(), ContentKind.BLOCK, player);
+            Bukkit.getPluginManager().callEvent(placement);
+            if (placement.isCancelled() || !original.getAsBoolean()) return false;
+        }
+        CropRemoval supported = null;
+        if (!nextData.equals(originalData)) {
+            PlacedContent above = loaded.get(position.above());
+            if (above != null && above.kind() == ContentKind.CROP) {
+                var preparation = prepareCropRemoval(above.position().location(), io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause.SUPPORT_BREAK, player);
+                if (preparation.isEmpty()) return false;
+                supported = preparation.get();
+            }
+        }
+        org.bukkit.Chunk heldChunk = block.getChunk();
+        boolean temporaryTicket = heldChunk.addPluginChunkTicket(plugin);
+        try {
+            if (!original.getAsBoolean()) return false;
+            blockTransitions.add(position);
+            PlacedContent[] expected = {previous}, replacement = {null};
+            boolean[] retired = {false}, published = {false};
+            boolean result = blockEditor.change(block, nextData, new WorldBlockEditor.Lifecycle() {
+                @Override public boolean valid() {
+                    return !closed && registry.get() == observed && (published[0] || source.getAsBoolean())
+                            && block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4) && loaded.get(position) == expected[0];
+                }
+                @Override public boolean canRestore() {
+                    return !closed && registry.get() == observed && block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)
+                            && (loaded.get(position) == previous || loaded.get(position) == replacement[0]);
+                }
+                @Override public boolean admit(BlockState before) {
+                    if (player == null || nextData.getMaterial().isAir()) return true;
+                    ItemStack item = into.kind() == null ? new ItemStack(nextData.getPlacementMaterial().isItem() ? nextData.getPlacementMaterial() : Material.STONE)
+                            : items.create(into.id(), 1);
+                    var event = new BlockPlaceEvent(block, before, block.getRelative(BlockFace.DOWN), item, player, true, EquipmentSlot.HAND);
+                    boolean beforeSynthetic = syntheticPlacement; syntheticPlacement = true;
+                    try { Bukkit.getPluginManager().callEvent(event); } finally { syntheticPlacement = beforeSynthetic; }
+                    return !event.isCancelled() && event.canBuild();
+                }
+                @Override public void publish() {
+                    if (previous != null) { unregister(previous); retired[0] = true; }
+                    expected[0] = null;
+                    if (into.kind() != null) {
+                        replacement[0] = new PlacedContent(position, into.id(), ContentKind.BLOCK, yaw, nextData.getAsString(), 0, 0, face);
+                        expected[0] = replacement[0];
+                        register(replacement[0]);
+                        render(replacement[0]);
+                        if (blockStates != null) blockStates.track(block.getLocation(), into.id(), nextData);
+                        if (blockBehavior != null) blockBehavior.placed(block.getLocation(), into.id());
+                    }
+                    save(position.chunk());
+                    published[0] = true;
+                }
+                @Override public void retract() {
+                    if (replacement[0] != null && loaded.get(position) == replacement[0]) unregister(replacement[0]);
+                }
+                @Override public void restore() {
+                    if (retired[0] && previous != null) {
+                        register(previous); render(previous);
+                        if (blockStates != null) blockStates.track(block.getLocation(), previous.id(), originalData);
+                        if (blockBehavior != null) blockBehavior.placed(block.getLocation(), previous.id());
+                    }
+                    save(position.chunk());
+                }
+                @Override public void displaced() {
+                    if (previous != null && loaded.get(position) == previous && !block.getBlockData().getAsString().equals(previous.blockData())) unregister(previous);
+                    save(position.chunk());
+                }
+            }, plugin.getLogger());
+            if (result && supported != null) supported.commit(false);
+            return result;
+        } finally {
+            blockTransitions.remove(position);
+            if (supported != null) supported.close();
+            if (temporaryTicket) heldChunk.removePluginChunkTicket(plugin);
+        }
+    }
 
     public boolean replaceFurniture(Location location, String nextId, Player player) {
+        requireServerThread();
+        if (location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
+        PlacedContent previous = managed(location.getBlock());
+        if (previous == null || preparingChanges.size() >= 32 || !preparingChanges.add(previous.position())) return false;
+        try { return replaceFurniture(location, nextId, player, () -> true); }
+        finally { preparingChanges.remove(previous.position()); }
+    }
+
+    private boolean replaceFurniture(Location location, String nextId, Player player, java.util.function.BooleanSupplier source) {
         requireServerThread();
         if (closed || furniture == null || location.getWorld() == null) return false;
         PlacedContent previous = managed(location.getBlock());
         ItemDefinition next = registry.get().find(nextId).orElse(null);
         if (previous == null || previous.kind() != ContentKind.FURNITURE || next == null || kind(next).filter(ContentKind.FURNITURE::equals).isEmpty()
-                || furnitureTransitions.contains(previous.position()) || !consistent(previous)) return false;
+                || furnitureTransitions.contains(previous.position()) || blockTransitions.contains(previous.position()) || !consistent(previous)) return false;
         ItemDefinition old = registry.get().find(previous.id()).orElse(null);
-        if (old == null || player != null && (!player.hasPermission("blocksadder.use") || player.getGameMode() == GameMode.SPECTATOR)) return false;
+        if (old == null || player != null && (!player.hasPermission("blocksadder.use") || !contentPermission(player, old, ContentKind.FURNITURE, "interact") || player.getGameMode() == GameMode.SPECTATOR)) return false;
         Location anchor = previous.position().location();
         var replacementEvent = new io.github.lino9999.blocksadder.api.event.CustomContentReplaceEvent(anchor, previous.id(), next.id().toString(), player);
         Bukkit.getPluginManager().callEvent(replacementEvent);
-        if (replacementEvent.isCancelled() || closed || loaded.get(previous.position()) != previous) return false;
+        if (replacementEvent.isCancelled() || closed || !source.getAsBoolean() || loaded.get(previous.position()) != previous) return false;
         Block target = anchor.getBlock();
         WorldFurniture.Change change = furniture.prepareReplacement(anchor, next.id().toString(), previous.face(), previous.yaw(), player);
-        if (change == null || closed || loaded.get(previous.position()) != previous) return false;
+        if (change == null || closed || !source.getAsBoolean() || loaded.get(previous.position()) != previous) return false;
         PlacedContent replacement = null;
         boolean previousHelpersRemoved = false;
         furnitureTransitions.add(previous.position());
@@ -898,13 +1061,16 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             replacement.origin(previous.origin());
             replacement.furnitureRotation(previous.furnitureRotation());
             render(replacement);
-            if (closed || loaded.get(previous.position()) != previous) throw new IllegalStateException("Furniture anchor changed during replacement.");
+            if (closed || loaded.get(previous.position()) != previous || !target.getBlockData().getAsString().equals(replacement.blockData()) || !change.current())
+                throw new IllegalStateException("Furniture anchor or footprint changed during replacement.");
             loaded.put(previous.position(), replacement);
             chunks.get(previous.position().chunk()).put(previous.position(), replacement);
             if (blockBehavior != null) { blockBehavior.removed(anchor); blockBehavior.placed(anchor, replacement.id()); }
             save(previous.position().chunk());
             previousHelpersRemoved = true;
             removeHelpers(previous);
+            if (!target.getBlockData().getAsString().equals(replacement.blockData()) || !change.current())
+                throw new IllegalStateException("Furniture replacement lost its committed footprint.");
             change.complete();
             return true;
         } catch (RuntimeException | LinkageError failure) {
@@ -1005,6 +1171,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     public boolean rollbackPlacement(Location location, String expectedId) {
         requireServerThread();
+        if (blockTransitions.contains(BlockPosition.of(location))) return false;
         PlacedContent placed = loaded.get(BlockPosition.of(location));
         if (placed == null || !placed.id().equals(expectedId)) return false;
         unregister(placed);
@@ -1022,7 +1189,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private boolean breakContent(PlacedContent placed, Player player, boolean harvest, boolean protectionAlreadyChecked, boolean dropItems, boolean explosion) {
-        if (furnitureTransitions.contains(placed.position())) return false;
+        if (furnitureTransitions.contains(placed.position()) || blockTransitions.contains(placed.position())) return false;
         if (pendingCropRemovals.containsKey(placed.position())) return false;
         if (!consistent(placed)) return false;
         if (player != null && (!player.hasPermission("blocksadder.break") || player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.ADVENTURE)) return false;
@@ -1550,6 +1717,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private boolean consistent(PlacedContent placed) {
+        if ((blockTransitions.contains(placed.position()) || furnitureTransitions.contains(placed.position())) && loaded.get(placed.position()) == placed) return true;
         if (pendingCropRemovals.containsKey(placed.position()) && loaded.get(placed.position()) == placed) return true;
         if (blockStates != null && placed.kind() == ContentKind.BLOCK) blockStates.restore(placed.position().location());
         if (placed.position().location().getBlock().getBlockData().getAsString().equals(placed.blockData())) return true;

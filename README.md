@@ -31,6 +31,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Placed-content actions:** independent [use, removal and harvest plans](docs/world-plans.md), with permission/cancellation checks and retained source identity for delayed work.
 - **Held interactions:** [shared native routing](docs/held-world-interactions.md) for both hands, managed helpers and furniture models, with protected cancellation and callback-safe consumption.
 - **Environmental rules:** [crop destruction and block explosion rules](docs/environment-removal.md), with optional prevention, committed effects, guarded delays and chunk-based cleanup.
+- **Conditional world changes:** [native/custom block and furnishing replacements](docs/world-changes.md), with protection, source identity, rollback and retained native storage payloads.
 
 BlocksAdder's core has no mandatory plugin dependencies. Advanced packet features and raw tile-NBT loot conditions use optional ProtocolLib through its public API. Install a compatible official build for your server; modern Paper and Spigot have separate artifacts. See [ProtocolLib's installation/API guidance](https://github.com/dmulloy2/ProtocolLib/blob/master/Readme.md). BlocksAdder does not download executable tools, contact activation servers or send telemetry.
 

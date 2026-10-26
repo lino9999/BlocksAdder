@@ -13,6 +13,7 @@ public interface WorldFurniture {
     default Location origin(Location anchor) { return anchor.clone().add(.5, 0, .5); }
     interface Change {
         boolean commit();
+        default boolean current() { return true; }
         void rollback();
         void complete();
     }

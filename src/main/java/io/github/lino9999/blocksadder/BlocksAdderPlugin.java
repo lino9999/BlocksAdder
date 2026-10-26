@@ -81,6 +81,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
                 if (animation != null && !models.play(rig, animation, true)) throw new IllegalArgumentException("Unknown idle animation: " + animation);
             });
             environment = new LiquidFireService(this, () -> content, items, world);
+            world.setExternalOwnership(block -> environment.identify(block).isPresent());
             sounds = new io.github.lino9999.blocksadder.sound.BlockSoundService(this, () -> content, this::identify);
             world.setSounds(sounds);
             environment.setSounds(sounds);
@@ -164,7 +165,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     }
 
     public void reloadContent() throws Exception {
-        if (world != null && world.replacingFurniture()) throw new IllegalStateException("Content cannot reload during a furniture replacement.");
+        if (world != null && world.replacingContent()) throw new IllegalStateException("Content cannot reload while a world replacement is committing.");
         ContentRegistry candidate = validateContent();
         ContentRegistry previous = content;
         YamlConfiguration previousSettings = settings;
@@ -272,6 +273,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     @Override
     public boolean place(Location location, String id, Player player) { return environment.isFireDefinition(id) ? environment.placeFire(location, id, player) : world.place(location, id, player); }
+    @Override public boolean changeContent(Location location, String match, String replacement, Player player) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Content changes must run on the server thread.");
+        return world.change(location,
+                io.github.lino9999.blocksadder.world.WorldChoice.parse(content, "blocksadder", match),
+                io.github.lino9999.blocksadder.world.WorldChoice.parse(content, "blocksadder", replacement), player, () -> true);
+    }
 
     @Override
     public Entity spawnEntity(Location location, String id) { return world.spawnEntity(location, id); }
