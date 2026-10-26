@@ -143,6 +143,13 @@ final class OwnedLightService implements AutoCloseable {
         return ownership != null && ownership.airBaseline() && block.getType() == Material.LIGHT && block.getBlockData().getAsString().equals(ownership.last);
     }
 
+    java.util.Optional<BlockData> baseline(Block block) {
+        if (!block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)) return java.util.Optional.empty();
+        Ownership ownership = owned.get(Position.of(block.getLocation()));
+        return ownership != null && block.getBlockData().getAsString().equals(ownership.last)
+                ? java.util.Optional.of(Bukkit.createBlockData(ownership.base)) : java.util.Optional.empty();
+    }
+
     List<Location> ownedLights(org.bukkit.Chunk chunk) {
         if (!chunk.isLoaded()) return List.of();
         ChunkKey key = new ChunkKey(chunk.getWorld().getUID(), chunk.getX(), chunk.getZ());

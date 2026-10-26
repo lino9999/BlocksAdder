@@ -1,0 +1,145 @@
+{
+  "recorded_at": "2026-10-26T08:41:29.825289+00:00",
+  "plugin_version": "1.1.0-SNAPSHOT",
+  "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+  "scope": [
+    "retain the exact player LIGHT baseline beneath temporary plugin illumination",
+    "remove furniture after a covered light source disappears",
+    "do not resurrect AIR-baseline temporary lights",
+    "relight vacated footprints while a source remains",
+    "restore player light after the last source disappears",
+    "preserve external player edits",
+    "do not load absent chunks during baseline lookup or refresh"
+  ],
+  "targeted_results": [
+    {
+      "server": "spigot21",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:28:08] [Server thread/INFO]: [LightFurnitureProbe] LIGHT_FURNITURE_VERIFICATION: PASS passed=32 failed=0",
+      "passed": true,
+      "local_log": ".work/light-furniture-server-spigot21/console.log",
+      "assertions": 32
+    },
+    {
+      "server": "paper263",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:28:28 INFO]: [LightFurnitureProbe] LIGHT_FURNITURE_VERIFICATION: PASS passed=32 failed=0",
+      "passed": true,
+      "local_log": ".work/light-furniture-server-paper263/console.log",
+      "assertions": 32
+    }
+  ],
+  "targeted_total_assertions": 64,
+  "same_candidate_bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:29:12] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:29:34 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:29:47 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2611/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:30:00 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:30:11] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:30:25] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:30:38 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:30:50] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot263/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+      "summary": "[09:31:03 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper263/console.log",
+      "assertions": 45
+    }
+  ],
+  "bundle_total_assertions": 405,
+  "regression_baseline": [
+    {
+      "server": "spigot21",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:26:31] [Server thread/INFO]: [LightFurnitureProbe] LIGHT_FURNITURE_VERIFICATION: FAIL passed=25 failed=3",
+      "passed": false,
+      "local_log": ".work/light-furniture-server-spigot21-reference/console.log"
+    }
+  ],
+  "notes": [
+    "Reference baseline means the earlier independently built development preview, not the supplied original plugin.",
+    "No graphical client or original plugin was executed.",
+    "These are two targeted light/furniture processes plus nine bundle/core processes, not complete native-player or restart coverage.",
+    "Paper emitted the existing Windows OSHI/Perflib warning before plugin work.",
+    "Full functional reconstruction remains in progress."
+  ]
+}

@@ -93,6 +93,8 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             world.setFurniture(furniture);
             furniture.setReplacement(world::replaceFurniture);
             furniture.setVirtualAirPredicate(blockBehavior::isOwnedLight);
+            furniture.setLightBaselineProvider(blockBehavior::lightBaseline);
+            furniture.setVacated(blockBehavior::refreshLight);
             furniture.setModelHooks((carrier, anchor, staticModel) -> models.byEntity(carrier).ifPresent(rig -> {
                 models.interaction(rig, player -> world.useFurniture(anchor, player, carrier));
                 models.attack(rig, event -> {

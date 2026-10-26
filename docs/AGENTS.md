@@ -12,6 +12,7 @@ Read this file and the relevant document before searching the repository. Produc
 - `world/`: custom block, display furniture, entity and crop lifecycle.
 - `world/WorldFurniture`: furniture footprint/render/interaction bridge. Placement version three retains face/yaw/fractional origin/frame rotation and reads versions one/two. Footprint protection uses `allowFurnitureCell` inside the guarded native-place context. `completePlacement` seals successful placement rollback state; model callbacks use protected `useFurniture`/`attackFurniture`.
 - `blockstate/`: reserved state allocation and native block model compilation; `WorldBlockStates` connects placement/persistence to this adapter.
+- `blockbehavior/`: owned light baselines and protected explosions. Furniture uses `lightBaseline` and `refreshLight`; a visible LIGHT level may be a temporary override of player data. Keep baseline lookups resident-only and preserve external changes.
 - `mining/`: timed mining, tool/tier rules, progress and native start/abort lifecycle.
 - `model/`: skeletal rigs, Blockbench/legacy imports, animations, viewers and player disguises.
 - `environment/`: custom liquid/fire state, flow, age, bucket behavior and rendering registry work.

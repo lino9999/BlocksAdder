@@ -24,6 +24,8 @@ Solid footprint transactions preflight every affected resident chunk and protect
 
 Rectangular interaction regions use a bounded union of overlapping native square Interaction strips. This preserves the rectangle without changing an entity's private bounding box. Existing single-anchor furniture remains supported. Bukkit world/entity operations remain on the server thread.
 
+The light service supplies the pre-illumination baseline for covered LIGHT cells. A temporarily raised player light restores its original level, while AIR-baseline temporary lights disappear when their source is gone. External edits are preserved. Footprint restoration queues a resident-only refresh for sources that remain active. The new integration passed [64 targeted checks](light-furniture-verification.json), with the same candidate also passing the nine-build bundle matrix; this is separate from the older furniture phase results below.
+
 ## Current acceptance work
 
 The following basic-phase checks completed on Java 25 with Java 21 bytecode:

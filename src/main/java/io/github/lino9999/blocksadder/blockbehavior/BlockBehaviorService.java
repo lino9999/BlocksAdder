@@ -196,6 +196,16 @@ public final class BlockBehaviorService implements Listener, AutoCloseable, Worl
         return lights != null && lights.owns(block);
     }
 
+    public java.util.Optional<org.bukkit.block.data.BlockData> lightBaseline(Block block) {
+        requireThread();
+        return lights == null ? java.util.Optional.empty() : lights.baseline(block);
+    }
+
+    public void refreshLight(Block block) {
+        requireThread();
+        if (lights != null && block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)) lights.changed(block);
+    }
+
     public java.util.Collection<Location> ownedLights(org.bukkit.Chunk chunk) {
         requireThread();
         return lights == null ? List.of() : lights.ownedLights(chunk);
