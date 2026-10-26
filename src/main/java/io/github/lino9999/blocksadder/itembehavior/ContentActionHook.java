@@ -1,10 +1,7 @@
 package io.github.lino9999.blocksadder.itembehavior;
 
 import io.github.lino9999.blocksadder.api.event.CustomContentBreakEvent;
-import io.github.lino9999.blocksadder.world.ContentKind;
-import org.bukkit.Location;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import io.github.lino9999.blocksadder.api.event.CustomContentInteractEvent;
 
 public interface ContentActionHook {
     interface BreakAttempt {
@@ -12,6 +9,5 @@ public interface ContentActionHook {
         void committed();
     }
     BreakAttempt beforeBreak(CustomContentBreakEvent event);
-    default boolean beforeInteract(PlayerInteractEvent event, String id, ContentKind kind, Location anchor) { return true; }
-    default boolean beforeEntityInteract(PlayerInteractEntityEvent event, String id, ContentKind kind, Location anchor) { return true; }
+    default boolean beforeUse(CustomContentInteractEvent event) { return true; }
 }

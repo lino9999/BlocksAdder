@@ -28,6 +28,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Loot and entities:** block, entity and fishing tables; configured vanilla living entities with custom stats, equipment and drops; manually generated custom trees.
 - **Resource packs:** sorted ZIP output, stable hashes, modern item definitions, model/font/sound generation, asset merging, size limits, manual delivery and optional built-in HTTP hosting.
 - **Administration and integrations:** paginated catalog, recipe previews, item management, candidate validation, reload rollback, Bukkit service API and cancellable content events.
+- **Placed-content actions:** independent [use, removal and harvest plans](docs/world-plans.md), with permission/cancellation checks and retained source identity for delayed work.
 
 BlocksAdder's core has no mandatory plugin dependencies. Advanced packet features and raw tile-NBT loot conditions use optional ProtocolLib through its public API. Install a compatible official build for your server; modern Paper and Spigot have separate artifacts. See [ProtocolLib's installation/API guidance](https://github.com/dmulloy2/ProtocolLib/blob/master/Readme.md). BlocksAdder does not download executable tools, contact activation servers or send telemetry.
 

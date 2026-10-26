@@ -26,6 +26,8 @@ Historical release reports retain their exact artifacts and original audit scope
 
 The [plant-view audit](crop-views-audit.json) applies the same checks to the later candidate containing 330 own-package classes and three YAML resources. All copied-file, branding, readable-message and declared command/permission collision lists are empty. Its per-player renderer is independently organized around a resident chunk index, incremental nearest-candidate queues and directly owned normal/facing display lifecycles. This records a concrete source/distribution boundary rather than claiming every algorithm's authorship can be inferred from byte differences.
 
+The later [placed-plan audit](world-plans-audit.json) covers 332 own-package classes with the same empty collision lists. Its independently named `world.use/remove/harvest` plans use read-only physical representations, root preparation events and weak revision markers for delayed identity. No reference trigger alias or implementation class is introduced by this domain bridge. Behavioral results are separate in [world-plans-verification.json](world-plans-verification.json).
+
 ## Distribution preparation
 
 The JAR contains project classes and three independently authored YAML resources. Bukkit/Spigot and optional ProtocolLib dependencies remain provided dependencies, with their own authorship. Administrator-supplied pack assets are not redistributed by this repository. Publishing a content pack requires rights to all of its assets.

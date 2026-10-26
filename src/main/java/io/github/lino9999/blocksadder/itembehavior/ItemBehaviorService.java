@@ -35,6 +35,9 @@ public final class ItemBehaviorService implements AutoCloseable {
     static final Set<String> TRIGGERS =
             Set.of(
                     "block_break",
+                    "world.use",
+                    "world.remove",
+                    "world.harvest",
                     "attack",
                     "kill",
                     "interact.entity",
@@ -128,6 +131,8 @@ public final class ItemBehaviorService implements AutoCloseable {
     }
 
     public ContentActionHook contentActions() { return worldActions; }
+    java.util.Optional<ItemWorldAccess.Target> worldTarget(Location anchor) { return worldAccess == null ? java.util.Optional.empty() : worldAccess.target(anchor.getBlock()); }
+    boolean hasPlan(String id, String trigger) { Definition definition = definitions.get(id); return definition != null && definition.plans().containsKey(trigger); }
 
     public ItemBehaviorService(
             JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items, Stats stats) {
@@ -251,6 +256,8 @@ public final class ItemBehaviorService implements AutoCloseable {
                                                                     + path
                                                                     + "/"
                                                                     + actionId));
+                    if (path.startsWith("world.") && Set.of("increment_amount", "decrement_amount", "increment_durability", "decrement_durability", "decrement_usages", "replace_properties").contains(family))
+                        throw BehaviorActions.error(item, "Placed-content plans require a world operation instead of an inventory source change: " + actionId);
                     ConfigurationSection config = child.getConfigurationSection(actionId);
                     if (config == null && family.equals("cancel") && child.isBoolean(actionId)) {
                         if (!child.getBoolean(actionId)) continue;
@@ -397,6 +404,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         Boolean last = null;
         Set<String> successes = new HashSet<>(), failures = new HashSet<>();
         for (Step step : plan.steps()) {
+            if (trigger.startsWith("world.") && context.stack() == null) break;
             if (!permission(context.player(), step.permission())) continue;
             if (!step.flows().isEmpty()
                     && step.flows().getFirst().matches(last, successes, failures)) {

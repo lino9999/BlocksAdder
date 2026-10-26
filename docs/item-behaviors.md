@@ -32,7 +32,7 @@ entries:
     settings: {material: BARRIER, display: false, hardness: 0.3}
 ```
 
-These are pre-removal action plans, not a committed-removal notification API: later failures can still stop a mutation, and arbitrary configured effects cannot be rolled back. The custom event itself is also a preparation event. The held-item bridge currently covers custom blocks; owned furniture/crop interaction plans and additional provider/projectile families remain separate work.
+These are pre-removal action plans, not a committed-removal notification API: later failures can still stop a mutation, and arbitrary configured effects cannot be rolled back. The custom event itself is also a preparation event. The held-item break bridge covers custom blocks. Separate [placed-content plans](world-plans.md) now cover physical use/removal/harvest sources; complete held-item interaction routing and provider/projectile families remain open.
 
 Candidate `621bdb1d952a88bca30e9041d7dea79f06416c1d1fa436ee39063c3d7b00c6ed` passed 56 connected-player/API/protocol checks on each Spigot/Paper 1.21.11 endpoint with Java 21 and no ProtocolLib. The preceding independent preview failed 17 overlapping assertions in the same scenario. The same candidate passed 405 bundle/core checks across nine builds. Exact scopes are in [world-actions-verification.json](world-actions-verification.json), alongside its [distribution audit](world-actions-audit.json). Native-player behavior on 26.x is not established by the bundle matrix.
 
@@ -91,7 +91,7 @@ Commands expand only known player/target/world/location placeholders, never chat
 
 ## Explicit remaining gaps
 
-This checkpoint rejects script/gun providers, projectile throw/hit and placed-content trigger families, world/furniture replacement and multiple-break actions, custom HUD cooldowns, typed particle data, custom totem animation items, legacy tag-only NBT, custom unregistered equipment sounds, untrusted external command placeholders and captured native-command output. These need dedicated public capability adapters or domain integration before full parity can be claimed. Modern raw components now use the proven public native codec; ProtocolLib availability alone is not evidence that a component codec exists.
+This checkpoint rejects script/gun providers, projectile throw/hit and external placed-trigger aliases, world/furniture replacement and multiple-break actions, custom HUD cooldowns, typed particle data, custom totem animation items, legacy tag-only NBT, custom unregistered equipment sounds, untrusted external command placeholders and captured native-command output. Independently named `world.use/remove/harvest` plans are implemented with the limits in their guide. Remaining families need dedicated public capability adapters or domain integration before full parity can be claimed. Modern raw components use the public native codec; ProtocolLib availability alone is not evidence that a component codec exists.
 
 Non-disappearing durability clamps the native damage component before native destruction; it exposes one native point remaining at exhaustion. Exact original zero-remaining presentation and exhausted-tool interaction policy remain open. Armor effects use public events and a five-tick equipment reconciliation window; they are not a claim of synchronous third-party equipment-event compatibility. Server-issued usage splitting preserves PDC identity and fresh remainder units. Rendering remains user verification.
 

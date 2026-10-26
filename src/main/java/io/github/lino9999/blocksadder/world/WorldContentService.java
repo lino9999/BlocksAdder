@@ -99,6 +99,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private WorldBlockBehavior blockBehavior;
     private WorldFurniture furniture;
     private io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions;
+    private final Map<BlockPosition, long[]> actionRevisions = new java.util.WeakHashMap<>();
+    private final Set<BlockPosition> activeUses = new java.util.HashSet<>();
 
     public void setActions(io.github.lino9999.blocksadder.itembehavior.ContentActionHook actions) { requireServerThread(); this.actions = java.util.Objects.requireNonNull(actions); }
 
@@ -117,8 +119,12 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private Optional<io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target> actionTarget(PlacedContent placed) {
         if (placed == null) return Optional.empty();
         Location location = placed.position().location();
+        long[] revision = actionRevisions.computeIfAbsent(placed.position(), unused -> new long[1]);
+        long observed = revision[0];
         return location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) || !consistent(placed)
-                ? Optional.empty() : Optional.of(new io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target(placed.id(), placed.kind(), location));
+                ? Optional.empty() : Optional.of(new io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess.Target(placed.id(), placed.kind(), location,
+                        () -> !closed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && loaded.get(placed.position()) == placed && consistent(placed),
+                        () -> !closed && revision[0] == observed && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !loaded.containsKey(placed.position()) && location.getBlock().getType().isAir()));
     }
     private java.util.function.Consumer<Entity> entityCleanup = entity -> {};
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds = io.github.lino9999.blocksadder.sound.ContentSoundSink.NONE;
@@ -492,6 +498,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             return;
         }
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && clicked != null) {
+            if (!prepareUse(clicked, event.getPlayer(), event.getHand(), null)) { event.setCancelled(true); return; }
             if (clicked.kind() == ContentKind.BLOCK && !event.getPlayer().isSneaking() && furniture != null && event.getPlayer().hasPermission("blocksadder.use")
                     && event.getPlayer().getGameMode() != GameMode.SPECTATOR && furniture.interact(clicked.position().location(), event.getPlayer(), null)) {
                 event.setCancelled(true);
@@ -596,6 +603,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         event.setCancelled(true);
         if (placed.kind() == ContentKind.CROP && !cropViews.interactive(event.getPlayer())) return;
         if (placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), event.getPlayer(), event.getRightClicked())) return;
+        if (!prepareUse(placed, event.getPlayer(), event.getHand(), event.getRightClicked())) return;
         if (placed.kind() == ContentKind.CROP && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE_MEAL) fertilize(placed, event.getPlayer());
         else if (placed.kind() == ContentKind.CROP) harvest(placed, event.getPlayer());
         else if (!interactFurniture(placed, event.getPlayer(), event.getRightClicked()) && event.getPlayer().isSneaking()) breakContent(placed, event.getPlayer(), false, false);
@@ -719,6 +727,20 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         return sit(placed, player);
     }
 
+    private boolean prepareUse(PlacedContent placed, Player player, EquipmentSlot hand, Entity clicked) {
+        if (closed || !consistent(placed) || pendingCropRemovals.containsKey(placed.position()) || furnitureTransitions.contains(placed.position())
+                || !player.hasPermission("blocksadder.use") || player.getGameMode() == GameMode.SPECTATOR) return false;
+        ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
+        if (definition == null || !contentPermission(player, definition, placed.kind(), "interact")) return false;
+        if (activeUses.size() >= 32 || !activeUses.add(placed.position())) return false;
+        try {
+        var event = new io.github.lino9999.blocksadder.api.event.CustomContentInteractEvent(placed.position().location(), placed.id(), placed.kind(), player, hand, clicked);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled() || closed || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
+        return (actions == null || actions.beforeUse(event)) && !event.isCancelled() && !closed && loaded.get(placed.position()) == placed && consistent(placed);
+        } finally { activeUses.remove(placed.position()); }
+    }
+
     public boolean useFurniture(Location location, Player player, Entity clicked) {
         requireServerThread();
         if (closed || location == null || player == null || location.getWorld() == null
@@ -727,6 +749,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         if (placed == null || placed.kind() != ContentKind.FURNITURE || !consistent(placed)
                 || furnitureTransitions.contains(placed.position())) return false;
         if (furniture != null && !furniture.acceptsHit(placed.position().location(), player, clicked)) return false;
+        if (!prepareUse(placed, player, EquipmentSlot.HAND, clicked)) return false;
         if (interactFurniture(placed, player, clicked)) return true;
         return player.isSneaking() && breakContent(placed, player, false, false);
     }
@@ -1063,6 +1086,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         var event = new CustomContentBreakEvent(placed.position().location(), placed.id(), ContentKind.CROP, player, true);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
+        var attempt = actions == null ? null : actions.beforeBreak(event);
+        if (event.isCancelled() || attempt != null && !attempt.allowed() || closed || loaded.get(placed.position()) != placed || !consistent(placed)) return false;
         if (plan.stage() != placed.stage()) {
             int old = placed.stage();
             long oldGrowth = placed.nextGrowth();
@@ -1080,6 +1105,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             }
         }
         if (event.isDropItems() && player.getGameMode() != GameMode.CREATIVE) contentLoot.execute(plan, placed.position().location(), player);
+        if (attempt != null) attempt.committed();
         return true;
     }
 
@@ -1179,6 +1205,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private void register(PlacedContent placed) {
+        long[] revision = actionRevisions.get(placed.position());
+        if (revision != null) revision[0]++;
         loaded.put(placed.position(), placed);
         chunks.computeIfAbsent(placed.position().chunk(), unused -> new LinkedHashMap<>()).put(placed.position(), placed);
         if (placed.kind() == ContentKind.CROP) {

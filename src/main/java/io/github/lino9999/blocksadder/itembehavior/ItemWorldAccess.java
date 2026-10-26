@@ -11,8 +11,11 @@ public interface ItemWorldAccess {
     Optional<Target> target(Block block);
     Optional<Target> target(Entity entity);
 
-    record Target(String id, ContentKind kind, Location anchor) {
-        public Target { anchor = anchor.clone(); }
+    record Target(String id, ContentKind kind, Location anchor, java.util.function.BooleanSupplier current, java.util.function.BooleanSupplier vacant) {
+        public Target {
+            anchor = anchor.clone();
+            java.util.Objects.requireNonNull(current); java.util.Objects.requireNonNull(vacant);
+        }
         @Override public Location anchor() { return anchor.clone(); }
     }
 }
