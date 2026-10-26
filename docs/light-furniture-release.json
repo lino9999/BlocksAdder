@@ -1,0 +1,17 @@
+{
+  "release": "https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.2",
+  "prerelease": true,
+  "commit": "875028c84f2af0ce573486cad2510bfa94f215ca",
+  "download_sha256": "9784140d878da55c7db4f04ef8f50d673146ad583649e370c9ff510194f58c59",
+  "download_matches": true,
+  "assets": [
+    "BlocksAdder-1.1.0-SNAPSHOT.jar",
+    "BlocksAdder-1.1.0-SNAPSHOT.jar.sha256",
+    "blocksadder-icon.png",
+    "LICENSE",
+    "light-furniture-audit.json",
+    "light-furniture-verification.json",
+    "spigot-description.bbcode",
+    "spigot-documentation.bbcode"
+  ]
+}
