@@ -77,7 +77,9 @@ public final class ModelLoader {
         Set<String> visiting = new HashSet<>();
         Set<String> visited = new HashSet<>();
         bones.values().forEach(bone -> order(bone, bones, visiting, visited, ordered));
-        return new ModelDefinition(id, scale, range, config.getBoolean("hide-base", true), config.getBoolean("self-visible", false), width, height, ordered, animations, assets);
+        String skin = config.getString("skin");
+        if (skin != null) PlayerSkins.parse(skin);
+        return new ModelDefinition(id, scale, range, config.getBoolean("hide-base", true), config.getBoolean("self-visible", false), width, height, ordered, animations, assets, skin);
     }
 
     private void readBones(ConfigurationSection configured, ContentRegistry registry, Map<String, Bone> bones) {
@@ -94,9 +96,11 @@ public final class ModelLoader {
             Vector scale = vector(bone.getList("scale", List.of(1, 1, 1)), Vector.ONE);
             boolean mount = bone.getBoolean("mount", name.startsWith("mount_"));
             ModelDefinition.Role role = role(bone.getString("role", mount ? "mount" : "normal"));
+            PlayerSkinPart part = bone.contains("skin-part") ? PlayerSkinPart.parse(bone.getString("skin-part")) : null;
+            if (part == PlayerSkinPart.HEAD && role == ModelDefinition.Role.NORMAL) role = ModelDefinition.Role.HEAD;
             if (Set.of(ModelDefinition.Role.HAT_PIVOT, ModelDefinition.Role.LEFT_HAND_PIVOT, ModelDefinition.Role.RIGHT_HAND_PIVOT).contains(role) && (item != null || model != null)) throw new IllegalArgumentException("Equipment pivot bones mirror the target equipment and cannot define a static item or model.");
             addBone(bones, new Bone(name, bone.getString("parent"), pivot, rotation, scale, item, model, 1, mount, false, role,
-                    bounded(bone.getDouble("max-head-rotation-x", 70), 0, 180, "Head pitch limit"), bounded(bone.getDouble("max-head-rotation-y", 45), 0, 180, "Head yaw limit")));
+                    bounded(bone.getDouble("max-head-rotation-x", 70), 0, 180, "Head pitch limit"), bounded(bone.getDouble("max-head-rotation-y", 45), 0, 180, "Head yaw limit"), part));
         }
     }
 
@@ -140,13 +144,14 @@ public final class ModelLoader {
             String name = entry.getKey();
             JsonObject bone = entry.getValue();
             ModelDefinition.Role type = role(text(bone, "boneType", "NORMAL"));
+            PlayerSkinPart part = PlayerSkinPart.legacy(name);
             JsonArray parents = array(bone, "parents");
             String parent = null;
             for (JsonElement ancestor : parents) {
                 String candidate = ancestor.getAsString();
                 if (sourceBones.containsKey(candidate)) parent = candidate;
             }
-            boolean drawable = type == ModelDefinition.Role.NORMAL || type == ModelDefinition.Role.HEAD;
+            boolean drawable = part == null && (type == ModelDefinition.Role.NORMAL || type == ModelDefinition.Role.HEAD);
             String generated = null;
             if (drawable) {
                 String geometry = config.getString("bone-models." + name, geometryRoot + "/" + name);
@@ -156,7 +161,7 @@ public final class ModelLoader {
                 assets.put("assets/" + content.namespace() + "/items/" + value + ".json", Json.write(Map.of("model", Map.of("type", "minecraft:model", "model", geometry))).getBytes(StandardCharsets.UTF_8));
             }
             addBone(bones, new Bone(name, parent, vector(bone.get("pos"), Vector.ZERO).multiply(16), vector(bone.get("rot"), Vector.ZERO), Vector.ONE, null, generated, 1, type == ModelDefinition.Role.MOUNT_PIVOT, true, type,
-                    bounded(decimal(bone, "maxHeadRotX", 70), 0, 180, "Legacy head pitch limit"), bounded(decimal(bone, "maxHeadRotY", 45), 0, 180, "Legacy head yaw limit")));
+                    bounded(decimal(bone, "maxHeadRotX", 70), 0, 180, "Legacy head pitch limit"), bounded(decimal(bone, "maxHeadRotY", 45), 0, 180, "Legacy head yaw limit"), part));
         }
         for (JsonElement element : array(model, "animations")) {
             JsonObject animation = element.getAsJsonObject();

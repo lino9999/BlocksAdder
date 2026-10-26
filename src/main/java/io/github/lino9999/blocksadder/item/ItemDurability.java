@@ -78,7 +78,10 @@ public final class ItemDurability {
 
     static void apply(ItemDefinition item, ItemStack stack, ItemMeta meta) {
         Settings settings = settings(item);
-        meta.setUnbreakable(settings.unbreakable());
+        if (item.options().contains("unbreakable")
+                || item.options().contains("durability.unbreakable")
+                || item.options().contains("durability-options.unbreakable"))
+            meta.setUnbreakable(settings.unbreakable());
         if (settings.maximum() != null) {
             if (!(meta instanceof Damageable damageable))
                 throw new IllegalArgumentException(
@@ -86,7 +89,10 @@ public final class ItemDurability {
             damageable.setMaxDamage(settings.maximum());
             damageable.setDamage(settings.maximum() - settings.remaining());
         }
-        if (meta instanceof Repairable repairable && settings.repairCost() > 0)
+        if (meta instanceof Repairable repairable
+                && (settings.repairCost() > 0
+                        || item.options().contains("durability.repair_cost")
+                        || item.options().contains("durability-options.repair_cost")))
             repairable.setRepairCost(settings.repairCost());
         if (settings.usages() >= 0) {
             meta.getPersistentDataContainer()

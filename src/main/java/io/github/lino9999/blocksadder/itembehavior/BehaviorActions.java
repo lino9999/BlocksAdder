@@ -5,8 +5,6 @@ import io.github.lino9999.blocksadder.item.ItemKeys;
 import io.github.lino9999.blocksadder.item.ItemService;
 import io.github.lino9999.blocksadder.item.ItemWear;
 
-import org.bukkit.Bukkit;
-
 import org.bukkit.Effect;
 import org.bukkit.EntityEffect;
 import org.bukkit.Material;
@@ -191,7 +189,8 @@ final class BehaviorActions {
                 int amount = integer(c, "amount", 0, 0, 10000);
                 yield context -> {
                     if (context.consumeEvent()) context.cancel();
-                    return ItemWear.usages(context.player(), context.stack(), amount, context::set);
+                    return ItemWear.usages(
+                            context.player(), context.stack(), amount, context::set, context::give);
                 };
             }
             case "give_item" -> {
@@ -411,15 +410,13 @@ final class BehaviorActions {
                                 "flow_success_if_message_contains",
                                 "delay")
                         .contains(key)) throw error(item, "Unsupported command field: " + key);
-            String command = required(config, "command");
+            String command = required(config, "command").trim();
             if (command.startsWith("/")) command = command.substring(1);
             service.validatePlaceholders(command);
             boolean console = config.getBoolean("as_console");
             boolean silent = config.getBoolean("silent", true);
             String expected = config.getString("flow_success_if_message_contains");
-            if (console
-                    && (silent || expected != null)
-                    && Bukkit.getPluginCommand(command.split("\\s+", 2)[0]) == null)
+            if (console && (silent || expected != null) && !CommandOutput.supported(command))
                 throw error(
                         item,
                         "Silent console dispatch and output conditions require a registered Bukkit"
@@ -458,18 +455,10 @@ final class BehaviorActions {
     private void give(ItemBehaviorService.Context context, ItemStack template, int amount) {
         while (amount > 0) {
             ItemStack stack = template.clone();
-            stack.setAmount(Math.min(amount, stack.getMaxStackSize()));
-            context.player()
-                    .getInventory()
-                    .addItem(stack)
-                    .values()
-                    .forEach(
-                            left ->
-                                    context.player()
-                                            .getWorld()
-                                            .dropItemNaturally(
-                                                    context.player().getLocation(), left));
-            amount -= stack.getAmount();
+            int count = Math.min(amount, stack.getMaxStackSize());
+            stack.setAmount(count);
+            context.give(stack);
+            amount -= count;
         }
     }
 

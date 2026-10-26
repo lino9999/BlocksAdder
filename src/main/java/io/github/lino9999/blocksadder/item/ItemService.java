@@ -23,10 +23,12 @@ import java.util.function.Supplier;
 public final class ItemService {
     private final Supplier<ContentRegistry> registry;
     private final NamespacedKey identity;
+    private final java.nio.file.Path contents;
 
     public ItemService(JavaPlugin plugin, Supplier<ContentRegistry> registry) {
         this.registry = registry;
         this.identity = new NamespacedKey(plugin, "item_id");
+        contents = plugin.getDataFolder().toPath().resolve("contents").toAbsolutePath().normalize();
     }
 
     public ItemStack create(String id, int amount) {
@@ -39,13 +41,17 @@ public final class ItemService {
                                                 "Unknown or ambiguous item: " + id));
         if (amount < 1 || amount > 6400)
             throw new IllegalArgumentException("Amount must be between 1 and 6400.");
-        ItemStack stack = new ItemStack(item.material());
+        FoodProfiles.Profile profile = FoodProfiles.profile(item);
+        RawItemComponents.Template raw = RawItemComponents.template(item, contents);
+        ItemStack stack = raw.create();
         var meta = stack.getItemMeta();
-        meta.setDisplayName(Text.color(item.displayName()));
-        meta.setLore(item.lore().stream().map(Text::color).toList());
+        if (!raw.contains("custom_name")) meta.setDisplayName(Text.color(item.displayName()));
+        if (!raw.contains("lore") || item.options().contains("lore"))
+            meta.setLore(item.lore().stream().map(Text::color).toList());
         meta.getPersistentDataContainer()
                 .set(identity, PersistentDataType.STRING, item.id().toString());
-        meta.setItemModel(NamespacedKey.fromString(item.model()));
+        if (!raw.contains("item_model") || item.options().contains("model"))
+            meta.setItemModel(NamespacedKey.fromString(item.model()));
         var modelData = meta.getCustomModelDataComponent();
         if (item.modelData() > 0) {
             modelData.setFloats(List.of((float) item.modelData()));
@@ -59,7 +65,7 @@ public final class ItemService {
                         "max-stack-size must be between 1 and 99: " + item.id());
             meta.setMaxStackSize(size);
         }
-        meta.setUnbreakable(options.getBoolean("unbreakable", false));
+        if (options.contains("unbreakable")) meta.setUnbreakable(options.getBoolean("unbreakable"));
         if (options.contains("glow")) meta.setEnchantmentGlintOverride(options.getBoolean("glow"));
         for (String flag : options.getStringList("flags"))
             meta.addItemFlags(ItemFlag.valueOf(flag.toUpperCase(Locale.ROOT)));
@@ -82,26 +88,12 @@ public final class ItemService {
             }
         }
         ItemAttributes.apply(item, meta);
-        ConfigurationSection food = options.getConfigurationSection("food");
-        if (food != null) {
-            var component = meta.getFood();
-            int nutrition = food.getInt("nutrition", 4);
-            double saturation = food.getDouble("saturation", 2.4);
-            if (nutrition < 0
-                    || nutrition > 20
-                    || !Double.isFinite(saturation)
-                    || saturation < 0
-                    || saturation > 20)
-                throw new IllegalArgumentException(
-                        "Food nutrition and saturation must be between 0 and 20: " + item.id());
-            component.setNutrition(nutrition);
-            component.setSaturation((float) saturation);
-            component.setCanAlwaysEat(food.getBoolean("always-eat", false));
-            meta.setFood(component);
-        }
-        ItemComponents.apply(item, meta);
+        if (profile != null && !raw.contains("food"))
+            meta.setFood(profile.prototype().getItemMeta().getFood());
+        ItemComponents.apply(item, meta, raw);
         stack.setItemMeta(meta);
-        if (food != null) ConsumableSupport.apply(stack);
+        if (profile != null && !raw.contains("consumable"))
+            ConsumableSupport.copy(profile.prototype(), stack);
         stack.setAmount(amount);
         return stack;
     }

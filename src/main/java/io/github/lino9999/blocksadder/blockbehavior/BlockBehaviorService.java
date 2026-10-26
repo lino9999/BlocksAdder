@@ -106,7 +106,8 @@ public final class BlockBehaviorService implements Listener, AutoCloseable, Worl
     public boolean handlesExplosion(Block block) {
         requireThread();
         Placement placement = placements.get(Position.of(block.getLocation()));
-        return placement != null && rules.containsKey(placement.id) && content.identify(block).filter(placement.id::equals).isPresent();
+        BlockBehaviorRules rule = placement == null ? null : rules.get(placement.id);
+        return rule != null && rule.blockBehavior() && content.identify(block).filter(placement.id::equals).isPresent();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

@@ -51,6 +51,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     private NativeBlockService nativeBlocks;
     private BlockBehaviorService blockBehavior;
     private io.github.lino9999.blocksadder.sound.BlockSoundService sounds;
+    private io.github.lino9999.blocksadder.furniture.FurnitureService furniture;
 
     @Override
     public void onEnable() {
@@ -68,6 +69,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             packs = new PackService(this, () -> content);
             mining = new MiningService(this, () -> content, items, world);
             models = new ModelService(this, () -> content, items);
+            world.setEntityCleanup(entity -> models.byEntity(entity).ifPresent(models::detach));
             world.setEntityInitializer((entity, config) -> {
                 String model = config.getString("model");
                 if (model == null || model.isBlank()) return;
@@ -87,6 +89,16 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             generation.setVirtualAirCandidates(blockBehavior::ownedLights);
             world.setNativeTreeGenerator(generation::generateNativeTree);
             vehicles = new VehicleService(this, () -> content, models, items);
+            furniture = new io.github.lino9999.blocksadder.furniture.FurnitureService(this, () -> content, items, world);
+            world.setFurniture(furniture);
+            furniture.setReplacement(world::replaceFurniture);
+            furniture.setVirtualAirPredicate(blockBehavior::isOwnedLight);
+            furniture.setModelHooks((carrier, anchor, staticModel) -> models.byEntity(carrier).ifPresent(rig -> {
+                models.interaction(rig, player -> world.useFurniture(anchor, player, carrier));
+                models.attack(rig, event -> {
+                    if (event.getDamager() instanceof Player player) world.attackFurniture(anchor, player, carrier);
+                });
+            }));
             reloadContent();
             menus = new CatalogMenu(() -> content, items, recipes);
             var commands = new ContentCommand(this, menus);
@@ -97,6 +109,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             }
             var manager = getServer().getPluginManager();
             manager.registerEvents(world, this);
+            manager.registerEvents(world.cropDestruction(), this);
             manager.registerEvents(nativeBlocks, this);
             manager.registerEvents(blockBehavior, this);
             manager.registerEvents(sounds, this);
@@ -105,6 +118,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             manager.registerEvents(environment, this);
             manager.registerEvents(generation, this);
             manager.registerEvents(vehicles, this);
+            manager.registerEvents(furniture, this);
             manager.registerEvents(gameplay, this);
             manager.registerEvents(recipes, this);
             manager.registerEvents(menus, this);
@@ -139,10 +153,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
         if (generation != null) generation.validate(candidate);
         if (vehicles != null) vehicles.validate(candidate);
         if (sounds != null) sounds.validate(candidate);
+        if (furniture != null) furniture.validate(candidate);
         return candidate;
     }
 
     public void reloadContent() throws Exception {
+        if (world != null && world.replacingFurniture()) throw new IllegalStateException("Content cannot reload during a furniture replacement.");
         ContentRegistry candidate = validateContent();
         ContentRegistry previous = content;
         YamlConfiguration previousSettings = settings;
@@ -150,14 +166,16 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
         content = candidate;
         try {
             vehicles.close();
+            world.close();
             recipes.reload();
             gameplay.reload();
             mining.reload();
             nativeBlocks.reload();
             blockBehavior.reload();
+            models.reload();
+            furniture.reload();
             world.reload();
             environment.reload();
-            models.reload();
             generation.reload();
             vehicles.reload();
             sounds.reload();
@@ -167,14 +185,16 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             content = previous;
             settings = previousSettings;
             try {
+                world.close();
                 recipes.reload();
                 gameplay.reload();
                 mining.reload();
                 nativeBlocks.reload();
                 blockBehavior.reload();
+                models.reload();
+                furniture.reload();
                 world.reload();
                 environment.reload();
-                models.reload();
                 generation.reload();
                 vehicles.reload();
                 sounds.reload();
@@ -200,6 +220,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
         if (models != null) models.close();
         if (environment != null) environment.close();
         if (world != null) world.close();
+        if (furniture != null) furniture.close();
         if (sounds != null) sounds.close();
         if (blockBehavior != null) blockBehavior.close();
         if (nativeBlocks != null) nativeBlocks.close();
@@ -224,6 +245,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     public NativeBlockService nativeBlocks() { return nativeBlocks; }
     public BlockBehaviorService blockBehavior() { return blockBehavior; }
     public io.github.lino9999.blocksadder.sound.BlockSoundService sounds() { return sounds; }
+    public io.github.lino9999.blocksadder.furniture.FurnitureService furniture() { return furniture; }
 
     @Override
     public Collection<ItemDefinition> definitions() { return content.items(); }
@@ -321,4 +343,13 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     @Override
     public String emoteState(Player player) { return models.emoteState(player); }
+
+    @Override
+    public boolean modelSkin(java.util.UUID instance, Player source) { return models.skin(instance, source); }
+
+    @Override
+    public boolean modelSkin(java.util.UUID instance, String texture) { return models.skin(instance, texture); }
+
+    @Override
+    public boolean resetModelSkin(java.util.UUID instance) { return models.resetSkin(instance); }
 }

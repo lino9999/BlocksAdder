@@ -15,6 +15,29 @@ import java.util.UUID;
 final class CommandOutput {
     private CommandOutput() {}
 
+    static boolean supported(String command) {
+        String label = command.split("\\s+", 2)[0].toLowerCase(java.util.Locale.ROOT);
+        if (Bukkit.getPluginCommand(label) != null) return true;
+        for (org.bukkit.plugin.Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+            String prefix =
+                    plugin.getDescription().getName().toLowerCase(java.util.Locale.ROOT) + ":";
+            String requested = label.startsWith(prefix) ? label.substring(prefix.length()) : label;
+            if (requested.contains(":")) continue;
+            var definitions = plugin.getDescription().getCommands();
+            if (definitions == null) continue;
+            for (var entry : definitions.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase(requested)) return true;
+                Object aliases = entry.getValue().get("aliases");
+                if (aliases instanceof String alias && alias.equalsIgnoreCase(requested))
+                    return true;
+                if (aliases instanceof Iterable<?> values)
+                    for (Object alias : values)
+                        if (requested.equalsIgnoreCase(String.valueOf(alias))) return true;
+            }
+        }
+        return false;
+    }
+
     static boolean dispatch(String command, boolean silent, String expected) {
         ConsoleCommandSender console = Bukkit.getConsoleSender();
         List<String> messages = new ArrayList<>();

@@ -65,6 +65,8 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
     private final JavaPlugin plugin;
     private final Map<UUID, Map<EquipmentSlot, ItemStack>> equipment = new HashMap<>();
     private final Map<UUID, Map<String, CooldownDisplay>> displays = new HashMap<>();
+    private final java.util.Set<UUID> handEvents = new java.util.HashSet<>();
+    private final java.util.Set<UUID> offhandEvents = new java.util.HashSet<>();
     private final BukkitTask monitor;
 
     ItemBehaviorEvents(ItemBehaviorService service, ItemService items, JavaPlugin plugin) {
@@ -76,6 +78,8 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     void reset() {
         equipment.clear();
+        handEvents.clear();
+        offhandEvents.clear();
         displays.values().forEach(values -> values.values().forEach(CooldownDisplay::close));
         displays.clear();
         for (Player player : Bukkit.getOnlinePlayers()) snapshot(player, false);
@@ -261,17 +265,15 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onConsume(PlayerItemConsumeEvent event) {
-        service.fire(
-                event.getItem().getType().name().contains("POTION")
-                                || event.getItem().getType() == Material.MILK_BUCKET
-                        ? "drink"
-                        : "eat",
+        var context =
                 ItemBehaviorService.Context.held(
                         event.getPlayer(),
                         event.getHand(),
                         null,
                         event.getPlayer().getLocation(),
-                        event));
+                        event);
+        if (event.getItem().getType() != Material.POTION) service.fire("eat", context);
+        service.fire("drink", context);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -415,13 +417,52 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
         snapshot(event.getPlayer(), false);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        service.fire(
+                "unheld",
+                ItemBehaviorService.Context.indexed(player, event.getPreviousSlot(), event));
+        service.fire(
+                "held", ItemBehaviorService.Context.indexed(player, event.getNewSlot(), event));
+        handEvents.add(player.getUniqueId());
         refresh(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSwap(PlayerSwapHandItemsEvent event) {
+        Player player = event.getPlayer();
+        ItemStack main = event.getMainHandItem(), off = event.getOffHandItem();
+        var incomingMain =
+                new ItemBehaviorService.Context(
+                        player,
+                        null,
+                        player.getLocation(),
+                        event,
+                        event::getMainHandItem,
+                        stack -> {
+                            player.getInventory().setItemInOffHand(stack);
+                            event.setMainHandItem(stack);
+                        },
+                        main == null ? null : main.clone());
+        var incomingOff =
+                new ItemBehaviorService.Context(
+                        player,
+                        null,
+                        player.getLocation(),
+                        event,
+                        event::getOffHandItem,
+                        stack -> {
+                            player.getInventory().setItemInMainHand(stack);
+                            event.setOffHandItem(stack);
+                        },
+                        off == null ? null : off.clone());
+        service.fire("unheld_offhand", incomingMain);
+        service.fire("held", incomingMain);
+        service.fire("unheld", incomingOff);
+        service.fire("held_offhand", incomingOff);
+        handEvents.add(player.getUniqueId());
+        offhandEvents.add(player.getUniqueId());
         refresh(event.getPlayer());
     }
 
@@ -478,7 +519,10 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
     private boolean emptyEquipmentSlot(Player player, ItemStack stack) {
         if (stack == null || !stack.hasItemMeta()) return false;
         EquipmentSlot slot = stack.getItemMeta().getEquippable().getSlot();
-        if (slot != EquipmentSlot.HEAD && slot != EquipmentSlot.CHEST && slot != EquipmentSlot.LEGS && slot != EquipmentSlot.FEET) return false;
+        if (slot != EquipmentSlot.HEAD
+                && slot != EquipmentSlot.CHEST
+                && slot != EquipmentSlot.LEGS
+                && slot != EquipmentSlot.FEET) return false;
         ItemStack equipped = player.getInventory().getItem(slot);
         return equipped == null || equipped.getType().isAir();
     }
@@ -496,11 +540,16 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
         Map<EquipmentSlot, ItemStack> before =
                 equipment.computeIfAbsent(
                         player.getUniqueId(), ignored -> new EnumMap<>(EquipmentSlot.class));
+        boolean nativeHand = handEvents.remove(player.getUniqueId());
+        boolean nativeOffhand = offhandEvents.remove(player.getUniqueId());
         for (EquipmentSlot slot : SLOTS) {
             ItemStack previous = before.get(slot), current = player.getInventory().getItem(slot);
             String oldId = items.identify(previous).orElse(null),
                     newId = items.identify(current).orElse(null);
-            if (trigger && !java.util.Objects.equals(oldId, newId)) {
+            if (trigger
+                    && !(slot == EquipmentSlot.HAND && nativeHand
+                            || slot == EquipmentSlot.OFF_HAND && nativeOffhand)
+                    && !java.util.Objects.equals(oldId, newId)) {
                 if (oldId != null)
                     service.fire(
                             slot == EquipmentSlot.HAND
@@ -580,6 +629,8 @@ final class ItemBehaviorEvents implements Listener, AutoCloseable {
 
     void remove(Player player) {
         equipment.remove(player.getUniqueId());
+        handEvents.remove(player.getUniqueId());
+        offhandEvents.remove(player.getUniqueId());
         Map<String, CooldownDisplay> values = displays.remove(player.getUniqueId());
         if (values != null) values.values().forEach(CooldownDisplay::close);
     }

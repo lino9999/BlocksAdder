@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class ContentLoader {
-    private static final List<String> TYPES = List.of("recipes", "categories", "font_images", "stats", "huds", "loot", "emotes", "entities", "trees", "sounds", "liquids", "fires", "models", "vehicles", "populators", "decorators", "tree_populators", "blocks_populators", "worlds_populators", "surface_decorators", "cave_decorators", "trees_populators", "crops", "block_loot", "equipments", "armors_rendering", "legacy_armor_renderings");
+    private static final List<String> TYPES = BundleDocument.definitionTypes();
     private final JavaPlugin plugin;
 
     public ContentLoader(JavaPlugin plugin) {
@@ -34,22 +34,20 @@ public final class ContentLoader {
                 if (!path.toRealPath().startsWith(root.toRealPath())) throw new IOException("Content path escapes its directory: " + path.getFileName());
                 YamlConfiguration yaml = new YamlConfiguration();
                 yaml.load(path.toFile());
+                yaml = BundleDocument.decode(yaml);
                 if (!yaml.getBoolean("enabled", true)) continue;
-                String namespace = yaml.getString("namespace", yaml.getString("info.namespace"));
+                String namespace = yaml.getString("namespace");
                 if (namespace == null) {
                     if (yaml.contains("items") || yaml.contains("loots") || TYPES.stream().anyMatch(yaml::contains)) throw new InvalidConfigurationException("Missing namespace in " + root.relativize(path));
                     continue;
                 }
                 new ContentId(namespace, "validation");
-                ContentSchemas.normalizeRecipes(yaml, namespace);
-                ContentSchemas.normalizeLoot(yaml);
                 ConfigurationSection definitions = yaml.getConfigurationSection("items");
                 if (definitions != null) {
                     for (String key : definitions.getKeys(false)) {
                         ConfigurationSection config = definitions.getConfigurationSection(key);
                         if (config == null) throw new InvalidConfigurationException("Item must be a section: " + key);
                         if (!config.getBoolean("enabled", true)) continue;
-                        ContentSchemas.normalizeItem(config, namespace);
                         ContentId id = new ContentId(namespace, key);
                         Material material = Material.matchMaterial(config.getString("material", "PAPER"));
                         if (material == null || !material.isItem() || material.isAir()) throw new InvalidConfigurationException("Invalid item material for " + id);
@@ -58,7 +56,7 @@ public final class ContentLoader {
                         String model = config.getString("model", id.toString());
                         ContentId.parse(model);
                         ItemDefinition item = new ItemDefinition(id, material, config.getString("display-name", key), config.getStringList("lore"), modelData,
-                                model, config.getString("category", "default"), config);
+                                model, config.getString("category", "default"), config, path.toRealPath());
                         if (items.putIfAbsent(id.toString(), item) != null) throw new InvalidConfigurationException("Duplicate item: " + id);
                     }
                 }

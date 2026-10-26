@@ -27,7 +27,7 @@ final class ChunkContentStore {
         for (String row : encoded.split("\n")) {
             try {
                 String[] parts = row.split("\\|", -1);
-                if (parts.length != 8 && parts.length != 9) throw new IllegalArgumentException("Invalid placement record.");
+                if (parts.length != 8 && parts.length != 9 && parts.length != 13) throw new IllegalArgumentException("Invalid placement record.");
                 String[] coordinates = parts[0].split(",", -1);
                 if (coordinates.length != 3) throw new IllegalArgumentException("Invalid position.");
                 int x = Integer.parseInt(coordinates[0]);
@@ -42,13 +42,20 @@ final class ChunkContentStore {
                 int stage = Integer.parseInt(parts[5]);
                 long nextGrowth = Long.parseLong(parts[6]);
                 boolean legacy = parts.length == 8 && parts[7].equals("1");
-                if (!Float.isFinite(yaw) || stage < 0 || nextGrowth < 0 || !legacy && !(parts.length == 9 && parts[7].equals("2"))) {
+                boolean second = parts.length == 9 && parts[7].equals("2");
+                boolean third = parts.length == 13 && parts[7].equals("3");
+                if (!Float.isFinite(yaw) || stage < 0 || nextGrowth < 0 || !legacy && !second && !third) {
                     throw new IllegalArgumentException("Invalid placement metadata.");
                 }
                 org.bukkit.block.BlockFace face = legacy ? org.bukkit.block.BlockFace.UP : org.bukkit.block.BlockFace.valueOf(parts[8]);
                 if (!face.isCartesian()) throw new IllegalArgumentException("Invalid placement face.");
                 plugin.getServer().createBlockData(parts[4]);
-                result.add(new PlacedContent(new BlockPosition(chunk.getWorld().getUID(), x, y, z), id, kind, yaw, parts[4], stage, nextGrowth, face));
+                PlacedContent placed = new PlacedContent(new BlockPosition(chunk.getWorld().getUID(), x, y, z), id, kind, yaw, parts[4], stage, nextGrowth, face);
+                if (third) {
+                    placed.origin(new org.bukkit.Location(chunk.getWorld(), x + Double.parseDouble(parts[9]), y + Double.parseDouble(parts[10]), z + Double.parseDouble(parts[11])));
+                    placed.furnitureRotation(Integer.parseInt(parts[12]));
+                }
+                result.add(placed);
             } catch (IllegalArgumentException exception) {
                 rejected++;
             }
@@ -66,7 +73,8 @@ final class ChunkContentStore {
         for (PlacedContent placed : placements) {
             encoded.append(placed.position().coordinates()).append('|').append(placed.id()).append('|')
                     .append(placed.kind()).append('|').append(placed.yaw()).append('|').append(placed.blockData()).append('|')
-                    .append(placed.stage()).append('|').append(placed.nextGrowth()).append("|2|").append(placed.face().name()).append('\n');
+                    .append(placed.stage()).append('|').append(placed.nextGrowth()).append("|3|").append(placed.face().name()).append('|')
+                    .append(placed.originX()).append('|').append(placed.originY()).append('|').append(placed.originZ()).append('|').append(placed.furnitureRotation()).append('\n');
         }
         chunk.getPersistentDataContainer().set(key, PersistentDataType.STRING, encoded.toString());
     }

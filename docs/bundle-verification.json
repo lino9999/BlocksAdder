@@ -1,0 +1,205 @@
+{
+  "recorded_at": "2026-10-26T08:19:08.602882+00:00",
+  "plugin_version": "1.1.0-SNAPSHOT",
+  "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+  "total_assertions": 405,
+  "runs": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:16:22] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot21/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:16:36 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper21/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:16:52 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2611/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:17:06 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper2612/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:17:17] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot2612/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:17:30] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot262/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:17:43 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper262/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:17:55] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-spigot263/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+      "summary": "[09:18:08 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/bundle-server-paper263/console.log",
+      "assertions": 45,
+      "scope": [
+        "bundle document parsing and exact IDs including dots",
+        "strict document and presentation validation",
+        "foreign-document rejection",
+        "production registry activation",
+        "own item presentation and recipe registration",
+        "furniture placement/removal/reload",
+        "transactional item and recipe edits across bundles",
+        "stale preview and exact byte/registry rollback",
+        "resource pack generation"
+      ]
+    }
+  ],
+  "not_full_parity": true,
+  "notes": [
+    "Java21 runtime became usable again; no host security or runtime configuration was changed.",
+    "Paper26.x emitted the previously observed Windows OSHI/Perflib warning before plugin initialization. This is separate from plugin checks.",
+    "One complete process per endpoint; reload is covered. These runs are not complete process restart or native-player acceptance for every module.",
+    "Existing historical flat-schema tests do not prove current bundle-format module compatibility.",
+    "Temporary test source and servers remain ignored after previously rejected cleanup; none enter the JAR or source control."
+  ]
+}

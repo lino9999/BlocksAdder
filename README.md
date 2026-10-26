@@ -2,6 +2,8 @@
 
 # BlocksAdder
 
+Development uses the independent `blocksadder/bundle-1` typed-record content format. See [configuration](docs/configuration.md) and the [implementation/distribution audit](docs/independent-implementation.md). External plugin YAML is not accepted by the development loader.
+
 **Custom items, blocks, furniture, crops and resource packs for Minecraft Spigot and Paper.**
 
 BlocksAdder by **Lino** is a Java plugin for building namespaced server content with YAML. Create items, decorate worlds, register recipes, grow crops and display player stats using the Minecraft client and a server resource pack.
@@ -89,6 +91,7 @@ The development branch additionally provides these commands; they are absent fro
 | `/ba model detach\|info\|bones <rig UUID>` | `blocksadder.model` | Remove or inspect a rig. |
 | `/ba model bone <rig UUID> <bone>` | `blocksadder.model` | Read an animated bone location. |
 | `/ba model color <rig UUID> <bone\|all> <#RRGGBB>` | `blocksadder.model` | Set bone tint. |
+| `/ba model skin <rig UUID> <player\|texture\|reset>` | `blocksadder.model` | Select a player skin or restore the configured skin. |
 | `/ba model glow <rig UUID> <bone\|all> <true\|false>` | `blocksadder.model` | Toggle the enchantment effect. |
 | `/ba model mount <rig UUID> <bone> <player>` | `blocksadder.model` | Use a bone seat. |
 | `/ba model lock <rig UUID> <bone> <true\|false>` | `blocksadder.model` | Control mount locking. |
@@ -123,16 +126,19 @@ Gameplay permissions are `blocksadder.place`, `blocksadder.break`, `blocksadder.
 Create `plugins/BlocksAdder/contents/my_pack/configs/items.yml`:
 
 ```yaml
-namespace: my_pack
-items:
-  sapphire:
-    material: AMETHYST_SHARD
-    display-name: '&bSapphire'
-    lore:
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: sapphire
+    kind: artifact
+    item:
+      base: AMETHYST_SHARD
+      label: '&bSapphire'
+      details:
       - '&7A custom crafting ingredient.'
-    category: materials
-    texture: my_pack:item/sapphire
-    max-stack-size: 64
+      group: materials
+      sprite: my_pack:item/sapphire
+      stack: 64
 ```
 
 Place its texture at `contents/my_pack/resourcepack/assets/my_pack/textures/item/sapphire.png`. Run `/ba validate`, `/ba reload` and `/ba pack build`, then upload the new ZIP if using external hosting. Read [configuration](docs/configuration.md), [world content](docs/world-content.md) and [gameplay](docs/gameplay.md) for complete schemas.

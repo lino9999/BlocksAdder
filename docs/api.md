@@ -20,11 +20,14 @@ Use the public interface in `io.github.lino9999.blocksadder.api`. Declare Blocks
 | Skeletal models | `attachModel`, `playAnimation`, `detachModel`, `modelVariable`, `modelVariables` |
 | Player models | `disguise`, `undisguise`, `playEmote`, `stopEmote`, `emoteState` |
 | Model cameras | `modelCamera(instance, viewer, distance)`, `stopModelCamera(viewer)` |
+| Player skins | `modelSkin(instance, player)`, `modelSkin(instance, texture)`, `resetModelSkin(instance)` |
 | Vehicles | `spawnVehicle`, `mountVehicle`, `vehicleFuel` |
 
 Placement and removal report whether an operation committed. Protection and custom-event cancellation can reject an operation. Model and vehicle instances use UUIDs; they differ from definition IDs. The `player` argument supplies player permission/protection context where supported. Null represents a server-initiated operation and does not bypass cancellable custom events.
 
 Crop growth clamps to maturity and emits `CustomCropGrowEvent` with cause `API`. It preserves the current stage on cancellation or failed regeneration. Player emote commands/API route skeletal definitions to the model controller and retain frame-effect timelines for existing content. `stop-now`/immediate stop skips an optional end animation. Skeletal emote status is available through `emoteState`.
+
+`CustomCropDestroyEvent` exposes natural destruction separately from growth and harvesting. Cancelling it protects the crop and its native source operation where applicable. Skin APIs select existing player or configured texture profiles without implicit profile-update network requests. Live skin shader/runtime acceptance remains tracked in the model guide.
 
 ProtocolLib is optional. Core item/world/model functionality must remain usable without it. Camera, equipment-view masking and typed tile-NBT predicates have adapter-specific requirements. Consult [model behavior](entity-models.md), [equipment](equipment.md) and [verification](development-verification.md) before depending on a development feature.
 

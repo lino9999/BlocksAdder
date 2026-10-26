@@ -67,6 +67,15 @@ public final class ItemWear {
             ItemStack stack,
             int amount,
             java.util.function.Consumer<ItemStack> commit) {
+        return usages(player, stack, amount, commit, returned -> give(player, returned, -1));
+    }
+
+    public static boolean usages(
+            Player player,
+            ItemStack stack,
+            int amount,
+            java.util.function.Consumer<ItemStack> commit,
+            java.util.function.Consumer<ItemStack> returned) {
         if (stack == null || stack.getType().isAir() || !stack.hasItemMeta()) return false;
         var meta = stack.getItemMeta();
         Integer uses =
@@ -88,14 +97,44 @@ public final class ItemWear {
             stack.setItemMeta(meta);
         }
         commit.accept(stack);
-        if (remainder != null)
+        if (remainder != null) returned.accept(remainder);
+        return true;
+    }
+
+    public static void give(Player player, ItemStack offered, int excludedStorageSlot) {
+        ItemStack remaining = offered.clone();
+        if (excludedStorageSlot < 0) {
             player.getInventory()
-                    .addItem(remainder)
+                    .addItem(remaining)
                     .values()
                     .forEach(
                             left ->
                                     player.getWorld()
                                             .dropItemNaturally(player.getLocation(), left));
-        return true;
+            return;
+        }
+        for (int phase = 0; phase < 2 && remaining.getAmount() > 0; phase++)
+            for (int slot = 0; slot < 36 && remaining.getAmount() > 0; slot++) {
+                if (slot == excludedStorageSlot) continue;
+                ItemStack present = player.getInventory().getItem(slot);
+                boolean empty = present == null || present.getType().isAir();
+                if (phase == 0 && !empty && present.isSimilar(remaining)) {
+                    int moved =
+                            Math.min(
+                                    remaining.getAmount(),
+                                    present.getMaxStackSize() - present.getAmount());
+                    if (moved <= 0) continue;
+                    present.setAmount(present.getAmount() + moved);
+                    player.getInventory().setItem(slot, present);
+                    remaining.setAmount(remaining.getAmount() - moved);
+                } else if (phase == 1 && empty) {
+                    ItemStack added = remaining.clone();
+                    added.setAmount(Math.min(remaining.getAmount(), remaining.getMaxStackSize()));
+                    player.getInventory().setItem(slot, added);
+                    remaining.setAmount(remaining.getAmount() - added.getAmount());
+                }
+            }
+        if (remaining.getAmount() > 0)
+            player.getWorld().dropItemNaturally(player.getLocation(), remaining);
     }
 }

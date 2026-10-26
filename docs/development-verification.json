@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-25T09:28:33.001732+00:00",
+  "recorded_at": "2026-10-25T10:05:08.852374+00:00",
   "historical_release_report_unchanged": true,
   "visual_checks": "User-owned; graphical clients are not controlled by the agent.",
   "runs": [
@@ -350,5 +350,30 @@
       }
     ],
     "scope": "Same full member payload across endpoints, as recorded in docs/block-sounds.md; archive ZIP metadata differs."
+  },
+  "crop_destruction_endpoints": [
+    {
+      "server": "spigot21",
+      "java": 25,
+      "jar_sha256": "630d9838f1fc6d3ed43a313e5d7c7eb2f3f900a486a2970cdc5d3fbd986a013e",
+      "summary": "[11:01:02] [Server thread/INFO]: [BlocksAdderCropDestructionProbe] CROP_DESTRUCTION_VERIFICATION: PASS passed=68 failed=0",
+      "passed": true,
+      "local_log": ".work/crop-destruction-server-spigot21/console.log"
+    },
+    {
+      "server": "paper263",
+      "java": 25,
+      "jar_sha256": "630d9838f1fc6d3ed43a313e5d7c7eb2f3f900a486a2970cdc5d3fbd986a013e",
+      "summary": "[11:04:27 INFO]: [BlocksAdderCropDestructionProbe] CROP_DESTRUCTION_VERIFICATION: PASS passed=68 failed=0",
+      "passed": true,
+      "local_log": ".work/crop-destruction-server-paper263/console.log"
+    }
+  ],
+  "bundle_format_verification": {
+    "report": "bundle-verification.json",
+    "jar_sha256": "1f7ff8ad3fd3c4043d4a229aca4428e774e73901f1eba79b185c69461e7ba5f7",
+    "total_assertions": 405,
+    "endpoints": 9,
+    "scope": "Independent document format, editor transactions, basic furniture and resource-pack generation. Separate module/native/restart evidence remains required."
   }
 }

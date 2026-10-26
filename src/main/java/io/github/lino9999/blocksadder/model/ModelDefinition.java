@@ -5,12 +5,19 @@ import java.util.Map;
 
 public record ModelDefinition(String id, float scale, float viewRange, boolean hideBase, boolean selfVisible,
                               float hitboxWidth, float hitboxHeight, List<Bone> bones, Map<String, Animation> animations,
-                              Map<String, byte[]> assets) {
+                              Map<String, byte[]> assets, String skin) {
     public ModelDefinition {
         bones = List.copyOf(bones);
         animations = Map.copyOf(animations);
         assets = Map.copyOf(assets);
     }
+
+    public ModelDefinition(String id, float scale, float viewRange, boolean hideBase, boolean selfVisible,
+                           float hitboxWidth, float hitboxHeight, List<Bone> bones, Map<String, Animation> animations, Map<String, byte[]> assets) {
+        this(id, scale, viewRange, hideBase, selfVisible, hitboxWidth, hitboxHeight, bones, animations, assets, null);
+    }
+
+    public boolean hasPlayerSkin() { return bones.stream().anyMatch(bone -> bone.skinPart() != null); }
 
     public boolean hasExpressions() {
         for (Animation animation : animations.values()) for (ModelEffect effect : animation.effects()) if (effect.script() != null) return true;
@@ -36,9 +43,14 @@ public record ModelDefinition(String id, float scale, float viewRange, boolean h
 
     public record Bone(String name, String parent, Vector pivot, Vector rotation, Vector scale, String item,
                        String generatedModel, float geometryScale, boolean mount, boolean absolutePose, Role role,
-                       float maxHeadPitch, float maxHeadYaw) {
+                       float maxHeadPitch, float maxHeadYaw, PlayerSkinPart skinPart) {
         public Bone {
             if (!Float.isFinite(maxHeadPitch) || !Float.isFinite(maxHeadYaw) || maxHeadPitch < 0 || maxHeadPitch > 180 || maxHeadYaw < 0 || maxHeadYaw > 180) throw new IllegalArgumentException("Head rotation limits must be between zero and 180 degrees.");
+            if (skinPart != null && (item != null || generatedModel != null || mount || role != Role.NORMAL && role != Role.HEAD)) throw new IllegalArgumentException("Player skin bones cannot also select static visuals, equipment or mount roles.");
+        }
+        public Bone(String name, String parent, Vector pivot, Vector rotation, Vector scale, String item,
+                    String generatedModel, float geometryScale, boolean mount, boolean absolutePose, Role role, float maxHeadPitch, float maxHeadYaw) {
+            this(name, parent, pivot, rotation, scale, item, generatedModel, geometryScale, mount, absolutePose, role, maxHeadPitch, maxHeadYaw, null);
         }
         public Bone(String name, String parent, Vector pivot, Vector rotation, Vector scale, String item,
                     String generatedModel, float geometryScale, boolean mount, boolean absolutePose) {

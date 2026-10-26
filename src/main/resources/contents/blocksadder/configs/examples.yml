@@ -1,81 +1,102 @@
-namespace: blocksadder
-
-items:
-  crystal:
-    material: AMETHYST_SHARD
-    display-name: '&bCrystal'
-    lore:
-      - '&7A bright crafting ingredient.'
-    texture: minecraft:item/amethyst_shard
-    category: materials
-    model-data: 10001
-  crystal_block:
-    material: PAPER
-    display-name: '&bCrystal Block'
-    lore:
-      - '&7Place a solid decorative block.'
-    category: building
+format: blocksadder/bundle-1
+bundle: blocksadder
+entries:
+- key: crystal
+  kind: artifact
+  item:
+    base: AMETHYST_SHARD
+    label: '&bCrystal'
+    details:
+    - '&7A bright crafting ingredient.'
+    group: materials
+    sprite: minecraft:item/amethyst_shard
+    variant: 10001
+- key: crystal_block
+  kind: block
+  item:
+    base: PAPER
+    label: '&bCrystal Block'
+    details:
+    - '&7Place a solid decorative block.'
+    group: building
+    sprite: minecraft:block/amethyst_block
+  settings:
+    material: BARRIER
     texture: minecraft:block/amethyst_block
-    block:
-      material: BARRIER
-      texture: minecraft:block/amethyst_block
-      display: true
-  crystal_chair:
-    material: PAPER
-    display-name: '&bCrystal Display'
-    lore:
-      - '&7Place an interactive decoration.'
-    category: furniture
-    texture: minecraft:item/amethyst_shard
-    furniture:
-      width: 0.8
-      height: 1.0
-      scale: 1.0
-      seat: true
-  crystal_pickaxe:
-    material: DIAMOND_PICKAXE
-    display-name: '&bCrystal Pickaxe'
-    category: tools
-    texture: minecraft:item/diamond_pickaxe
-    model-parent: minecraft:item/handheld
+    display: true
+- key: crystal_chair
+  kind: furnishing
+  item:
+    base: PAPER
+    label: '&bCrystal Display'
+    details:
+    - '&7Place an interactive decoration.'
+    group: furniture
+    sprite: minecraft:item/amethyst_shard
+  settings:
+    width: 0.8
+    height: 1.0
+    scale: 1.0
+    seat: true
+- key: crystal_pickaxe
+  kind: artifact
+  item:
+    base: DIAMOND_PICKAXE
+    label: '&bCrystal Pickaxe'
+    group: tools
+    sprite: minecraft:item/diamond_pickaxe
+    parent: minecraft:item/handheld
+  traits:
     durability: 2000
     enchantments:
       minecraft:efficiency: 3
-  berry:
-    material: SWEET_BERRIES
-    display-name: '&dCrystal Berry'
-    category: farming
-    texture: minecraft:item/sweet_berries
+- key: berry
+  kind: artifact
+  item:
+    base: SWEET_BERRIES
+    label: '&dCrystal Berry'
+    group: farming
+    sprite: minecraft:item/sweet_berries
+  traits:
     food:
       nutrition: 4
       saturation: 3.0
-  crystal_seed:
-    material: PAPER
-    display-name: '&aCrystal Seeds'
-    category: farming
-    texture: minecraft:block/wheat_stage0
-    crop:
-      stages:
-        - blocksadder:crystal_seed
-        - blocksadder:crystal_sprout
-        - blocksadder:crystal_crop
-      growth-seconds: 120
-      requires-farmland: true
-  crystal_sprout:
-    material: PAPER
-    display-name: '&aCrystal Sprout'
-    category: farming
-    texture: minecraft:block/wheat_stage3
-  crystal_crop:
-    material: PAPER
-    display-name: '&aMature Crystal Crop'
-    category: farming
-    texture: minecraft:block/wheat_stage7
-  energy_token:
-    material: GLOWSTONE_DUST
-    display-name: '&eEnergy Token'
-    category: consumables
-    texture: minecraft:item/glowstone_dust
+- key: crystal_seed
+  kind: crop
+  item:
+    base: PAPER
+    label: '&aCrystal Seeds'
+    group: farming
+    sprite: minecraft:block/wheat_stage0
+  settings:
+    stages:
+    - blocksadder:crystal_seed
+    - blocksadder:crystal_sprout
+    - blocksadder:crystal_crop
+    growth-seconds: 120
+    requires-farmland: true
+- key: crystal_sprout
+  kind: artifact
+  item:
+    base: PAPER
+    label: '&aCrystal Sprout'
+    group: farming
+    sprite: minecraft:block/wheat_stage3
+- key: crystal_crop
+  kind: artifact
+  item:
+    base: PAPER
+    label: '&aMature Crystal Crop'
+    group: farming
+    sprite: minecraft:block/wheat_stage7
+- key: energy_token
+  kind: artifact
+  item:
+    base: GLOWSTONE_DUST
+    label: '&eEnergy Token'
+    group: consumables
+    sprite: minecraft:item/glowstone_dust
+  traits:
     actions:
       right-click:
         consume: 1
@@ -84,84 +105,98 @@ items:
         sound: minecraft:entity.experience_orb.pickup
         stats:
           blocksadder:energy: 10
-
-categories:
-  materials:
+- key: materials
+  kind: catalog
+  settings:
     title: Materials
-  building:
+- key: building
+  kind: catalog
+  settings:
     title: Building
-  furniture:
+- key: furniture
+  kind: catalog
+  settings:
     title: Furniture
-  tools:
+- key: tools
+  kind: catalog
+  settings:
     title: Tools
-  farming:
+- key: farming
+  kind: catalog
+  settings:
     title: Farming
-  consumables:
+- key: consumables
+  kind: catalog
+  settings:
     title: Consumables
-
-recipes:
-  crystal_block:
+- key: crystal_block
+  kind: recipe
+  settings:
     type: shaped
     result: blocksadder:crystal_block
     shape:
-      - CC
-      - CC
+    - CC
+    - CC
     ingredients:
       C: blocksadder:crystal
-  crystal:
+- key: crystal
+  kind: recipe
+  settings:
     type: shapeless
     result: blocksadder:crystal
     amount: 4
     ingredients:
-      - blocksadder:crystal_block
-  crystal_pickaxe:
+    - blocksadder:crystal_block
+- key: crystal_pickaxe
+  kind: recipe
+  settings:
     type: shaped
     result: blocksadder:crystal_pickaxe
     shape:
-      - CCC
-      - ' S '
-      - ' S '
+    - CCC
+    - ' S '
+    - ' S '
     ingredients:
       C: blocksadder:crystal
       S: minecraft:stick
-
-stats:
-  energy:
+- key: energy
+  kind: meter
+  settings:
     min: 0
     max: 100
     default: 50
-
-huds:
-  energy:
+- key: energy
+  kind: overlay
+  settings:
     stat: blocksadder:energy
     title: '&bEnergy: {value}/{max}'
     type: bossbar
     color: BLUE
     style: SOLID
     visible-by-default: false
-
-entities:
-  crystal_guardian:
+- key: crystal_guardian
+  kind: creature
+  settings:
     type: ZOMBIE
     display-name: '&bCrystal Guardian'
     attributes:
       minecraft:max_health: 40
-
-trees:
-  oak:
+- key: oak
+  kind: tree
+  settings:
     trunk: OAK_LOG
     leaves: OAK_LEAVES
     height: 5
     radius: 2
-
-emotes:
-  celebrate:
+- key: celebrate
+  kind: motion
+  settings:
     duration: 30
     frames:
-      - at: 0
-        swing: true
-        particle: HAPPY_VILLAGER
-        sound: minecraft:entity.player.levelup
-      - at: 10
-        swing: true
-        particle: HAPPY_VILLAGER
+    - at: 0
+      swing: true
+      particle: HAPPY_VILLAGER
+      sound: minecraft:entity.player.levelup
+    - at: 10
+      swing: true
+      particle: HAPPY_VILLAGER

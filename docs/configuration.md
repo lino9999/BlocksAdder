@@ -1,20 +1,76 @@
-# Configuration and resource packs
+# BlocksAdder bundle configuration
 
-BlocksAdder stores settings in `plugins/BlocksAdder/config.yml`. Content YAML files are loaded recursively from `contents/` in sorted path order. Every definition file needs a lowercase `namespace` or the original `info.namespace`; an item key `sapphire` inside namespace `my_pack` becomes `my_pack:sapphire`. Full identifiers are stable and should remain unchanged after placing content in worlds. Ambiguous short identifiers are rejected.
+Server settings live in `plugins/BlocksAdder/config.yml`. Content uses the independently designed `blocksadder/bundle-1` format: a bundle identifier and a list of typed definition records. Flat namespace/item documents and configuration files from other plugins are rejected before a registry is published.
 
-## File layout
+```yaml
+format: blocksadder/bundle-1
+bundle: garden
+entries:
+  - key: sapphire
+    kind: artifact
+    item:
+      base: AMETHYST_SHARD
+      label: '&bSapphire'
+      details: ['&7A bright crafting ingredient.']
+      group: materials
+      visual: garden:sapphire
+      sprite: garden:item/sapphire
+      variant: 10001
+      stack: 64
+    traits:
+      unbreakable: false
+      allow-vanilla-recipes: false
+  - key: sapphire_block
+    kind: block
+    item:
+      base: PAPER
+      label: '&bSapphire Block'
+      sprite: minecraft:block/amethyst_block
+    settings:
+      material: BARRIER
+      texture: minecraft:block/amethyst_block
+      display: true
+  - key: sapphire_block
+    kind: recipe
+    settings:
+      type: shaped
+      result: garden:sapphire_block
+      shape: ['SS', 'SS']
+      ingredients:
+        S: garden:sapphire
+```
+
+The stable ID is `<bundle>:<key>`. Different definition families may share a key; two item-bearing records cannot. Bundle names accept lowercase letters, digits, underscores, dots and hyphens. Keys accept lowercase letters, digits, underscores, dots, slashes and hyphens. Keep saved content IDs stable.
+
+Set `active: false` on a record or the whole bundle to disable it. Unknown document, record and presentation fields, repeated definitions, invalid identifiers and unsupported format versions reject the candidate. `/ba validate` checks a candidate; `/ba reload` validates before publishing it.
+
+The `item` presentation fields are `base`, `label`, `details`, `group`, `visual`, `sprite`, `parent`, `variant` and `stack`. `base` is required. Other inventory-item properties belong in `traits`, including durability, enchantments, attributes, equipment, food and actions. Do not duplicate presentation fields inside traits. Typed world behavior belongs in `settings`.
+
+| Kind | Purpose | Body |
+| --- | --- | --- |
+| `artifact` | Inventory item | `item`, optional `traits` |
+| `block`, `furnishing`, `crop` | Item with block, furniture or crop behavior | `item`, optional `traits`, world `settings` |
+| `recipe`, `catalog` | Recipe or browser category | `settings` |
+| `glyph`, `meter`, `overlay` | Font image, player statistic or HUD | `settings` |
+| `drop-rule`, `block-reward` | Loot or conditional block/crop rewards | `settings` |
+| `motion`, `creature`, `rig`, `vehicle` | Emote, entity, skeletal model or controlled mount | `settings` |
+| `tree`, `ore-field`, `surface-cover`, `tree-field` | Manual tree or automatic generation | `settings` |
+| `fluid`, `flame`, `audio` | Custom liquid, fire or sound | `settings` |
+| `crop-series`, `armor-set`, `armor-effect` | Generated crop stages or equipment definitions | `settings` |
+
+This table describes routing, not acceptance of every rendering mode or option. Read the [development tracker](parity-progress.md) and each module's evidence. Subsystem guides describe settings/traits bodies. Their earlier flat namespace/type examples are historical excerpts, not complete bundle documents. Wrap the relevant body in a record. The packaged [examples](../src/main/resources/contents/blocksadder/configs/examples.yml) are executable complete current-format documents. External plugin YAML is unsupported.
+
+## Resource files
 
 ```text
 plugins/BlocksAdder/
   config.yml
   contents/
-    my_pack/
-      configs/
-        items.yml
-        gameplay.yml
+    garden/
+      definitions.yml
       resourcepack/
         assets/
-          my_pack/
+          garden/
             textures/item/sapphire.png
             models/item/chair.json
             sounds/chime.ogg
@@ -24,43 +80,11 @@ plugins/BlocksAdder/
     BlocksAdder.zip
 ```
 
-The optional top-level `resourcepack/` directory has the highest asset priority. Within content packs, sorted file paths determine asset overwrite priority. Explicit asset files override generated defaults. Conflicting generated definitions are rejected. Do not put private files in an asset tree; only supported resource-pack file types inside `assets/`, plus `pack.png`, are included. Symlinked files are excluded and escaped paths are rejected. YAML files are never packed.
+YAML files beneath `contents/` load in sorted path order. Only resource-pack assets enter the ZIP; YAML and analysis files are excluded. Supply assets you own or may distribute. Top-level `resourcepack/` has highest priority. Symlinked files and escaped paths are rejected. Explicit resource JSON overrides generated defaults.
 
-## Item schema
+`visual` selects a modern item model and defaults to the item's ID. `sprite` is a namespaced texture path without `.png`. `parent` selects generated/handheld geometry. Identity is stored separately from names and numeric model data.
 
-```yaml
-namespace: my_pack
-items:
-  sapphire:
-    enabled: true
-    material: AMETHYST_SHARD
-    display-name: '&bSapphire'
-    lore: ['&7A rare ingredient.']
-    category: materials
-    model: my_pack:sapphire
-    texture: my_pack:item/sapphire
-    model-parent: minecraft:item/generated
-    model-data: 10001
-    max-stack-size: 64
-    unbreakable: false
-    glow: false
-    flags: [HIDE_ATTRIBUTES]
-    enchantments:
-      minecraft:fortune: 1
-    allow-vanilla-recipes: false
-```
-
-`material` must be an item material supported by the running server. `model` defaults to the item's full ID; this is written into the modern item-model component and resolves through `assets/<namespace>/items/<value>.json`. Default generated model geometry lives at `assets/<namespace>/models/item/<value>.json`. `texture` is a namespaced path without `.png`; `model-parent` may be `minecraft:item/handheld` for tools. Supply a model JSON at the generated path to use your own geometry.
-
-`model-data` is an optional float-compatible integer from 0–16,777,216; zero omits it. Identity is stored separately as persistent data and never inferred from a name, texture or numeric model ID. Therefore changing model data does not change the identity used by recipes or placed blocks. No automatic numeric ID allocation/cache cleanup is required.
-
-Stack limits range from 1–99. `durability` sets a positive custom maximum damage on a damageable item. Leather armor accepts `color: '#55CCFF'`. `attributes` is a map of Minecraft attribute names to additive main-hand amounts. `equipment-model` is a namespaced equipment asset and `equipment-slot` is a Bukkit slot such as `CHEST`. Additional equipment assets must be supplied in your resource pack. Food uses a `food` section with `nutrition`, `saturation` and `always-eat`.
-
-An item may have one world-content section: `block`, `furniture` or `crop`. See [world-content.md](world-content.md). Current development additionally consumes `models`, `liquids`, `fires`, `populators`, `decorators` and `tree_populators`, including original generation aliases. Read [entity models](entity-models.md), [fluids/fire](fluids-fire.md), [generation](world-generation.md) and [mining](mining.md) for the new schemas and verification boundaries. Existing top-level sections remain `recipes`, `categories`, `font_images`, `stats`, `huds`, `loot`, `emotes`, `entities`, `trees` and `sounds`.
-
-Development imports common original item keys such as `display_name`, `resource.material`, `resource.model_id`, generated texture lists and `resource.model_path`, and recognizes original block/furniture/crop behaviour sections. Common `recipes.crafting_table`, `cooking`, `stonecutter`, `smithing_table` and `anvil` families normalize into the current recipe registry. This is partial schema compatibility; richer original predicates, return-item actions, shaders and other properties still need their own parity work. Legacy raw `contents/<namespace>/textures`, `models`, `sounds` and other asset directories are mapped into `assets/<namespace>/...` when packing, alongside modern resourcepack folders.
-
-## Resource-pack settings
+## Pack delivery
 
 ```yaml
 resource-pack:
@@ -75,45 +99,14 @@ resource-pack:
     port: 8163
 ```
 
-`/ba pack build` creates `pack/BlocksAdder.zip` and calculates SHA-1 and SHA-256 from the actual ZIP bytes. File order, JSON object keys and ZIP timestamps are stable for the same inputs, including between JVM starts. The generated `pack.mcmeta` declares resource-pack formats 75 through 97, covering the target 1.21.11–26.3 range. Declaring a format range does not validate arbitrary administrator-supplied assets on every client version.
+`/ba pack build` creates `pack/BlocksAdder.zip`, orders its entries deterministically and calculates SHA-1/SHA-256 from the actual bytes. A failed asynchronous build retains the previous published artifact. Upload that exact ZIP for external hosting and configure a direct HTTP(S) URL without credentials or a fragment.
 
-External hosting: upload this exact ZIP to a direct HTTP(S) download URL, set `url`, then `/ba reload`. Re-upload after every asset change before sending the new hash. The URL must not contain credentials or a fragment. Sending appends the current hash as a cache-busting query parameter.
+Built-in hosting exposes only `/BlocksAdder.zip` through GET/HEAD with capped workers. Configure its public URL and a separate available port. It does not configure DNS, forwarding, firewalls or TLS. `auto-apply` requests the pack after joining; `required` handles decline/failure for this plugin's pack UUID.
 
-Built-in hosting: enable `host.enabled`, choose a free TCP port, and set `url` to a public address ending in `/BlocksAdder.zip`, for example `https://assets.example.com/BlocksAdder.zip` behind a reverse proxy. The built-in server exposes only that exact file route through GET/HEAD. It serves from memory, caps workers and returns 503 until the first successful build. It does not configure DNS, router forwarding, firewalls or TLS. The port is separate from the Minecraft game port.
+## Editing and upgrades
 
-`auto-apply` requests the current pack shortly after joining. `required` marks the request as required and handles decline/failure for this plugin's pack UUID. No configured URL means manual requests fail with an English configuration message. Builds run asynchronously, and a failed build retains the previous successfully published in-memory artifact.
+Configuration commands preview changes to items, bundles and recipes. They edit current-format records, preserve unrelated definitions, reject stale previews and restore exact previous file bytes after activation failure where recovery succeeds. Keep backups. Saved placements retain missing IDs so content can be restored later; changed backing blocks are treated as stale without duplicate drops.
 
-## Fonts and sounds
+The historical 1.0.0 preview used another BlocksAdder format. Upgrade content deliberately; the development loader does not silently reinterpret old or third-party documents. API calls that touch worlds, players or registries must run on the server thread.
 
-```yaml
-namespace: my_pack
-font_images:
-  sapphire:
-    character: "\uE001"
-    texture: my_pack:font/sapphire
-    height: 8
-    ascent: 8
-    replace: [':sapphire:']
-sounds:
-  chime:
-    files: ['my_pack:chime']
-    subtitle: Sapphire chime
-```
-
-The texture belongs at `assets/my_pack/textures/font/sapphire.png`, and the sound at `assets/my_pack/sounds/chime.ogg`. A glyph's `font` defaults to `minecraft:default`; custom font IDs generate a separate provider file and require font-aware text rendering from an integration. Default-font generation references Minecraft's standard font includes so normal text remains available. User-supplied font JSON overrides generated files and must merge any desired providers.
-
-See [gameplay.md](gameplay.md) for permission-aware aliases, recipes, loot, stats/HUDs, right-click actions and simple emote timelines.
-
-Development extensions have separate guides: [native blocks](native-blocks.md), [mining](mining.md), [models/disguises](entity-models.md), [vehicles](vehicles.md), [crop growth and geometry](crop-growth.md), [armor equipment assets](equipment.md), [liquids/fire](fluids-fire.md), [automatic generation](world-generation.md), [recipe return/repair behavior](recipes-parity.md), and [transactional configuration commands](content-administration.md). Their tested scope and open requirements are retained in each guide and the [parity tracker](parity-progress.md).
-
-## Validation and reload
-
-`/ba validate` parses settings, every content file, item prototypes, recipes, gameplay definitions and world-content definitions without replacing live content. Duplicate IDs, invalid references and unsupported values reject the candidate. `/ba reload` repeats validation, publishes the candidate and reconfigures services. Service activation failures restore the previous registry/settings and attempt to restore services; failures are logged. Fix the file and validate again. Keep a backup before large content edits.
-
-Removing a definition does not automatically erase its saved placement identity; temporarily missing content can be restored. Backing blocks changed externally are treated as stale without creating duplicate custom drops. Never change persistent content IDs merely to rename their display text.
-
-## Version references
-
-Server Java requirements follow [Paper's requirements](https://docs.papermc.io/paper/getting-started/). Pack metadata uses the [modern min_format/max_format schema](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w31a). The baseline client has [split block/item texture atlases](https://www.minecraft.net/en-us/article/minecraft-java-edition-1-21-11), and [26.3 uses pack format 97.1](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3). Custom models must keep textures within a compatible atlas; administrator assets need interactive client acceptance.
-
-Generated metadata uses integer `max_format: 97`; Mojang defines an integer maximum as including every minor version of that major format, so the range includes 97.1. This metadata declaration does not certify every custom asset across the range.
+Pack metadata declares formats 75 through 97, including 97.1. This follows [Mojang's format-range specification](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w31a) and [26.3 format 97.1](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3). These declarations do not certify arbitrary supplied assets. The user performs appearance checks; server/generated-data verification is recorded separately.

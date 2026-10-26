@@ -13,7 +13,7 @@ This report describes the supplied artifact, not a claim of complete behavioral 
 | Bukkit entry point | `dev.lone.itemsadder.Main` |
 | Declared API minimum | `1.14`; not evidence that every packaged implementation works on that version |
 | Required plugin | ProtocolLib |
-| ZIP inventory | 2,197 entries; 2,095 files; 103 directory occurrences |
+| ZIP inventory | 2,197 entries; 2,094 files; 103 directory occurrences |
 | JVM class inventory | 1,946 class files; all parsed for constant-pool and member metadata |
 | Class file versions | 1,834 version 65 (Java 21); 44 version 52 (Java 8); 68 version 50 (Java 6) |
 | Public API package | 74 classes, including nested classes; 773 public/protected method records including constructors and bridge methods |

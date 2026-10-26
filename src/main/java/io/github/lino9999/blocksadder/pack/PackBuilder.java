@@ -107,6 +107,8 @@ public final class PackBuilder {
         copyAssets(entries, root.resolve("contents"), maxBytes);
         copyAssets(entries, root.resolve("resourcepack"), maxBytes);
         EquipmentAssetCompiler.append(entries, registry);
+        io.github.lino9999.blocksadder.model.PlayerEquipmentModels.append(entries, registry);
+        io.github.lino9999.blocksadder.model.PlayerSkinAssets.append(entries, registry, root);
         io.github.lino9999.blocksadder.sound.SoundAssetCompiler.append(entries, registry, rewriteSounds);
         io.github.lino9999.blocksadder.blockstate.NativeBlockAssetCompiler.appendBlockstates(entries, registry, root);
         io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendBlockstates(entries, registry, root);

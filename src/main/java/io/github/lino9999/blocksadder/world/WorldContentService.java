@@ -79,6 +79,9 @@ public final class WorldContentService implements Listener, AutoCloseable {
     private final ItemService items;
     private final ChunkContentStore store;
     private final io.github.lino9999.blocksadder.loot.ContentLootService contentLoot;
+    private final io.github.lino9999.blocksadder.crop.CropDestructionService cropDestruction;
+    private final Map<BlockPosition, Integer> pendingCropRemovals = new HashMap<>();
+    private final Set<BlockPosition> furnitureTransitions = new java.util.HashSet<>();
     private final NamespacedKey helperKey;
     private final NamespacedKey entityKey;
     private final Map<BlockPosition, PlacedContent> loaded = new HashMap<>();
@@ -93,6 +96,8 @@ public final class WorldContentService implements Listener, AutoCloseable {
     private java.util.function.BiConsumer<Entity, ConfigurationSection> entityInitializer = (entity, config) -> { };
     private WorldBlockStates blockStates;
     private WorldBlockBehavior blockBehavior;
+    private WorldFurniture furniture;
+    private java.util.function.Consumer<Entity> entityCleanup = entity -> {};
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds = io.github.lino9999.blocksadder.sound.ContentSoundSink.NONE;
     private java.util.function.BiPredicate<Location, String> nativeTreeGenerator;
     private java.util.function.Predicate<Block> coldBiome = block -> block.getTemperature() <= .15;
@@ -102,6 +107,11 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     public void setBlockStates(WorldBlockStates blockStates) { this.blockStates = java.util.Objects.requireNonNull(blockStates); }
     public void setBlockBehavior(WorldBlockBehavior blockBehavior) { this.blockBehavior = java.util.Objects.requireNonNull(blockBehavior); }
+    public void setFurniture(WorldFurniture furniture) {
+        this.furniture = java.util.Objects.requireNonNull(furniture);
+        furniture.setHelperRemoval(this::removeHelper);
+    }
+    public void setEntityCleanup(java.util.function.Consumer<Entity> cleanup) { entityCleanup = java.util.Objects.requireNonNull(cleanup); }
     public void setSounds(io.github.lino9999.blocksadder.sound.ContentSoundSink sounds) { this.sounds = java.util.Objects.requireNonNull(sounds); }
     public void setNativeTreeGenerator(java.util.function.BiPredicate<Location, String> generator) { nativeTreeGenerator = java.util.Objects.requireNonNull(generator); }
     public void setColdBiomePredicate(java.util.function.Predicate<Block> predicate) { coldBiome = java.util.Objects.requireNonNull(predicate); }
@@ -116,6 +126,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         this.registry = registry;
         this.items = items;
         this.contentLoot = new io.github.lino9999.blocksadder.loot.ContentLootService(registry, items);
+        this.cropDestruction = new io.github.lino9999.blocksadder.crop.CropDestructionService(plugin, this);
         this.store = new ChunkContentStore(plugin);
         this.helperKey = new NamespacedKey(plugin, "world_helper");
         this.entityKey = new NamespacedKey(plugin, "entity_id");
@@ -123,6 +134,8 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     public void reload() {
         requireServerThread();
+        if (!furnitureTransitions.isEmpty()) throw new IllegalStateException("World content cannot reload during a furniture replacement.");
+        cropDestruction.close();
         contentLoot.reload();
         Map<String, io.github.lino9999.blocksadder.crop.CropGrowthPolicy> policies = new HashMap<>();
         Map<String, io.github.lino9999.blocksadder.crop.CropLayout> layouts = new HashMap<>();
@@ -155,6 +168,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     @Override
     public void close() {
         requireServerThread();
+        cropDestruction.close();
         closed = true;
         if (growthTask != null) growthTask.cancel();
         growthTask = null;
@@ -185,7 +199,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
             String placementId = definition.get().options().getString("crop.placement-id");
             if (placementId != null) definition = registry.get().find(placementId);
         }
-        if (closed || definition.isEmpty() || location.getWorld() == null) return false;
+        if (closed || definition.isEmpty() || location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
         Optional<ContentKind> kind = kind(definition.get());
         if (kind.isEmpty()) return false;
         Block target = location.getBlock();
@@ -198,6 +212,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         CustomContentPlaceEvent custom = new CustomContentPlaceEvent(target.getLocation(), canonicalId, kind.get(), player);
         Bukkit.getPluginManager().callEvent(custom);
         if (custom.isCancelled()) return false;
+        if (kind.get() == ContentKind.FURNITURE && furniture != null && !furniture.canPlace(location.clone(), canonicalId, face, location.getYaw(), player)) return false;
         BlockState previous = target.getState();
         if (nativeData == null) target.setType(collision, false);
         else target.setBlockData(nativeData, false);
@@ -211,15 +226,21 @@ public final class WorldContentService implements Listener, AutoCloseable {
             return false;
         }
         PlacedContent placed = new PlacedContent(BlockPosition.of(target), canonicalId, kind.get(),
-                Math.round(location.getYaw() / 90.0f) * 90.0f, target.getBlockData().getAsString(), 0,
+                kind.get() == ContentKind.FURNITURE ? location.getYaw() : Math.round(location.getYaw() / 90.0f) * 90.0f, target.getBlockData().getAsString(), 0,
                 kind.get() == ContentKind.CROP ? nextGrowth(settings) : 0, face);
         try {
             register(placed);
+            if (placed.kind() == ContentKind.FURNITURE && furniture != null) {
+                if (!furniture.placed(target.getLocation(), canonicalId, face, placed.yaw(), player)) throw new IllegalStateException("Furniture footprint could not be committed.");
+                placed.origin(furniture.origin(target.getLocation()));
+                placed.blockData(target.getBlockData().getAsString());
+            }
             render(placed);
             save(placed.position().chunk());
             if (blockStates != null && placed.kind() == ContentKind.BLOCK) blockStates.track(target.getLocation(), canonicalId, target.getBlockData());
             if (blockBehavior != null) blockBehavior.placed(target.getLocation(), canonicalId);
             if (placed.kind() == ContentKind.BLOCK) sounds.placed(target.getLocation(), canonicalId, player);
+            if (placed.kind() == ContentKind.FURNITURE && furniture != null) furniture.completePlacement(target.getLocation());
             return true;
         } catch (RuntimeException exception) {
             unregister(placed);
@@ -232,13 +253,19 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     public Optional<String> identify(Block block) {
         requireServerThread();
-        PlacedContent placed = loaded.get(BlockPosition.of(block));
+        PlacedContent placed = managed(block);
         return placed == null || !consistent(placed) ? Optional.empty() : Optional.of(placed.id());
+    }
+
+    public Optional<ContentKind> kind(Block block) {
+        requireServerThread();
+        PlacedContent placed = managed(block);
+        return placed == null || !consistent(placed) ? Optional.empty() : Optional.of(placed.kind());
     }
 
     public String inspect(Location location) {
         requireServerThread();
-        PlacedContent placed = loaded.get(BlockPosition.of(location));
+        PlacedContent placed = managed(location.getBlock());
         if (placed == null || !consistent(placed)) return "No custom content at this location.";
         return placed.id() + " | " + placed.kind().name().toLowerCase(Locale.ROOT) + " | " + placed.position().coordinates()
                 + (placed.kind() == ContentKind.CROP ? " | stage " + placed.stage() : "");
@@ -247,8 +274,31 @@ public final class WorldContentService implements Listener, AutoCloseable {
     public Optional<BlockFace> placementFace(Location location) {
         requireServerThread();
         if (location.getWorld() == null || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return Optional.empty();
-        PlacedContent placed = loaded.get(BlockPosition.of(location));
+        PlacedContent placed = managed(location.getBlock());
         return placed == null || !consistent(placed) ? Optional.empty() : Optional.of(placed.face());
+    }
+
+    public Optional<Location> placementOrigin(Location location) {
+        requireServerThread();
+        if (location.getWorld() == null) return Optional.empty();
+        PlacedContent placed = managed(location.getBlock());
+        return placed == null || !consistent(placed) ? Optional.empty() : Optional.of(placed.origin());
+    }
+
+    public int furnitureRotation(Location location) {
+        requireServerThread();
+        PlacedContent placed = location.getWorld() == null ? null : managed(location.getBlock());
+        return placed == null || placed.kind() != ContentKind.FURNITURE || !consistent(placed) ? 0 : placed.furnitureRotation();
+    }
+
+    public boolean setFurnitureRotation(Location location, int value) {
+        requireServerThread();
+        if (value < 0 || value > 7) throw new IllegalArgumentException("Furniture frame rotation must be between 0 and 7.");
+        PlacedContent placed = location.getWorld() == null ? null : managed(location.getBlock());
+        if (placed == null || placed.kind() != ContentKind.FURNITURE || !consistent(placed) || furnitureTransitions.contains(placed.position())) return false;
+        placed.furnitureRotation(value);
+        save(placed.position().chunk());
+        return true;
     }
 
     public int count() {
@@ -393,6 +443,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         if (placements == null) return;
         store.write(event.getChunk(), placements.values());
         for (PlacedContent placed : placements.values()) {
+            if (placed.kind() == ContentKind.FURNITURE && furniture != null) furniture.unloaded(placed.position().location());
             if (blockStates != null) blockStates.untrack(placed.position().location());
             if (blockBehavior != null) blockBehavior.unloaded(placed.position().location());
             removeHelpers(placed);
@@ -405,7 +456,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     public void onInteract(PlayerInteractEvent event) {
         if (closed || event.getHand() != EquipmentSlot.HAND || event.getClickedBlock() == null
                 || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY) return;
-        PlacedContent clicked = loaded.get(BlockPosition.of(event.getClickedBlock()));
+        PlacedContent clicked = managed(event.getClickedBlock());
         if (event.getAction() == Action.LEFT_CLICK_BLOCK && clicked != null) {
             if (clicked.kind() == ContentKind.BLOCK) return;
             event.setCancelled(true);
@@ -413,6 +464,11 @@ public final class WorldContentService implements Listener, AutoCloseable {
             return;
         }
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && clicked != null) {
+            if (clicked.kind() == ContentKind.BLOCK && !event.getPlayer().isSneaking() && furniture != null && event.getPlayer().hasPermission("blocksadder.use")
+                    && event.getPlayer().getGameMode() != GameMode.SPECTATOR && furniture.interact(clicked.position().location(), event.getPlayer(), null)) {
+                event.setCancelled(true);
+                return;
+            }
             if (clicked.kind() == ContentKind.CROP && event.getItem() != null && event.getItem().getType() == Material.BONE_MEAL) {
                 event.setCancelled(true);
                 fertilize(clicked, event.getPlayer());
@@ -422,7 +478,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
                 event.setCancelled(true);
                 return;
             }
-            if (clicked.kind() == ContentKind.FURNITURE && sit(clicked, event.getPlayer())) {
+            if (clicked.kind() == ContentKind.FURNITURE && interactFurniture(clicked, event.getPlayer(), null)) {
                 event.setCancelled(true);
                 return;
             }
@@ -443,7 +499,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onNativePlace(BlockPlaceEvent event) {
         if (syntheticPlacement) return;
-        if (loaded.containsKey(BlockPosition.of(event.getBlock()))) {
+        if (managed(event.getBlock()) != null) {
             event.setCancelled(true);
             return;
         }
@@ -453,10 +509,10 @@ public final class WorldContentService implements Listener, AutoCloseable {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
         if (syntheticBreak) return;
-        PlacedContent placed = loaded.get(BlockPosition.of(event.getBlock()));
+        PlacedContent placed = managed(event.getBlock());
         if (placed == null) {
             PlacedContent above = loaded.get(BlockPosition.of(event.getBlock()).above());
-            if (above != null && above.kind() == ContentKind.CROP) {
+            if (above != null && above.kind() == ContentKind.CROP && !vulnerableCrop(event.getBlock().getRelative(BlockFace.UP))) {
                 event.setCancelled(true);
                 Text.send(event.getPlayer(), "Harvest the crop before breaking its supporting block.");
             } else vanillaLoot(event);
@@ -497,6 +553,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         event.setCancelled(true);
         if (event.getDamager() instanceof Player player) {
             PlacedContent placed = loaded.get(position);
+            if (placed != null && placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), player, event.getEntity())) return;
             if (placed != null) breakContent(placed, player, false, false);
         }
     }
@@ -508,10 +565,10 @@ public final class WorldContentService implements Listener, AutoCloseable {
         PlacedContent placed = position == null ? null : loaded.get(position);
         if (placed == null) return;
         event.setCancelled(true);
+        if (placed.kind() == ContentKind.FURNITURE && furniture != null && !furniture.acceptsHit(placed.position().location(), event.getPlayer(), event.getRightClicked())) return;
         if (placed.kind() == ContentKind.CROP && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE_MEAL) fertilize(placed, event.getPlayer());
         else if (placed.kind() == ContentKind.CROP) harvest(placed, event.getPlayer());
-        else if (event.getPlayer().isSneaking()) breakContent(placed, event.getPlayer(), false, false);
-        else sit(placed, event.getPlayer());
+        else if (!interactFurniture(placed, event.getPlayer(), event.getRightClicked()) && event.getPlayer().isSneaking()) breakContent(placed, event.getPlayer(), false, false);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -533,7 +590,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        if (event.getBlocks().stream().anyMatch(block -> protectedMovement(block, event.getDirection()))) event.setCancelled(true);
+        if (event.getBlocks().stream().anyMatch(block -> protectedPiston(block) || protectedPiston(block.getRelative(event.getDirection())))) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -543,22 +600,22 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFlow(BlockFromToEvent event) {
-        if (loaded.containsKey(BlockPosition.of(event.getToBlock()))) event.setCancelled(true);
+        if (managed(event.getToBlock()) != null && !vulnerableCrop(event.getToBlock())) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBurn(BlockBurnEvent event) {
-        if (protectedBlock(event.getBlock())) event.setCancelled(true);
+        if (protectedBlock(event.getBlock()) && !cropDestruction.support(event.getBlock())) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
-        if (protectedBlock(event.getBlock())) event.setCancelled(true);
+        if (protectedBlock(event.getBlock()) && !(event.getBlock().getType() == Material.FARMLAND && cropDestruction.support(event.getBlock()))) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityChange(EntityChangeBlockEvent event) {
-        if (protectedBlock(event.getBlock())) event.setCancelled(true);
+        if (protectedBlock(event.getBlock()) && !(event.getBlock().getType() == Material.FARMLAND && cropDestruction.support(event.getBlock()))) event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -592,7 +649,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
                 || target.getY() < target.getWorld().getMinHeight() || target.getY() >= target.getWorld().getMaxHeight()) return false;
         if (player != null && (!player.hasPermission("blocksadder.place") || !contentPermission(player, definition, kind, "place") || player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.ADVENTURE)) return false;
         BlockPosition position = BlockPosition.of(target);
-        if (loaded.containsKey(position)) return false;
+        if (managed(target) != null) return false;
         Map<BlockPosition, PlacedContent> chunk = chunks.get(position.chunk());
         int limit = Math.max(1, plugin.getConfig().getInt("world.max-content-per-chunk", 128));
         int totalLimit = Math.max(limit, plugin.getConfig().getInt("world.max-loaded-content", 100000));
@@ -612,6 +669,46 @@ public final class WorldContentService implements Listener, AutoCloseable {
             if (crop.getBoolean("requires-farmland", true)) return ground.getType() == Material.FARMLAND;
         }
         return true;
+    }
+
+    private PlacedContent managed(Block block) {
+        if (!block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)) return null;
+        PlacedContent placed = loaded.get(BlockPosition.of(block));
+        if (placed != null || furniture == null) return placed;
+        return furniture.anchor(block).map(BlockPosition::of).map(loaded::get).orElse(null);
+    }
+
+    private void clearBacking(PlacedContent placed) {
+        Block block = placed.position().location().getBlock();
+        if (block.getBlockData().getAsString().equals(placed.blockData())) block.setType(Material.AIR, false);
+    }
+
+    private boolean interactFurniture(PlacedContent placed, Player player, Entity clicked) {
+        if (placed.kind() != ContentKind.FURNITURE || !player.hasPermission("blocksadder.use") || player.getGameMode() == GameMode.SPECTATOR) return false;
+        if (furniture != null && furniture.interact(placed.position().location(), player, clicked)) return true;
+        return sit(placed, player);
+    }
+
+    public boolean useFurniture(Location location, Player player, Entity clicked) {
+        requireServerThread();
+        if (closed || location == null || player == null || location.getWorld() == null
+                || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
+        PlacedContent placed = managed(location.getBlock());
+        if (placed == null || placed.kind() != ContentKind.FURNITURE || !consistent(placed)
+                || furnitureTransitions.contains(placed.position())) return false;
+        if (furniture != null && !furniture.acceptsHit(placed.position().location(), player, clicked)) return false;
+        if (interactFurniture(placed, player, clicked)) return true;
+        return player.isSneaking() && breakContent(placed, player, false, false);
+    }
+
+    public boolean attackFurniture(Location location, Player player, Entity clicked) {
+        requireServerThread();
+        if (closed || location == null || player == null || location.getWorld() == null
+                || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
+        PlacedContent placed = managed(location.getBlock());
+        if (placed == null || placed.kind() != ContentKind.FURNITURE
+                || furniture != null && !furniture.acceptsHit(placed.position().location(), player, clicked)) return false;
+        return breakContent(placed, player, false, false);
     }
 
     private boolean cropSpace(BlockPosition position, String id) {
@@ -679,8 +776,62 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     public boolean breakPlaced(Location location, Player player, boolean dropItems) {
         requireServerThread();
-        PlacedContent placed = loaded.get(BlockPosition.of(location));
+        PlacedContent placed = managed(location.getBlock());
         return placed != null && breakContent(placed, player, false, false, dropItems);
+    }
+
+    public boolean replacingFurniture() { requireServerThread(); return !furnitureTransitions.isEmpty(); }
+
+    public boolean replaceFurniture(Location location, String nextId, Player player) {
+        requireServerThread();
+        if (closed || furniture == null || location.getWorld() == null) return false;
+        PlacedContent previous = managed(location.getBlock());
+        ItemDefinition next = registry.get().find(nextId).orElse(null);
+        if (previous == null || previous.kind() != ContentKind.FURNITURE || next == null || kind(next).filter(ContentKind.FURNITURE::equals).isEmpty()
+                || furnitureTransitions.contains(previous.position()) || !consistent(previous)) return false;
+        ItemDefinition old = registry.get().find(previous.id()).orElse(null);
+        if (old == null || player != null && (!player.hasPermission("blocksadder.use") || player.getGameMode() == GameMode.SPECTATOR)) return false;
+        Location anchor = previous.position().location();
+        var replacementEvent = new io.github.lino9999.blocksadder.api.event.CustomContentReplaceEvent(anchor, previous.id(), next.id().toString(), player);
+        Bukkit.getPluginManager().callEvent(replacementEvent);
+        if (replacementEvent.isCancelled() || closed || loaded.get(previous.position()) != previous) return false;
+        Block target = anchor.getBlock();
+        WorldFurniture.Change change = furniture.prepareReplacement(anchor, next.id().toString(), previous.face(), previous.yaw(), player);
+        if (change == null || closed || loaded.get(previous.position()) != previous) return false;
+        PlacedContent replacement = null;
+        boolean previousHelpersRemoved = false;
+        furnitureTransitions.add(previous.position());
+        try {
+            if (!change.commit()) return false;
+            replacement = new PlacedContent(previous.position(), next.id().toString(), ContentKind.FURNITURE, previous.yaw(), target.getBlockData().getAsString(), 0, 0, previous.face());
+            replacement.origin(previous.origin());
+            replacement.furnitureRotation(previous.furnitureRotation());
+            render(replacement);
+            if (closed || loaded.get(previous.position()) != previous) throw new IllegalStateException("Furniture anchor changed during replacement.");
+            loaded.put(previous.position(), replacement);
+            chunks.get(previous.position().chunk()).put(previous.position(), replacement);
+            if (blockBehavior != null) { blockBehavior.removed(anchor); blockBehavior.placed(anchor, replacement.id()); }
+            save(previous.position().chunk());
+            previousHelpersRemoved = true;
+            removeHelpers(previous);
+            change.complete();
+            return true;
+        } catch (RuntimeException | LinkageError failure) {
+            if (replacement != null) removeHelpers(replacement);
+            try { change.rollback(); }
+            catch (RuntimeException | LinkageError rollback) { failure.addSuppressed(rollback); }
+            if (!closed) {
+                loaded.put(previous.position(), previous);
+                chunks.computeIfAbsent(previous.position().chunk(), ignored -> new LinkedHashMap<>()).put(previous.position(), previous);
+                try {
+                    if (previousHelpersRemoved) render(previous);
+                    if (blockBehavior != null) { blockBehavior.removed(anchor); blockBehavior.placed(anchor, previous.id()); }
+                    save(previous.position().chunk());
+                } catch (RuntimeException | LinkageError rollback) { failure.addSuppressed(rollback); }
+            }
+            plugin.getLogger().log(java.util.logging.Level.WARNING, "Could not replace furniture " + previous.id() + " with " + next.id(), failure);
+            return false;
+        } finally { furnitureTransitions.remove(previous.position()); }
     }
 
     public boolean breakExplosion(Location location) {
@@ -690,12 +841,77 @@ public final class WorldContentService implements Listener, AutoCloseable {
         return placed != null && placed.kind() == ContentKind.BLOCK && breakContent(placed, null, false, false, true, true);
     }
 
+    public io.github.lino9999.blocksadder.crop.CropDestructionService cropDestruction() { return cropDestruction; }
+    public boolean syntheticBreak() { return syntheticBreak; }
+    public boolean syntheticPlacement() { return syntheticPlacement; }
+
+    public boolean vulnerableCrop(Block block) {
+        requireServerThread();
+        if (closed || !block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4)) return false;
+        PlacedContent placed = loaded.get(BlockPosition.of(block));
+        ItemDefinition definition = placed == null || placed.kind() != ContentKind.CROP ? null : registry.get().find(placed.id()).orElse(null);
+        return definition != null && definition.options().getBoolean("crop.natural-destruction", definition.options().getBoolean("crop.original-schema", false)) && consistent(placed);
+    }
+
+    public interface CropRemoval extends AutoCloseable {
+        void commit(boolean drops);
+        @Override void close();
+    }
+
+    public Optional<CropRemoval> prepareCropRemoval(Location location, io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause cause, Player player) {
+        requireServerThread();
+        if (!vulnerableCrop(location.getBlock())) return Optional.empty();
+        PlacedContent placed = loaded.get(BlockPosition.of(location));
+        ItemDefinition definition = registry.get().find(placed.id()).orElseThrow();
+        if (cause == io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause.SUPPORT_BREAK && player != null
+                && (!player.hasPermission("blocksadder.break") || !contentPermission(player, definition, ContentKind.CROP, "break"))) return Optional.empty();
+        var destroy = new io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent(location, placed.id(), placed.stage(), cause, player);
+        Bukkit.getPluginManager().callEvent(destroy);
+        if (destroy.isCancelled()) return Optional.empty();
+        var event = new CustomContentBreakEvent(location, placed.id(), ContentKind.CROP, player, false);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled() || closed || loaded.get(placed.position()) != placed) return Optional.empty();
+        var trigger = switch (cause) {
+            case WATER -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.WATER;
+            case LAVA -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.LAVA;
+            case TRAMPLE -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.TRAMPLE;
+            case FARMLAND_DRY, EXPLOSION -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.FARMLAND_DRY;
+            default -> io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.BREAK;
+        };
+        Player lootPlayer = cause == io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause.SUPPORT_BREAK ? player : null;
+        var plan = contentLoot.plan(placed.id(), placed.stage(), trigger, location, lootPlayer);
+        boolean permittedDrops = event.isDropItems() && (player == null || player.getGameMode() != GameMode.CREATIVE);
+        pendingCropRemovals.merge(placed.position(), 1, Integer::sum);
+        return Optional.of(new CropRemoval() {
+            private boolean finished;
+            @Override public void commit(boolean drops) {
+                requireServerThread();
+                if (finished) return;
+                close();
+                if (closed || loaded.get(placed.position()) != placed || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return;
+                unregister(placed);
+                clearBacking(placed);
+                save(placed.position().chunk());
+                if (!drops || !permittedDrops) return;
+                if (plan.configured() && !plan.successful() && definition.options().getBoolean("crop.drop_seed_if_immature", true))
+                    location.getWorld().dropItemNaturally(location.clone().add(.5, .5, .5), items.create(definition.options().getString("crop.seed-item", placed.id()), 1));
+                contentLoot.execute(plan, location, lootPlayer);
+            }
+            @Override public void close() {
+                requireServerThread();
+                if (finished) return;
+                finished = true;
+                pendingCropRemovals.computeIfPresent(placed.position(), (key, count) -> count <= 1 ? null : count - 1);
+            }
+        });
+    }
+
     public boolean rollbackPlacement(Location location, String expectedId) {
         requireServerThread();
         PlacedContent placed = loaded.get(BlockPosition.of(location));
         if (placed == null || !placed.id().equals(expectedId)) return false;
         unregister(placed);
-        location.getBlock().setType(Material.AIR, false);
+        clearBacking(placed);
         save(placed.position().chunk());
         return true;
     }
@@ -709,6 +925,8 @@ public final class WorldContentService implements Listener, AutoCloseable {
     }
 
     private boolean breakContent(PlacedContent placed, Player player, boolean harvest, boolean protectionAlreadyChecked, boolean dropItems, boolean explosion) {
+        if (furnitureTransitions.contains(placed.position())) return false;
+        if (pendingCropRemovals.containsKey(placed.position())) return false;
         if (!consistent(placed)) return false;
         if (player != null && (!player.hasPermission("blocksadder.break") || player.getGameMode() == GameMode.SPECTATOR || player.getGameMode() == GameMode.ADVENTURE)) return false;
         ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
@@ -717,6 +935,14 @@ public final class WorldContentService implements Listener, AutoCloseable {
         CustomContentBreakEvent event = new CustomContentBreakEvent(placed.position().location(), placed.id(), placed.kind(), player, harvest);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
+        CropRemoval supportedCrop = null;
+        Block above = placed.position().location().getBlock().getRelative(BlockFace.UP);
+        if (placed.kind() != ContentKind.CROP && vulnerableCrop(above)) {
+            var prepared = prepareCropRemoval(above.getLocation(), explosion ? io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause.EXPLOSION : io.github.lino9999.blocksadder.api.event.CustomCropDestroyEvent.Cause.SUPPORT_BREAK, player);
+            if (prepared.isEmpty()) return false;
+            supportedCrop = prepared.get();
+        }
+        try {
         boolean configuredDrops = definition == null || placed.kind() != ContentKind.BLOCK || definition.options().getBoolean("block.drop-when-mined", true);
         boolean override = false;
         if (!configuredDrops && player != null && definition != null && placed.kind() == ContentKind.BLOCK) {
@@ -740,20 +966,27 @@ public final class WorldContentService implements Listener, AutoCloseable {
         Location dropLocation = placed.position().location().add(0.5, 0.5, 0.5);
         var cropPlan = placed.kind() == ContentKind.CROP ? contentLoot.plan(placed.id(), placed.stage(), io.github.lino9999.blocksadder.loot.ContentLootService.Trigger.BREAK, placed.position().location(), player) : null;
         var blockPlan = placed.kind() == ContentKind.BLOCK && allowedDrops && (explosion || !override && !specialLootTool(player, placed.position().location().getBlock())) ? contentLoot.block(placed.id(), placed.position().location(), player) : null;
+        List<ItemStack> rewards = new ArrayList<>();
         boolean baseDrops = drops && (!explosion || blockPlan == null || !blockPlan.matched());
         if (baseDrops && definition != null) {
             boolean seedDrop = placed.kind() != ContentKind.CROP || mature(placed, settings(definition, ContentKind.CROP)) || settings(definition, ContentKind.CROP).getBoolean("drop_seed_if_immature", true);
             if (cropPlan != null && cropPlan.configured()) seedDrop = !cropPlan.successful() && definition.options().getBoolean("crop.drop_seed_if_immature", true);
-            if (seedDrop) dropLocation.getWorld().dropItemNaturally(dropLocation, items.create(definition.options().getString("crop.seed-item", placed.id()), 1));
-            if (placed.kind() == ContentKind.CROP && (cropPlan == null || !cropPlan.configured()) && mature(placed, settings(definition, ContentKind.CROP))) dropHarvest(placed, settings(definition, ContentKind.CROP));
+            if (placed.kind() == ContentKind.CROP && definition.options().getBoolean("crop.original-schema", false) && cropPlan != null && !cropPlan.configured()) seedDrop = false;
+            if (seedDrop) rewards.add(items.create(definition.options().getString("crop.seed-item", placed.id()), 1));
+            if (placed.kind() == ContentKind.CROP && (cropPlan == null || !cropPlan.configured()) && mature(placed, settings(definition, ContentKind.CROP))) {
+                for (String drop : settings(definition, ContentKind.CROP).getStringList("drops")) rewards.add(parseDrop(drop));
+            }
         }
         unregister(placed);
-        placed.position().location().getBlock().setType(Material.AIR, false);
+        clearBacking(placed);
         save(placed.position().chunk());
+        if (supportedCrop != null) supportedCrop.commit(allowedDrops);
+        for (ItemStack reward : rewards) dropLocation.getWorld().dropItemNaturally(dropLocation, reward);
         if (drops && cropPlan != null && cropPlan.configured()) contentLoot.execute(cropPlan, placed.position().location(), player);
         if (blockPlan != null && blockPlan.matched()) contentLoot.execute(blockPlan, placed.position().location(), player);
         if (placed.kind() == ContentKind.BLOCK) sounds.broken(placed.position().location(), placed.id(), player);
         return true;
+        } finally { if (supportedCrop != null) supportedCrop.close(); }
     }
 
     private static boolean specialLootTool(Player player, Block block) {
@@ -773,6 +1006,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     }
 
     private boolean harvest(PlacedContent placed, Player player) {
+        if (pendingCropRemovals.containsKey(placed.position())) return false;
         ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
         if (definition != null && placed.kind() == ContentKind.CROP && definition.options().getBoolean("crop.original-schema", false)) return interactCropLoot(placed, player);
         if (definition == null || placed.kind() != ContentKind.CROP || !mature(placed, settings(definition, ContentKind.CROP))) return false;
@@ -870,6 +1104,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     private void load(Chunk chunk) {
         ChunkPosition key = ChunkPosition.of(chunk);
         if (chunks.containsKey(key)) return;
+        if (furniture != null) furniture.recover(chunk);
         Map<BlockPosition, PlacedContent> placements = new LinkedHashMap<>();
         chunks.put(key, placements);
         for (PlacedContent placed : store.read(chunk)) {
@@ -889,6 +1124,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
             var policy = cropGrowth.get(placed.id());
             if (placed.kind() == ContentKind.CROP && policy != null && policy.sampled()) placed.nextGrowth(System.currentTimeMillis());
             if (blockBehavior != null) blockBehavior.loaded(block.getLocation(), placed.id());
+            if (placed.kind() == ContentKind.FURNITURE && furniture != null) furniture.loaded(block.getLocation(), placed.id(), placed.face(), placed.yaw());
             if (placed.kind() == ContentKind.CROP) growthQueue.addLast(placed);
             try {
                 render(placed);
@@ -909,6 +1145,8 @@ public final class WorldContentService implements Listener, AutoCloseable {
     }
 
     private void unregister(PlacedContent placed) {
+        pendingCropRemovals.remove(placed.position());
+        if (placed.kind() == ContentKind.FURNITURE && furniture != null) furniture.removed(placed.position().location());
         if (blockBehavior != null) blockBehavior.removed(placed.position().location());
         if (blockStates != null) blockStates.untrack(placed.position().location());
         removeHelpers(placed);
@@ -925,6 +1163,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         ConfigurationSection config = settings(definition, placed.kind());
         if (config == null) return;
         Location origin = placed.position().location();
+        if (placed.kind() == ContentKind.FURNITURE && furniture != null && furniture.render(origin, placed.id(), placed.face(), placed.yaw(), entity -> markHelper(entity, placed))) return;
         String modelId = placed.id();
         if (placed.kind() == ContentKind.CROP) {
             List<String> stages = config.getStringList("stages");
@@ -971,15 +1210,26 @@ public final class WorldContentService implements Listener, AutoCloseable {
 
     private void removeHelpers(PlacedContent placed) {
         for (UUID uuid : List.copyOf(placed.helpers())) {
-            helpers.remove(uuid);
-            Entity entity = helperEntities.remove(uuid);
-            if (entity != null) {
-                entity.eject();
-                entity.remove();
-            }
+            Entity entity = helperEntities.get(uuid);
+            if (entity != null) removeHelper(entity);
+            else { helpers.remove(uuid); helperEntities.remove(uuid); }
         }
         placed.helpers().clear();
         placed.seat(null);
+    }
+
+    private void removeHelper(Entity entity) {
+        UUID id = entity.getUniqueId();
+        BlockPosition position = helpers.remove(id);
+        helperEntities.remove(id);
+        PlacedContent placed = position == null ? null : loaded.get(position);
+        if (placed != null) {
+            placed.helpers().remove(id);
+            if (id.equals(placed.seat())) placed.seat(null);
+        }
+        entityCleanup.accept(entity);
+        entity.eject();
+        entity.remove();
     }
 
     private void growBatch() {
@@ -1024,6 +1274,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
         java.util.Objects.requireNonNull(cause, "Crop growth cause");
         if (closed || location.getWorld() == null || stages < 1 || !location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) return false;
         PlacedContent placed = loaded.get(BlockPosition.of(location.getBlock()));
+        if (placed != null && pendingCropRemovals.containsKey(placed.position())) return false;
         if (placed == null || placed.kind() != ContentKind.CROP || !consistent(placed)) return false;
         ItemDefinition definition = registry.get().find(placed.id()).orElse(null);
         if (definition == null) return false;
@@ -1072,6 +1323,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     private void flushAndClear() {
         for (ChunkPosition key : List.copyOf(chunks.keySet())) save(key);
         for (PlacedContent placed : List.copyOf(loaded.values())) {
+            if (placed.kind() == ContentKind.FURNITURE && furniture != null) furniture.unloaded(placed.position().location());
             if (blockStates != null) blockStates.untrack(placed.position().location());
             if (blockBehavior != null) blockBehavior.unloaded(placed.position().location());
             removeHelpers(placed);
@@ -1082,22 +1334,30 @@ public final class WorldContentService implements Listener, AutoCloseable {
         helpers.clear();
         helperEntities.clear();
         growthQueue.clear();
+        pendingCropRemovals.clear();
     }
 
     private boolean protectedMovement(Block block, BlockFace direction) {
         return protectedBlock(block) || protectedBlock(block.getRelative(direction));
     }
 
+    private boolean protectedPiston(Block block) {
+        PlacedContent placed = managed(block);
+        if (placed != null && !vulnerableCrop(block)) return true;
+        PlacedContent above = loaded.get(BlockPosition.of(block).above());
+        return above != null && above.kind() == ContentKind.CROP && !vulnerableCrop(block.getRelative(BlockFace.UP));
+    }
+
     private boolean protectedBlock(Block block) {
         BlockPosition key = BlockPosition.of(block);
         PlacedContent above = loaded.get(key.above());
-        return loaded.containsKey(key) || (above != null && above.kind() == ContentKind.CROP);
+        return managed(block) != null || (above != null && above.kind() == ContentKind.CROP);
     }
 
     private boolean protectedExplosionBlock(Block block) {
         BlockPosition key = BlockPosition.of(block);
         PlacedContent above = loaded.get(key.above());
-        if (above != null && above.kind() == ContentKind.CROP) return true;
+        if (above != null && above.kind() == ContentKind.CROP) return !vulnerableCrop(block.getRelative(BlockFace.UP));
         PlacedContent placed = loaded.get(key);
         if (placed != null && placed.kind() == ContentKind.BLOCK && blockBehavior != null && blockBehavior.handlesExplosion(block)) return false;
         return placed != null;
@@ -1166,6 +1426,7 @@ public final class WorldContentService implements Listener, AutoCloseable {
     }
 
     private boolean consistent(PlacedContent placed) {
+        if (pendingCropRemovals.containsKey(placed.position()) && loaded.get(placed.position()) == placed) return true;
         if (blockStates != null && placed.kind() == ContentKind.BLOCK) blockStates.restore(placed.position().location());
         if (placed.position().location().getBlock().getBlockData().getAsString().equals(placed.blockData())) return true;
         unregister(placed);

@@ -134,12 +134,20 @@ final class AdvancedContentCommands {
                 usage(args, 3, "model variables <rig UUID>");
                 Text.send(sender, "Model variables: " + plugin.models().variables(UUID.fromString(args[2])));
             }
+            case "skin" -> {
+                usage(args, 4, "model skin <rig UUID> <player|texture|reset>");
+                UUID rig = UUID.fromString(args[2]);
+                Player source = Bukkit.getPlayerExact(args[3]);
+                boolean success = args[3].equalsIgnoreCase("reset") ? plugin.models().resetSkin(rig) : source != null ? plugin.models().skin(rig, source) : plugin.models().skin(rig, args[3]);
+                if (!success) throw new IllegalArgumentException("The model has no available player-skin binding.");
+                Text.send(sender, "Model skin updated.");
+            }
             case "variable" -> {
                 usage(args, 5, "model variable <rig UUID> <name> <value>");
                 double value = plugin.models().variable(UUID.fromString(args[2]), args[3], Double.parseDouble(args[4]));
                 Text.send(sender, "Model variable updated: " + args[3] + " = " + value);
             }
-            default -> throw new IllegalArgumentException("Use /ba model list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable.");
+            default -> throw new IllegalArgumentException("Use /ba model list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable|skin.");
         }
     }
 

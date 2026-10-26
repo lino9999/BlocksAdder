@@ -57,6 +57,7 @@ public final class ModelService implements Listener, AutoCloseable {
     private final NamespacedKey modelKey;
     private final NamespacedKey disguiseKey;
     private final NamespacedKey helperKey;
+    private final NamespacedKey skinKey;
     private final Map<UUID, Rig> rigs = new HashMap<>();
     private final Map<UUID, UUID> targets = new HashMap<>();
     private final Map<UUID, UUID> helpers = new HashMap<>();
@@ -72,6 +73,7 @@ public final class ModelService implements Listener, AutoCloseable {
         modelKey = new NamespacedKey(plugin, "model_id");
         disguiseKey = new NamespacedKey(plugin, "disguise_id");
         helperKey = new NamespacedKey(plugin, "model_helper");
+        skinKey = new NamespacedKey(plugin, "model_skin");
         protocol = ModelProtocol.create(plugin);
         cameras = new ModelCameraService(plugin, protocol, (id, player) -> {
             Rig rig = rigs.get(id);
@@ -119,10 +121,14 @@ public final class ModelService implements Listener, AutoCloseable {
         int bones = rigs.values().stream().mapToInt(rig -> rig.definition.bones().size()).sum();
         int boneLimit = Math.clamp(plugin.getConfig().getInt("models.max-total-bones", 4096), 1, 65536);
         UUID previous = targets.get(entity.getUniqueId());
+        String skin = entity.getPersistentDataContainer().get(skinKey, PersistentDataType.STRING);
+        org.bukkit.profile.PlayerProfile profile = definition.hasPlayerSkin() ? skinProfile(entity, definition, skin) : null;
         int previousBones = previous == null ? 0 : rigs.get(previous).definition.bones().size();
         if (previous == null && rigs.size() >= limit || bones - previousBones + definition.bones().size() > boneLimit) throw new IllegalArgumentException("The active model limit has been reached.");
         if (previous != null) remove(previous, false);
         Rig rig = new Rig(UUID.randomUUID(), entity, definition, disguise, tick);
+        rig.skinOverride = skin;
+        rig.skinProfile = profile;
         rigs.put(rig.id, rig);
         targets.put(entity.getUniqueId(), rig.id);
         try {
@@ -239,7 +245,7 @@ public final class ModelService implements Listener, AutoCloseable {
 
     public String inspect(UUID id) {
         Rig rig = rigs.get(id);
-        return rig == null ? "No active model with that UUID." : rig.definition.id() + " | target " + rig.target.getUniqueId() + " | " + rig.displays.size() + " displays | animation " + (rig.animation == null ? "none" : rig.animation);
+        return rig == null ? "No active model with that UUID." : rig.definition.id() + " | target " + rig.target.getUniqueId() + " | " + (rig.displays.size() + rig.skinLayers.size()) + " displays | animation " + (rig.animation == null ? "none" : rig.animation);
     }
 
     public int count() { return rigs.size(); }
@@ -252,8 +258,12 @@ public final class ModelService implements Listener, AutoCloseable {
     public Optional<ModelDefinition> definition(UUID id) { requireThread(); Rig rig = rigs.get(id); return rig == null ? Optional.empty() : Optional.of(rig.definition); }
 
     public record State(String model, boolean disguise, String animation, boolean loop, long elapsed, Float yaw, boolean head, boolean sounds,
-                        Map<String, Double> variables, Map<String, Integer> colors, Set<UUID> excluded, Map<String, Vector> poses, Map<String, Boolean> glints) {
+                        Map<String, Double> variables, Map<String, Integer> colors, Set<UUID> excluded, Map<String, Vector> poses, Map<String, Boolean> glints, String skin) {
         public State { variables = Map.copyOf(variables); colors = Map.copyOf(colors); excluded = Set.copyOf(excluded); poses = Map.copyOf(poses); glints = Map.copyOf(glints); }
+        public State(String model, boolean disguise, String animation, boolean loop, long elapsed, Float yaw, boolean head, boolean sounds,
+                     Map<String, Double> variables, Map<String, Integer> colors, Set<UUID> excluded, Map<String, Vector> poses, Map<String, Boolean> glints) {
+            this(model, disguise, animation, loop, elapsed, yaw, head, sounds, variables, colors, excluded, poses, glints, null);
+        }
         public State(String model, boolean disguise, String animation, boolean loop, long elapsed, Float yaw, boolean head, boolean sounds,
                      Map<String, Double> variables, Map<String, Integer> colors, Set<UUID> excluded, Map<String, Vector> poses) {
             this(model, disguise, animation, loop, elapsed, yaw, head, sounds, variables, colors, excluded, poses, Map.of());
@@ -264,12 +274,14 @@ public final class ModelService implements Listener, AutoCloseable {
         requireThread();
         Rig rig = rigs.get(id);
         return rig == null ? Optional.empty() : Optional.of(new State(rig.definition.id(), rig.disguise, rig.animation, rig.forcedLoop,
-                tick - rig.animationStart, rig.fixedYaw, rig.trackHead, rig.stopSounds, rig.variables, rig.colors, rig.excluded, rig.poseHistory, rig.glints));
+                tick - rig.animationStart, rig.fixedYaw, rig.trackHead, rig.stopSounds, rig.variables, rig.colors, rig.excluded, rig.poseHistory, rig.glints, rig.skinOverride));
     }
 
     void restoreState(Player player, State state) {
         player.getPersistentDataContainer().set(state.disguise() ? disguiseKey : modelKey, PersistentDataType.STRING, state.model());
         player.getPersistentDataContainer().remove(state.disguise() ? modelKey : disguiseKey);
+        if (state.skin() == null) player.getPersistentDataContainer().remove(skinKey);
+        else player.getPersistentDataContainer().set(skinKey, PersistentDataType.STRING, state.skin());
         if (!plugin.isEnabled() || closing || !player.isOnline() || player.isDead() || definition(state.model()).isEmpty()) return;
         UUID id = attach(player, state.model(), state.disguise());
         Rig rig = requireRig(id);
@@ -294,6 +306,60 @@ public final class ModelService implements Listener, AutoCloseable {
     public boolean cameraAvailable() { return cameras.available(); }
     public String cameraReason() { return cameras.reason(); }
     public Optional<Location> cameraPosition(Player player) { requireThread(); return cameras.position(player); }
+
+    public boolean skin(UUID id, Player player) {
+        requireThread();
+        Rig rig = requireRig(id);
+        if (!rig.definition.hasPlayerSkin()) return false;
+        replaceSkin(rig, PlayerSkins.checked(player.getPlayerProfile()));
+        return true;
+    }
+
+    public boolean skin(UUID id, String texture) {
+        requireThread();
+        Rig rig = requireRig(id);
+        if (!rig.definition.hasPlayerSkin()) return false;
+        replaceSkin(rig, PlayerSkins.profile(PlayerSkins.parse(texture)));
+        return true;
+    }
+
+    private void replaceSkin(Rig rig, org.bukkit.profile.PlayerProfile profile) {
+        String serialized = PlayerSkins.serialize(profile);
+        rig.skinOverride = serialized;
+        rig.target.getPersistentDataContainer().set(skinKey, PersistentDataType.STRING, serialized);
+        updateSkin(rig, profile);
+        render(rig, rig.target.getLocation());
+    }
+
+    public boolean resetSkin(UUID id) {
+        requireThread();
+        Rig rig = requireRig(id);
+        if (!rig.definition.hasPlayerSkin()) return false;
+        var profile = skinProfile(rig.target, rig.definition, null);
+        rig.skinOverride = null;
+        rig.target.getPersistentDataContainer().remove(skinKey);
+        updateSkin(rig, profile);
+        render(rig, rig.target.getLocation());
+        return true;
+    }
+
+    private org.bukkit.profile.PlayerProfile skinProfile(Entity target, ModelDefinition definition, String override) {
+        if (override != null) return PlayerSkins.restore(override);
+        if (definition.skin() != null) return PlayerSkins.profile(PlayerSkins.parse(definition.skin()));
+        if (target instanceof Player player) return PlayerSkins.checked(player.getPlayerProfile());
+        return Bukkit.createPlayerProfile(new UUID(0, 15));
+    }
+
+    private void updateSkin(Rig rig, org.bukkit.profile.PlayerProfile profile) {
+        rig.skinProfile = profile;
+        rig.skinNoInterpolationUntil = tick + 1;
+        ItemStack source = PlayerSkins.item(profile);
+        for (Bone bone : rig.definition.bones()) if (bone.skinPart() != null) {
+            ItemStack stack = decorate(rig, bone.name(), source);
+            rig.displays.get(bone.name()).setItemStack(stack);
+            rig.skinLayers.get(bone.name()).setItemStack(stack);
+        }
+    }
 
     public boolean camera(UUID id, Player viewer, boolean enabled) {
         requireThread();
@@ -352,7 +418,9 @@ public final class ModelService implements Listener, AutoCloseable {
         rig.displays.forEach((name, display) -> {
             if (!bone.equals("all") && !name.equals(bone)) return;
             rig.glints.put(name, enchanted);
-            display.setItemStack(decorate(rig, name, display.getItemStack()));
+            display.setItemStack(decorate(rig, name, rig.equipmentSources.getOrDefault(name, display.getItemStack())));
+            ItemDisplay layer = rig.skinLayers.get(name);
+            if (layer != null) layer.setItemStack(display.getItemStack());
         });
     }
 
@@ -409,6 +477,12 @@ public final class ModelService implements Listener, AutoCloseable {
 
     private void spawn(Rig rig) {
         for (Bone bone : rig.definition.bones()) {
+            if (bone.skinPart() != null) {
+                ItemStack skin = decorate(rig, bone.name(), PlayerSkins.item(rig.skinProfile));
+                rig.displays.put(bone.name(), spawnDisplay(rig, bone, skin));
+                rig.skinLayers.put(bone.name(), spawnDisplay(rig, bone, skin));
+                continue;
+            }
             EquipmentSlot equipment = equipmentSlot(rig, bone);
             if (bone.item() == null && bone.generatedModel() == null && equipment == null) continue;
             ItemStack stack;
@@ -423,7 +497,21 @@ public final class ModelService implements Listener, AutoCloseable {
                 stack.setItemMeta(meta);
             }
             ItemStack rendered = decorate(rig, bone.name(), stack);
-            ItemDisplay display = rig.target.getWorld().spawn(origin(rig.target.getLocation()), ItemDisplay.class, entity -> {
+            rig.displays.put(bone.name(), spawnDisplay(rig, bone, rendered));
+        }
+        rig.hitbox = rig.target.getWorld().spawn(origin(rig.target.getLocation()), Interaction.class, entity -> {
+            entity.setInteractionWidth(rig.definition.hitboxWidth() * rig.definition.scale());
+            entity.setInteractionHeight(rig.definition.hitboxHeight() * rig.definition.scale());
+            entity.setResponsive(true);
+            entity.setGravity(false);
+            entity.setPersistent(false);
+            entity.setVisibleByDefault(false);
+            mark(entity, rig);
+        });
+    }
+
+    private ItemDisplay spawnDisplay(Rig rig, Bone bone, ItemStack rendered) {
+        return rig.target.getWorld().spawn(origin(rig.target.getLocation()), ItemDisplay.class, entity -> {
                 entity.setItemStack(rendered);
                 entity.setItemDisplayTransform(switch (bone.role()) {
                     case HAT_PIVOT -> ItemDisplay.ItemDisplayTransform.HEAD;
@@ -442,17 +530,6 @@ public final class ModelService implements Listener, AutoCloseable {
                 entity.setInterpolationDuration(1);
                 entity.setInterpolationDelay(0);
                 mark(entity, rig);
-            });
-            rig.displays.put(bone.name(), display);
-        }
-        rig.hitbox = rig.target.getWorld().spawn(origin(rig.target.getLocation()), Interaction.class, entity -> {
-            entity.setInteractionWidth(rig.definition.hitboxWidth() * rig.definition.scale());
-            entity.setInteractionHeight(rig.definition.hitboxHeight() * rig.definition.scale());
-            entity.setResponsive(true);
-            entity.setGravity(false);
-            entity.setPersistent(false);
-            entity.setVisibleByDefault(false);
-            mark(entity, rig);
         });
     }
 
@@ -474,7 +551,8 @@ public final class ModelService implements Listener, AutoCloseable {
     private ItemStack equipmentItem(Rig rig, EquipmentSlot slot) {
         if (rig.hiddenEquipment.contains(slot) || !(rig.target instanceof LivingEntity living) || living.getEquipment() == null) return new ItemStack(Material.AIR);
         ItemStack value = living.getEquipment().getItem(slot);
-        return value == null ? new ItemStack(Material.AIR) : value.clone();
+        if (value == null) return new ItemStack(Material.AIR);
+        return slot == EquipmentSlot.HEAD ? PlayerEquipmentModels.helmet(value) : value.clone();
     }
 
     private void refreshEquipment(Rig rig) {
@@ -495,7 +573,13 @@ public final class ModelService implements Listener, AutoCloseable {
         var meta = stack.getItemMeta();
         if (meta == null) return stack;
         var component = meta.getCustomModelDataComponent();
-        component.setColors(List.of(Color.fromRGB(tick < rig.damageUntil ? 0xff5555 : rig.colors.getOrDefault(name, 0xffffff))));
+        int tint = tick < rig.damageUntil ? 0xff5555 : rig.colors.getOrDefault(name, 0xffffff);
+        component.setColors(List.of(Color.fromRGB(tint)));
+        if (meta instanceof org.bukkit.inventory.meta.LeatherArmorMeta leather && meta.getItemModel() != null && meta.getItemModel().getNamespace().equals("blocksadder")
+                && meta.getItemModel().getKey().startsWith("equipment_head/")) {
+            Color color = leather.getColor();
+            leather.setColor(Color.fromRGB(color.getRed() * ((tint >> 16) & 255) / 255, color.getGreen() * ((tint >> 8) & 255) / 255, color.getBlue() * (tint & 255) / 255));
+        }
         meta.setCustomModelDataComponent(component);
         if (rig.glints.containsKey(name)) meta.setEnchantmentGlintOverride(rig.glints.get(name));
         stack.setItemMeta(meta);
@@ -555,6 +639,11 @@ public final class ModelService implements Listener, AutoCloseable {
         Matrix4f root = new Matrix4f().rotationY((float) Math.toRadians(-(rig.fixedYaw == null ? location.getYaw() : rig.fixedYaw))).scale(rig.definition.scale());
         Molang.Context context = rig.expressions ? context(rig, location, time) : Molang.Context.ZERO;
         rig.expressionContext = context;
+        if (rig.skinProfile != null && rig.skinOverride == null && rig.definition.skin() == null && rig.target instanceof Player player && tick % 20 == 0) {
+            var current = PlayerSkins.checked(player.getPlayerProfile());
+            if (!java.util.Objects.equals(current.getTextures().getSkin() == null ? null : current.getTextures().getSkin().toString(), rig.skinProfile.getTextures().getSkin() == null ? null : rig.skinProfile.getTextures().getSkin().toString())
+                    || PlayerSkins.slim(current) != PlayerSkins.slim(rig.skinProfile)) updateSkin(rig, current);
+        }
         refreshEquipment(rig);
         Map<String, Matrix4f> matrices = new HashMap<>();
         Map<String, Bone> boneDefinitions = new HashMap<>();
@@ -585,8 +674,16 @@ public final class ModelService implements Listener, AutoCloseable {
             ItemDisplay display = rig.displays.get(bone.name());
             if (display != null && !display.isDead()) {
                 display.teleport(origin(location));
-                display.setTransformationMatrix(new Matrix4f(matrix).scale(bone.geometryScale()));
+                display.setTransformationMatrix(bone.skinPart() == null ? new Matrix4f(matrix).scale(bone.geometryScale()) : PlayerSkinMath.transform(matrix, bone.skinPart(), PlayerSkins.slim(rig.skinProfile), false));
+                if (bone.skinPart() != null) display.setInterpolationDuration(tick <= rig.skinNoInterpolationUntil ? 0 : 1);
                 display.setInterpolationDelay(0);
+            }
+            ItemDisplay skinLayer = rig.skinLayers.get(bone.name());
+            if (skinLayer != null && !skinLayer.isDead()) {
+                skinLayer.teleport(origin(location));
+                skinLayer.setTransformationMatrix(PlayerSkinMath.transform(matrix, bone.skinPart(), PlayerSkins.slim(rig.skinProfile), true));
+                skinLayer.setInterpolationDuration(tick <= rig.skinNoInterpolationUntil ? 0 : 1);
+                skinLayer.setInterpolationDelay(0);
             }
             Slime seat = rig.seats.get(bone.name());
             if (seat != null && !seat.isDead()) {
@@ -711,9 +808,11 @@ public final class ModelService implements Listener, AutoCloseable {
                     && viewer.getLocation().distanceSquared(rig.location) <= rig.definition.viewRange() * rig.definition.viewRange();
             if (visible && rig.viewers.add(id)) {
                 rig.displays.values().forEach(entity -> viewer.showEntity(plugin, entity));
+                rig.skinLayers.values().forEach(entity -> viewer.showEntity(plugin, entity));
                 if (rig.hitbox != null) viewer.showEntity(plugin, rig.hitbox);
             } else if (!visible && rig.viewers.remove(id)) {
                 rig.displays.values().forEach(entity -> viewer.hideEntity(plugin, entity));
+                rig.skinLayers.values().forEach(entity -> viewer.hideEntity(plugin, entity));
                 if (rig.hitbox != null) viewer.hideEntity(plugin, rig.hitbox);
             }
         }
@@ -744,7 +843,8 @@ public final class ModelService implements Listener, AutoCloseable {
     }
 
     private void tint(Rig rig) {
-        rig.displays.forEach((name, display) -> display.setItemStack(decorate(rig, name, display.getItemStack())));
+        rig.displays.forEach((name, display) -> display.setItemStack(decorate(rig, name, rig.equipmentSources.getOrDefault(name, display.getItemStack()))));
+        rig.skinLayers.forEach((name, display) -> display.setItemStack(decorate(rig, name, display.getItemStack())));
     }
 
     private void remove(UUID id, boolean eraseTag) {
@@ -758,6 +858,7 @@ public final class ModelService implements Listener, AutoCloseable {
             if (viewer != null) showBase(viewer, rig);
         }
         List<Entity> owned = new ArrayList<>(rig.displays.values());
+        owned.addAll(rig.skinLayers.values());
         owned.addAll(rig.seats.values());
         if (rig.hitbox != null) owned.add(rig.hitbox);
         for (Entity entity : owned) {
@@ -768,6 +869,7 @@ public final class ModelService implements Listener, AutoCloseable {
         if (eraseTag) {
             rig.target.getPersistentDataContainer().remove(modelKey);
             rig.target.getPersistentDataContainer().remove(disguiseKey);
+            rig.target.getPersistentDataContainer().remove(skinKey);
         }
     }
 
@@ -904,6 +1006,7 @@ public final class ModelService implements Listener, AutoCloseable {
         private final boolean expressions;
         private final long created;
         private final Map<String, ItemDisplay> displays = new HashMap<>();
+        private final Map<String, ItemDisplay> skinLayers = new HashMap<>();
         private final Map<String, Slime> seats = new HashMap<>();
         private final Map<String, Integer> colors = new HashMap<>();
         private final Map<String, Boolean> glints = new HashMap<>();
@@ -936,6 +1039,9 @@ public final class ModelService implements Listener, AutoCloseable {
         private long damageUntil;
         private long dyingUntil;
         private double distance;
+        private org.bukkit.profile.PlayerProfile skinProfile;
+        private String skinOverride;
+        private long skinNoInterpolationUntil;
 
         private Rig(UUID id, Entity target, ModelDefinition definition, boolean disguise, long created) {
             this.id = id;

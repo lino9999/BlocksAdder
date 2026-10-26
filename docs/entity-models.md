@@ -87,9 +87,84 @@ The supplied reference artifact's `itemsadder/m/ec` parser and `dx`, `ea`, `dt`,
 
 The importer therefore treats these exported samples as absolute poses in world units, preserves their 20 Hz timing and YXZ rotations, and supports normal/head/pivot/mount/locator bone types. It does not reapply a parent animation to an already baked absolute pose. Legacy metadata contains no cube geometry. Supply the accompanying geometry and textures in your own resource-pack assets; the compiler creates modern item wrappers referencing `namespace:entity/<source-stem>/<bone>` by default. `legacy-model-root` and `bone-models` can override that convention. No original code, shaders or bundled model assets are incorporated.
 
-Dynamic player-skin shaders, special hand/hat equipment slots, original pre-generated scale variants and precise original player pose correction offsets remain unimplemented. The new renderer supplies display scaling directly instead of selecting exported geometry variants. Importing the metadata is narrower than verifying identical rendering of every original exported model.
+Precise original player pose correction offsets remain under parity work. The new renderer supplies display scaling directly instead of selecting original exported scale variants. Importing the metadata is narrower than verifying identical rendering of every original exported model.
 
 Observed legacy camelCase roles (`hatPivot`, `leftHandPivot`, `rightHandPivot`), `mount`/`locator` names and empty normal roles are normalized and retained. Bind-pose positions and frame positions both use the export's world units. Equipment pivots do not generate references to nonexistent static geometry. Legacy geometry authored for armor-stand HEAD display context and the original private correction offsets still require explicit parity work; these parser fixes do not certify identical visuals.
+
+## Player equipment and head tracking
+
+YAML bones can select `role: head`, `hatPivot`, `leftHandPivot` or `rightHandPivot`. Equipment pivots mirror cloned target equipment and cannot also select a static item/model. Left/right pivots follow the player's physical main-hand preference. Inventory changes update the displayed clones; tint/glint changes preserve the underlying native inventory. Hand displays use their corresponding third-person item contexts. Head bones follow public player pitch/yaw, bounded by `max-head-rotation-x` and `max-head-rotation-y` (defaults 70 and 45 degrees). Legacy `maxHeadRotX`/`maxHeadRotY` use the same limits. Child locators and hat pivots follow the resulting head matrix. Independent private body/head yaw is unavailable through the public Bukkit pose API.
+
+Armor helmets select independently generated six-face geometry using the equipment family's humanoid armor UVs, rather than the flat inventory icon. Native and authored equipment layers, leather dye, overlays, model tint and glint retain separate rendering data. The rendering clone carries its trim-pattern selector; the native item, dye, trim and equipment component remain unchanged. Generated item models include the eight vanilla helmet families, all 18 vanilla trim patterns and their palettes, including same-material darker variants. Authored `equipments` and native `assets/<namespace>/equipment/<family>.json` humanoid layers feed the same compiler. Custom datapack trim materials/patterns and 26.3-specific equipment `trim_overrides` still require separate support.
+
+The compiler preserves existing item-atlas sources. Base atlas palette paths support 1.21.11 through 26.2. A format-97 overlay supplies the new palette identifiers used by 26.3, preserving existing metadata, overlay registrations and applicable authored item-atlas sources. It copies authored palette pixels into their new directory when needed. This follows Mojang's [26.3 palette changes](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3) and [pack version/overlay rules](https://www.minecraft.net/en-us/article/minecraft-snapshot-25w31a). Generated geometry, palette selection and server metadata are testable without a graphical client; alignment, lighting and rendered armor/trim appearance remain user visual checks.
+
+## Live player skins
+
+```yaml
+namespace: my_pack
+models:
+  player_rig:
+    view-range: 48
+    bones:
+      head: {skin-part: head, origin: [0, 24, 0]}
+      body: {skin-part: body, origin: [0, 24, 0]}
+      left_arm: {skin-part: left_arm, origin: [5, 22, 0]}
+      right_arm: {skin-part: right_arm, origin: [-5, 22, 0]}
+      left_leg: {skin-part: left_leg, origin: [1.9, 12, 0]}
+      right_leg: {skin-part: right_leg, origin: [-1.9, 12, 0]}
+```
+
+Skin parts use the target player's public `PlayerProfile` by default. A nonplayer target without a configured skin uses the game's built-in wide Steve texture. The optional model-level `skin` field accepts an HTTPS `textures.minecraft.net/texture/<hash>` URL or a bounded Base64 Minecraft texture property. A Base64 property retains `metadata.model: slim`. Ports, credentials, query strings, fragments, other hosts/protocols and oversized properties are rejected. The server does not fetch/upload skin images or invoke profile updates. URL-bearing profiles use public `SkullMeta`; texture-less profiles use generated special models pointing to the matching built-in slim/wide default texture. This avoids the name-completion lookup documented by the public [SkullMeta contract](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/meta/SkullMeta.html#setOwnerProfile(org.bukkit.profile.PlayerProfile)). No Minecraft textures are included in this plugin.
+
+`/ba model skin <rig-UUID> <player|texture|reset>` and `ModelService.skin`/`resetSkin` replace or reset a rig's source. The public integration API offers `modelSkin` and `resetModelSkin`. Texture and UUID-only default overrides persist on the target and survive reload/restart. Emote state restoration preserves the previous override. Changes to a target's already available profile are checked once per second; this does not request a network profile update.
+
+Each part has two directly owned profile-head displays for its base and outer layer. Arms use the profile's classic/slim width, while head and clothing overlays retain their independent vanilla dilation. The shader remaps native head-face UVs to the chosen body-part region. The six observed exported names (`phead_0`, `pbody_2`, `parm_left_3`, `parm_right_4`, `pleg_left_1`, `pleg_right_5`) select these parts during legacy import; they require no original static model files. Skin bones cannot simultaneously select a static item/model, an equipment pivot or a mount role.
+
+The pack adds independent entity shaders only when a skin model exists. Separate overlays supply the interfaces used by 26.1/26.2 and 26.3; existing helmet palette and user overlay registrations remain present. Conflicting authored core entity shaders cause an explicit pack-build error. Owned skin geometry carries a bounded transform marker, restored before projection and fog calculations; native entity positions, hitboxes, locators, range checks and culling positions remain at the target. Skin bone translations and effective scale are bounded to 64 to preserve that encoding across the supported 256-block maximum viewer range. This path needs no ProtocolLib dependency and contains no Minecraft-internal imports.
+
+Rendered appearance remains a user check. Exact legacy player pose retargeting, skin tint/glint behavior, custom datapack trim extensions and interoperability with separately authored core shaders remain open parity requirements; the server/protocol and shader-compiler checks below do not establish those as complete.
+
+## Skeletal player emotes
+
+```yaml
+namespace: my_pack
+emotes:
+  dance:
+    model: my_pack:player_rig
+    animation: dance
+    end-animation: dance_end
+    can-player-move: false
+    third-person-view: true
+    hide-equipment:
+      helmet: true
+      mainhand: true
+      offhand: true
+    track-player-rotation:
+      head: true
+      body: false
+    cancel-conditions:
+      sneak: true
+      take-damage: true
+      deal-damage: true
+      in-air: true
+    on-stop:
+      stop-sounds: true
+      skip-emote-end: false
+    background-music:
+      sound:
+        name: my_pack:dance_music
+        category: MUSIC
+        volume: 1
+        pitch: 1
+      repeat-interval-seconds: 10
+```
+
+The observed underscore aliases are accepted. Legacy `id: namespace:animation` resolves an animation in one unambiguous imported model. Explicit `model`/`animation` bindings resolve before registry activation. A configured end clip is optional; otherwise `<animation>_end` is inferred when present. `duration-seconds` can bound a looping emote. Optional `speed.movement`/`speed.flying` use Bukkit's range of -1 through 1, and `allow-flight` temporarily grants flight. The default permission is `blocksadder.emote`. A definition cannot mix a skeletal binding with `frames`; frame emotes remain handled by the gameplay timeline.
+
+Starting an emote saves the prior model attachment/disguise, animation time/loop, variables, colors, glints, viewer exclusions, rotation tracking and pose history. Stop, natural completion and configured cancellation restore that state. Movement locks cancel actual position changes while permitting look updates. Accepted sneak/damage/attack/air conditions can run the end clip; teleport, game-mode changes, death, quit, reload and disable restore immediately. Existing walk/fly speeds and flight flags are restored with ownership checks so later changes by another plugin are preserved.
+
+Camera and equipment masking require a matching optional ProtocolLib build and report an actionable error when absent. Equipment hiding rewrites outbound inventory/equipment packets and never edits the native inventory; held-slot changes refresh the hidden slot and restore the former slot. Ending a camera performs a guarded resync so an emote configured to ignore damage can continue after damage closes its camera. Background music repeats at its configured interval and stops for recorded listeners when requested. `/ba emote <id|list|info|stop|stop-now> [player]` and the public API use this controller; unknown skeletal IDs fall through to an attached rig clip or a frame emote.
 
 ## Animation effects
 
@@ -140,11 +215,11 @@ Damage, teleport, world change, death, quit, sneak, explicit exit, rig removal, 
 
 Target entities retain a `blocksadder:model_id` or `blocksadder:disguise_id` tag. Helpers are nonpersistent and owned by direct references, including before Bukkit's global UUID index sees newly spawned entities. Chunk/entity unload, reload, target death/quit and plugin disable remove helpers and restore base-player visibility. Existing attachment tags allow restoration after entities load or after a server restart. Explicit detach removes the tag. Temporarily absent model definitions are retained as metadata so a content pack can be restored later.
 
-Player disguises use plugin-scoped `hidePlayer`/`showPlayer` for other viewers; this avoids changing other plugins' independent visibility decisions. The owner sees their normal first-person avatar unless `self-visible` is enabled for the model's helpers. The renderer updates viewer membership by world, range and explicit exclusions. Fixed Blockbench skin textures work as ordinary model textures. Fetching/adapting arbitrary live player skins is not implemented.
+Player disguises use plugin-scoped `hidePlayer`/`showPlayer` for other viewers; this avoids changing other plugins' independent visibility decisions. The owner sees their normal first-person avatar unless `self-visible` is enabled for the model's helpers. The renderer updates viewer membership by world, range and explicit exclusions. Fixed Blockbench textures and the live-profile skin path above are separate supported inputs.
 
 Entity damage triggers a short red tint on generated model geometry and optionally a `hurt` animation. A `death` animation may finish after a nonplayer target dies; player death restores the original player immediately. Hitbox attacks delegate damage to the underlying living entity, preserving its Bukkit damage event. Generated geometry supports custom-model-data tint colors; arbitrary external model assets need their own compatible tint sources.
 
-The runtime uses one shared tick task while rigs exist, and enforces `models.max-active-rigs` (default 128) and `models.max-total-bones` (default 4096). It does not load distant chunks to animate them. Mount pivots can accept passengers and lock voluntary dismounts. Controlled vehicle movement, fuel, precise animated-seat following and player input steering remain separate unverified work; this API does not establish those features as complete.
+The runtime uses one shared tick task while rigs exist, and enforces `models.max-active-rigs` (default 128) and `models.max-total-bones` (default 4096). It does not load distant chunks to animate them. Mount pivots can accept passengers and lock voluntary dismounts. Controlled vehicle movement, fuel and player steering have their own implementation and verification scope in [vehicles.md](vehicles.md).
 
 ## Verification boundary
 
@@ -164,3 +239,9 @@ The sound/particle runtime candidate `d6f644b67a95be7ae4ade876df7e51ba3f597d9492
 The scoped interpolation/script build `66c97651105dcc07562319500107b597379de79c827aec848c8512e3c9c9c9e0` passed 15 actual assertions on Spigot 1.21.11 and 15 on Paper 26.3. Native coordinates respond to health, variables and animation time; `this` changes display scale; the Bezier quarter-time cue matches its analytic coordinate; timeline/pre-effect scripts loop, respect cancellation and stop with playback. The later complete model module `24dd58ba3ea666b00a1cd75ec26b92c106f7cc9e68c0d08924453259dc5e275c` passed 17 assertions on each endpoint with ProtocolLib absent, including the optional-dependency behavior.
 
 Camera build `b20d15b7287bb876ba1c197c84462dc3d299c0e56d039fba1e2e6ec098aaa4c6` passed 37 native protocol-player checks on Spigot 1.21.11 and 37 on Paper 1.21.11 using the matching official ProtocolLib-Spigot development build. Five starts each arrived after their anchor spawn; private camera/mount/view-mode packets never reached the observer. Native look, suppressed movement, wall clipping and damage/teleport/detach/reload/quit restoration passed. The scoped builds contain independently compiled model classes over their documented combined-build base; final release artifacts still require the normal full Maven build. All rendered visual checks remain reserved for the user.
+
+Emote/equipment build `0ca2e7c2c7d57488326b60f0b5cf2e70e0aeca59cc3c364abe5a3a4ea47ea75d` passed 73 native protocol-player checks on Spigot 1.21.11 and 73 on Paper 1.21.11, both on Java 25 with Java-21-targeted plugin classes. It layers the independently compiled model module over combined build `2bee4cb7cc832b3e5b72e3ea8d40088e12638f91f09d16ec162ff8742d3e34c8`. Real look, movement, held-slot and disconnect packets verified head clamps, movement locks, client inventory masks, old/new held-slot restoration and quit cleanup. Native inventory, helmet dye, trim and equipment components remained unchanged. Prior animation/variables/tint/glint, natural/graceful stops, speed/flight restoration, teleport/reload and the camera/emote cancellation interaction passed. Generated vanilla/custom helmet model IDs, clone-only trim selectors and noncompounding dye/tint passed. The frame-emote and existing-rig fallback regressions passed through the production root wrapper. Separate pure checks pass 13 emote-schema and 22 equipment/overlay assertions. This scoped runtime artifact predates the final 26.3 atlas-overlay addition; that overlay has the separate pure-data evidence above. Rendered helmets/skins, sound/particle reception and custom datapack trim extensions remain outside these assertions.
+
+Full combined build `6249a35fff74b80454e6cc65aa858e510beb532e6c32c2c11f647ae803a9dd6b` passed 249 skin assertions in six actual server processes on Java 25: Spigot 1.21.11 (46 and 49), Paper 1.21.11 (49 and 49), and Paper 26.3 without ProtocolLib (28 and 28). Native protocol players were connected on both 1.21.11 servers; the 26.3 checks were headless server/API checks. The second process on every endpoint was a complete JVM restart. These checks cover 12 directly owned layers, native profile/default-model and transform packets, slim/outer dimensions, target following, persistent URL/UUID sources, same-tick helper removal, the skin command/public API, legacy part inference, actual pack entries and emote/disguise/reload/quit restoration. Fixed fallback runs produced no name-completion HTTP lookup warnings.
+
+The current pure suite passes 275 assertions (17 baseline, 23 effects/import, 119 expressions, 13 emotes, 22 equipment/overlays and 81 skin/profile/matrix/UV checks). The official Khronos glslang 16.6.0 compiler also compiled and linked all 43 tested shader version/macro variants against the actual includes from Mojang's SHA-1-verified 1.21.11, 26.1, 26.2 and 26.3 client archives. The official shader variants passed the same 43 fixture controls, including 26.3 glint, dissolve and OIT phases. All 18 referenced built-in default texture resources exist in each archive. These were static asset/GLSL checks; no graphical client was launched and no rendered appearance is certified.

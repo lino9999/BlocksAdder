@@ -38,7 +38,7 @@ final class CropSchemas {
                 copy(seed.options(), options);
                 copy(crop, options.createSection("crop"));
                 options.set("hidden", true);
-                items.put(id.toString(), new ItemDefinition(id, seed.material(), seed.displayName(), seed.lore(), seed.modelData(), seed.model(), seed.category(), options));
+                items.put(id.toString(), new ItemDefinition(id, seed.material(), seed.displayName(), seed.lore(), seed.modelData(), seed.model(), seed.category(), options, seed.sourceFile()));
                 crop.set("placement-id", id.toString());
             }
             copy(crop, seed.options().createSection("crop"));

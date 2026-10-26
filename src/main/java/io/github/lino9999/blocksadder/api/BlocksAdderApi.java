@@ -39,4 +39,7 @@ public interface BlocksAdderApi {
     boolean playEmote(Player player, String id);
     boolean stopEmote(Player player, boolean immediate);
     String emoteState(Player player);
+    boolean modelSkin(java.util.UUID modelInstance, Player source);
+    boolean modelSkin(java.util.UUID modelInstance, String texture);
+    boolean resetModelSkin(java.util.UUID modelInstance);
 }

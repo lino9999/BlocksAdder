@@ -45,7 +45,7 @@ public final class EquipmentAssetCompiler {
         }
         Map<String, Object> layer = new LinkedHashMap<>();
         layer.put("texture", output.toString());
-        if (definition.dyed()) layer.put("dyeable", Map.of("color_when_undyed", 16777215));
+        if (definition.dyed()) layer.put("dyeable", Map.of("color_when_undyed", definition.dyeColor()));
         return layer;
     }
 
@@ -54,15 +54,15 @@ public final class EquipmentAssetCompiler {
         registry.sections("equipments").forEach((key, section) -> {
             ContentId id = ContentId.parse(key);
             if (!section.getString("renderer", "armor").equalsIgnoreCase("armor")) throw new IllegalArgumentException("Unsupported equipment renderer: " + key);
-            add(result, new Definition(id, texture(section, "layer_1", id, null), texture(section, "layer_2", id, null), section.getBoolean("dyeable", section.getBoolean("use_color", false))));
+            add(result, new Definition(id, texture(section, "layer_1", id, null), texture(section, "layer_2", id, null), section.getBoolean("dyeable", section.getBoolean("use_color", false)), 16777215));
         });
         for (String type : List.of("armors_rendering", "legacy_armor_renderings")) registry.sections(type).forEach((key, section) -> {
             ContentId id = ContentId.parse(key);
             if (!section.contains("color")) throw new IllegalArgumentException("Legacy armor rendering requires color: " + key);
-            color(section.get("color"), key);
+            int dyeColor = color(section.get("color"), key);
             double speed = section.getDouble("animation.speed", 24);
             if (!Double.isFinite(speed) || speed <= 0 || speed > 1000) throw new IllegalArgumentException("Armor animation speed must be between 0 and 1000: " + key);
-            add(result, new Definition(id, texture(section, "layer_1", id, "minecraft:leather"), texture(section, "layer_2", id, "minecraft:leather"), section.getBoolean("use_color", false)));
+            add(result, new Definition(id, texture(section, "layer_1", id, "minecraft:leather"), texture(section, "layer_2", id, "minecraft:leather"), section.getBoolean("use_color", false), section.getBoolean("use_color", false) ? dyeColor : 16777215));
         });
         return result;
     }
@@ -83,15 +83,16 @@ public final class EquipmentAssetCompiler {
         return new ContentId(parsed.namespace(), path);
     }
 
-    private static void color(Object input, String id) {
+    private static int color(Object input, String id) {
         String value = input.toString().replace("#", "").replace("0x", "");
         try {
             long parsed = input instanceof Number number ? number.longValue() : Long.parseLong(value, 16);
             if (parsed < 0 || parsed > 16777215) throw new NumberFormatException();
+            return (int) parsed;
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException("Invalid armor rendering color: " + id);
         }
     }
 
-    private record Definition(ContentId id, ContentId first, ContentId second, boolean dyed) {}
+    private record Definition(ContentId id, ContentId first, ContentId second, boolean dyed, int dyeColor) {}
 }

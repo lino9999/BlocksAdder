@@ -347,7 +347,7 @@ public final class ContentCommand implements TabExecutor {
         Text.send(sender, "/ba stat <read|write|add|subtract> <player> <stat> [value] | hud <show|hide> <hud> [player]");
         Text.send(sender, "/ba tree <id> | entity <spawn|remove> <id|UUID> [player] | emote <id|list|info|stop|stop-now> [player]");
         Text.send(sender, "/ba sound <sound> <player> [volume] [pitch] | totem <player>");
-        Text.send(sender, "/ba model <list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable> | disguise <model> [player] | undisguise [player]");
+        Text.send(sender, "/ba model <list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable|skin> | disguise <model> [player] | undisguise [player]");
         Text.send(sender, "/ba vehicle <list|spawn|info|mount|dismount|remove|fuel>");
         Text.send(sender, "/ba config <item|namespace|recipes> <disable|delete> <identifier>");
         Text.send(sender, "/ba liquid <inspect|place|remove> | fire <inspect|place|remove|age>");
@@ -379,7 +379,7 @@ public final class ContentCommand implements TabExecutor {
                 case "glyph" -> choices.addAll(plugin.content().sections("font_images").keySet());
                 case "emote" -> { choices.addAll(List.of("list", "info", "stop", "stop-now")); choices.addAll(plugin.content().sections("emotes").keySet()); }
                 case "entity" -> { if (args.length == 2) choices.addAll(List.of("spawn", "remove")); if (args.length == 3 && args[1].equals("spawn")) choices.addAll(plugin.content().sections("entities").keySet()); }
-                case "model" -> { if (args.length == 2) choices.addAll(List.of("list", "attach", "play", "detach", "info", "bones", "bone", "color", "glow", "mount", "lock", "camera", "variables", "variable")); if (args.length == 3 && args[1].equals("attach")) choices.addAll(plugin.models().models()); }
+                case "model" -> { if (args.length == 2) choices.addAll(List.of("list", "attach", "play", "detach", "info", "bones", "bone", "color", "glow", "mount", "lock", "camera", "variables", "variable", "skin")); if (args.length == 3 && args[1].equals("attach")) choices.addAll(plugin.models().models()); }
                 case "vehicle" -> { if (args.length == 2) choices.addAll(List.of("list", "spawn", "info", "mount", "dismount", "remove", "fuel")); if (args.length == 3 && args[1].equals("spawn")) choices.addAll(plugin.vehicles().definitions()); }
                 case "config" -> { if (args.length == 2) choices.addAll(List.of("item", "namespace", "recipes")); if (args.length == 3) choices.addAll(List.of("disable", "delete")); if (args.length == 4) choices.addAll(plugin.content().items().stream().filter(item -> !item.options().getBoolean("hidden", false)).map(item -> args[1].equals("namespace") ? item.id().namespace() : item.id().toString()).distinct().toList()); }
                 case "disguise" -> { if (args.length == 2) choices.addAll(plugin.models().models()); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }

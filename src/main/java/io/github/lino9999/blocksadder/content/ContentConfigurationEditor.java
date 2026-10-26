@@ -48,21 +48,23 @@ public final class ContentConfigurationEditor {
                 YamlConfiguration yaml = new YamlConfiguration();
                 yaml.options().parseComments(true);
                 yaml.loadFromString(new String(before, StandardCharsets.UTF_8));
-                String namespace = yaml.getString("namespace", yaml.getString("info.namespace"));
+                YamlConfiguration original = yaml;
+                yaml = BundleDocument.decode(original);
+                String namespace = yaml.getString("namespace");
                 if (namespace == null) continue;
                 boolean changed = false;
                 List<RecipeNode> nodes = recipes(yaml);
                 for (RecipeNode recipe : nodes) {
                     boolean selected = area.equals("namespace") ? namespace.equals(target) || references(recipe.config, namespace, id.namespace(), true) : area.equals("recipes") && references(recipe.config, namespace, id.toString(), false);
                     if (!selected) continue;
-                    if (action.equals("delete")) yaml.set(recipe.path, null);
+                    if (action.equals("delete")) yaml.getConfigurationSection("recipes").set(recipe.path, null);
                     else recipe.config.set("enabled", false);
                     recipeCount++;
                     changed = true;
                 }
-                if (namespace.equals(id.namespace()) && area.equals("item") && yaml.isConfigurationSection("items." + id.value())) {
-                    if (action.equals("delete")) yaml.set("items." + id.value(), null);
-                    else yaml.set("items." + id.value() + ".enabled", false);
+                if (namespace.equals(id.namespace()) && area.equals("item") && BundleDocument.entry(yaml, "items", id.value()) != null) {
+                    if (action.equals("delete")) yaml.getConfigurationSection("items").set(id.value(), null);
+                    else BundleDocument.entry(yaml, "items", id.value()).set("enabled", false);
                     definitions++;
                     changed = true;
                 } else if (area.equals("namespace") && namespace.equals(target)) {
@@ -76,7 +78,7 @@ public final class ContentConfigurationEditor {
                         for (String type : ContentLoader.definitionTypes()) if (!type.equals("recipes") && yaml.contains(type)) { yaml.set(type, null); changed = true; }
                     }
                 }
-                byte[] after = yaml.saveToString().getBytes(StandardCharsets.UTF_8);
+                byte[] after = BundleDocument.encode(original, yaml).saveToString().getBytes(StandardCharsets.UTF_8);
                 if (changed && !Arrays.equals(before, after)) changes.add(new FileChange(path.toAbsolutePath().normalize(), before, after));
             }
         }
@@ -129,12 +131,7 @@ public final class ContentConfigurationEditor {
         for (String key : group.getKeys(false)) {
             ConfigurationSection value = group.getConfigurationSection(key);
             if (value == null) continue;
-            if (!value.contains("type") && List.of("crafting_table", "cooking", "smithing", "smithing_table", "anvil_repair", "anvil", "stonecutter").contains(key)) {
-                for (String child : value.getKeys(false)) {
-                    ConfigurationSection definition = value.getConfigurationSection(child);
-                    if (definition != null) result.add(new RecipeNode("recipes." + key + "." + child, definition));
-                }
-            } else result.add(new RecipeNode("recipes." + key, value));
+            result.add(new RecipeNode(key, value));
         }
         return result;
     }

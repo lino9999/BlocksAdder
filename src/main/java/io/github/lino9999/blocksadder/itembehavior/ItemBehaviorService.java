@@ -365,7 +365,7 @@ public final class ItemBehaviorService implements AutoCloseable {
                 || now - state.getOrDefault(id + "/" + trigger, Long.MIN_VALUE / 2) < 0)
             return false;
         if (context.event() != null) invocation.put(id, context.event());
-        int ticks = Math.max(definition.cooldown(), plan.cooldown());
+        int ticks = definition.cooldown();
         if (definition.cooldown() > 0) state.put(id, now + definition.cooldown() * 50000000L);
         if (plan.cooldown() > 0) state.put(id + "/" + trigger, now + plan.cooldown() * 50000000L);
         if (!sameEvent
@@ -462,6 +462,10 @@ public final class ItemBehaviorService implements AutoCloseable {
     }
 
     void validatePlaceholders(String command) {
+        if (Pattern.compile("%[^%\\r\\n]+%").matcher(command).find())
+            throw new IllegalArgumentException(
+                    "External command placeholders require an explicitly supported trusted"
+                            + " placeholder adapter.");
         var matcher = PLACEHOLDER.matcher(command);
         while (matcher.find())
             if (!PLACEHOLDERS.contains(matcher.group().substring(1, matcher.group().length() - 1)))
@@ -618,6 +622,15 @@ public final class ItemBehaviorService implements AutoCloseable {
             setter.accept(item);
         }
 
+        void give(ItemStack item) {
+            io.github.lino9999.blocksadder.item.ItemWear.give(
+                    player,
+                    item,
+                    event instanceof org.bukkit.event.player.PlayerSwapHandItemsEvent
+                            ? player.getInventory().getHeldItemSlot()
+                            : -1);
+        }
+
         boolean cancel() {
             if (!(event instanceof Cancellable cancellable)) return false;
             cancellable.setCancelled(true);
@@ -630,6 +643,16 @@ public final class ItemBehaviorService implements AutoCloseable {
 
         Context delayed() {
             return new Context(player, target, location.clone(), null, getter, setter);
+        }
+
+        static Context indexed(Player player, int slot, Event event) {
+            return new Context(
+                    player,
+                    null,
+                    player.getLocation(),
+                    event,
+                    () -> player.getInventory().getItem(slot),
+                    stack -> player.getInventory().setItem(slot, stack));
         }
 
         static Context held(

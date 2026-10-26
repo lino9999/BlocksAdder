@@ -1,176 +1,106 @@
 [SIZE=6][B]BlocksAdder Documentation[/B][/SIZE]
 [B]Author:[/B] Lino
+[B]Development format:[/B] blocksadder/bundle-1
 [B]Target servers:[/B] Spigot/Paper, Minecraft Java 1.21.11–26.3
-[B]Java:[/B] 21 for Minecraft 1.21.11; 25 for 26.x
+[B]Java:[/B] 21 for 1.21.11; 25 for 26.x
 
-[SIZE=5][B]1. Installation[/B][/SIZE]
-Download [URL=https://github.com/lino9999/BlocksAdder/releases]BlocksAdder-1.0.0.jar[/URL], put it in plugins/ and restart. Generated settings are in plugins/BlocksAdder/config.yml. Example content appears under contents/blocksadder/configs/examples.yml.
-The plugin needs a resource pack for custom visuals. It does not require a client mod or a mandatory third-party server plugin. Folia and Bedrock resource packs are unsupported.
+[SIZE=5][B]Installation and version scope[/B][/SIZE]
+Install the JAR matching this documentation in plugins/ and restart. Development 1.1.0-SNAPSHOT uses the bundle format below. Historical release 1.0.0 is a separate preview with an older format and a smaller feature set. Download only from [URL=https://github.com/lino9999/BlocksAdder/releases]GitHub Releases[/URL] and read the matching release notes.
+Custom visuals need the generated resource pack. ProtocolLib is optional; specific camera/equipment-view and tile-NBT adapters have separate requirements. Folia and Bedrock packs are unsupported.
 
-[SIZE=5][B]2. Content folders and identifiers[/B][/SIZE]
-[CODE]plugins/BlocksAdder/
-  config.yml
-  contents/my_pack/configs/items.yml
-  contents/my_pack/resourcepack/assets/my_pack/textures/item/sapphire.png
-  resourcepack/assets/
-  pack/BlocksAdder.zip[/CODE]
-Each YAML definition file declares a lowercase namespace. The example below defines my_pack:sapphire. Use full IDs in references; short IDs work only when unique. Keep existing IDs stable after placing content in worlds.
+[SIZE=5][B]Content documents[/B][/SIZE]
+Content belongs under plugins/BlocksAdder/contents/. Each complete file has a format marker, bundle identifier and typed record list:
+[CODE]format: blocksadder/bundle-1
+bundle: garden
+entries:
+  - key: sapphire
+    kind: artifact
+    item:
+      base: AMETHYST_SHARD
+      label: '&bSapphire'
+      details: ['&7A bright crafting ingredient.']
+      group: materials
+      sprite: garden:item/sapphire
+      stack: 64
+    traits:
+      unbreakable: false
+  - key: chair
+    kind: furnishing
+    item:
+      base: PAPER
+      label: '&bGarden Chair'
+      sprite: minecraft:item/amethyst_shard
+    settings:
+      width: 0.8
+      height: 1.0
+      seat: true
+  - key: materials
+    kind: catalog
+    settings:
+      title: Materials[/CODE]
+The IDs above are garden:sapphire and garden:chair. Keep existing IDs stable after placing content. Set active: false on a record or bundle to disable it. External plugin configurations and flat namespace/item documents are rejected.
 
-[CODE]namespace: my_pack
-items:
-  sapphire:
-    material: AMETHYST_SHARD
-    display-name: '&bSapphire'
-    lore:
-      - '&7A rare custom ingredient.'
-    category: materials
-    texture: my_pack:item/sapphire
-    max-stack-size: 64[/CODE]
-Run /ba validate, /ba reload and /ba pack build after editing. The top-level resourcepack folder overrides matching content-pack assets. Explicit model files override generated defaults. Original example content refers to vanilla textures rather than redistributing Minecraft assets.
+Presentation fields belong under item: base, label, details, group, visual, sprite, parent, variant and stack. Other item properties belong under traits. World settings belong under settings for block, furnishing or crop records. Each file's entries may mix definition kinds. Do not duplicate an item's presentation fields inside traits.
 
-[SIZE=5][B]3. Item options[/B][/SIZE]
+[SIZE=5][B]Features and record kinds[/B][/SIZE]
 [LIST]
-[*][B]material:[/B] a valid item material on the running server.
-[*][B]display-name / lore:[/B] English text with ampersand color codes.
-[*][B]model:[/B] modern item-model ID; defaults to the item's full ID.
-[*][B]texture:[/B] namespaced texture path without .png.
-[*][B]model-parent:[/B] defaults to minecraft:item/generated; use minecraft:item/handheld for tools.
-[*][B]model-data:[/B] optional integer from 0 to 16,777,216. Zero omits it.
-[*][B]max-stack-size:[/B] 1–99. The persistent ID is separate from names and model data.
-[*][B]durability / unbreakable / glow / flags:[/B] item metadata options.
-[*][B]enchantments:[/B] namespaced enchantment-to-level map.
-[*][B]attributes:[/B] additive main-hand attribute amounts.
-[*][B]color:[/B] hexadecimal color for leather armor.
-[*][B]food:[/B] nutrition, saturation and always-eat settings.
-[*][B]equipment-model / equipment-slot:[/B] equipment asset ID and Bukkit slot.
-[*][B]enabled: false:[/B] omit the definition.
+[*][B]artifact:[/B] custom inventory items with stable identity, model data, durability/usages, enchantments, attributes, colors, food, equipment and action plans.
+[*][B]block:[/B] placeable blocks, timed mining/tool rules, protected removal, persistent identity, native carrier states, sounds and owned light.
+[*][B]furnishing:[/B] display/frame/armor-stand carriers, hitboxes, transformations, seats and managed footprints. Advanced combinations remain under development.
+[*][B]crop / crop-series:[/B] seeds, growth stages, maturity, bone meal, harvest rewards and protected natural destruction.
+[*][B]recipe:[/B] shaped/shapeless crafting, furnace, blasting, smoking, campfire, stonecutting, smithing and anvil rules.
+[*][B]catalog:[/B] item browser groups.
+[*][B]glyph / audio:[/B] bitmap font images, permission-aware text aliases and custom sound definitions.
+[*][B]meter / overlay:[/B] bounded persistent player statistics and HUDs.
+[*][B]drop-rule / block-reward:[/B] conditional rewards for world, entity and fishing behavior.
+[*][B]creature / rig / motion / vehicle:[/B] living entities, skeletal models, player disguises/emotes and controlled mounts.
+[*][B]tree / ore-field / surface-cover / tree-field:[/B] manual trees and bounded automatic population.
+[*][B]fluid / flame:[/B] custom liquid and fire definitions.
+[*][B]armor-set / armor-effect:[/B] equipment assets and rendering settings; consult their current acceptance limits.
 [/LIST]
+This list describes development modules, not certification of every original option or visual effect. Read the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/parity-progress.md]implementation tracker[/URL] and module guides before production use.
 
-[SIZE=5][B]4. Custom blocks, furniture and crops[/B][/SIZE]
-Add one world-content section inside an item. Custom blocks use a collision block and an ItemDisplay model:
-[CODE]block:
-  material: BARRIER
-  display: true
-  scale: 1.0
-  offset-y: 0.5[/CODE]
-Right-click an adjacent block to place; left-click to remove after protection checks. Current removal is one protected click; custom mining times and tool-tier gates are unimplemented. Adventure/spectator placement/removal is denied. Creative removal produces no item drops.
+[SIZE=5][B]Recipe example[/B][/SIZE]
+Add another record to entries:
+[CODE]  - key: sapphire_block
+    kind: recipe
+    settings:
+      type: shaped
+      result: garden:sapphire_block
+      shape: ['SS', 'SS']
+      ingredients:
+        S: garden:sapphire[/CODE]
+The result must be defined separately. Custom recipe ingredients use persistent identity; vanilla lookalikes do not satisfy custom ingredients. Supported recipe-specific settings and limitations are in the recipe guide.
 
-[CODE]furniture:
-  collision: false
-  width: 1.0
-  height: 1.0
-  scale: 1.0
-  seat: true
-  seat-height: 0.4[/CODE]
-Right-click a seat to sit. Sneak-right-click or attack the hitbox to remove. Furniture occupies one anchor; collision is full-block or absent. Arbitrary model-shaped collision and controlled vehicles are unimplemented.
-
-[CODE]crop:
-  requires-farmland: true
-  growth-seconds: 240
-  stages:
-    - my_pack:sprout
-    - my_pack:plant
-    - my_pack:ripe
-  drops:
-    - my_pack:sapphire 2[/CODE]
-Stages reference existing custom items. Growth runs in bounded batches for loaded chunks. Right-click a mature crop to harvest/reset. Supporting farmland is protected while the crop exists. Placements persist in chunk data; temporary display/hitbox/seat entities are recreated when loading.
-
-[SIZE=5][B]5. Recipes[/B][/SIZE]
-[CODE]namespace: my_pack
-recipes:
-  sapphire_block:
-    type: shaped
-    result: my_pack:sapphire_block
-    amount: 1
-    shape:
-      - SS
-      - SS
-    ingredients:
-      S: my_pack:sapphire
-  sapphire_dust:
-    type: shapeless
-    result: my_pack:sapphire_dust
-    ingredients:
-      - my_pack:sapphire
-      - minecraft:flint[/CODE]
-Supported types: shaped, shapeless, furnace, blasting, smoking, campfire, stonecutting, smithing, anvil. Cooking/stonecutting use ingredient. Smithing uses template/base/addition. Anvil uses base/addition and experience-cost (1–100), with exactly one base item and one consumed addition. The configured output is fixed. Cooking uses cooking-time in ticks and experience.
-Custom ingredients match exact metadata and persistent identity. Modified ingredients can stop matching their configured prototype. Vanilla material choices reject protected custom items using the same material. allow-vanilla-recipes: true opts an item out of that protection. Optional recipe permissions apply where a player is available; permission-restricted recipes cannot run in crafters, and cooking definitions reject player permissions.
-
-[SIZE=5][B]6. Stats and HUDs[/B][/SIZE]
-[CODE]namespace: my_pack
-stats:
-  energy:
-    min: 0
-    max: 100
-    default: 50
-    regeneration-per-second: 1
-huds:
-  energy:
-    stat: my_pack:energy
-    type: bossbar
-    title: '&bEnergy {value}/{max}'
-    color: BLUE
-    style: SOLID
-    visible-by-default: true[/CODE]
-Stats and HUD visibility persist per player. Values clamp to finite configured bounds. HUD types are bossbar/actionbar; placeholders include {player}, {value}, {min}, {max}, {percent}. HUDs refresh once per second. Use /ba stat and /ba hud for administration.
-
-[SIZE=5][B]7. Item actions, glyphs, loot and entities[/B][/SIZE]
-An item's actions.right-click section supports consume (integer), cooldown (seconds), food, saturation, heal, effects, stats, sound and message. Permissions/cooldowns are checked before effects or consumption. Creative players do not consume the item. There is no command-execution action.
-Font images use character, replace, texture, height and ascent. Put the bitmap under assets/<namespace>/textures/. Permission-aware aliases apply to ordinary player chat, sign edits and book edits. Async chat uses permission snapshots refreshed once per second. Custom font files may be supplied directly.
-Sounds use files and optional subtitle; store OGG files under assets/<namespace>/sounds/. Loot tables support block/entity/fishing sources, match/world filters, probabilities, quantity ranges and optional replacement/permissions. Living entity definitions support type, display-name, attributes, equipment, AI, drops and experience. Tree definitions support trunk/leaves, height and radius. Emotes are simple scheduled hand swings, particles and sounds; they do not supply full-body skeletal animation.
-[URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/gameplay.md]Complete gameplay schemas[/URL] | [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/world-content.md]Complete world schemas[/URL]
-
-[SIZE=5][B]8. Resource-pack hosting[/B][/SIZE]
+[SIZE=5][B]Resource-pack assets and hosting[/B][/SIZE]
+Place the example texture at contents/garden/resourcepack/assets/garden/textures/item/sapphire.png. Supply models, textures, audio and fonts you own or may redistribute. Top-level resourcepack/assets/ overrides matching pack assets. YAML and private analysis files are excluded from the generated pack.
 [CODE]resource-pack:
   build-on-startup: true
   auto-apply: false
   required: false
   url: 'https://assets.example.com/BlocksAdder.zip'
-  max-uncompressed-mb: 128
   host:
     enabled: false
     bind: '0.0.0.0'
     port: 8163[/CODE]
-/ba pack build writes pack/BlocksAdder.zip and calculates actual SHA-1/SHA-256 hashes. Upload that exact file to your configured direct-download URL. Re-upload after rebuilding. Built-in hosting is optional, uses a separate port and exposes only /BlocksAdder.zip with GET/HEAD; configure routing/TLS externally as needed. /ba pack send applies the current built hash. auto-apply requests the pack after joining; required handles declined/failed requests for this plugin's pack.
-Generated metadata declares pack formats 75–97 for the target range. Administrator-supplied assets still need client verification. Identical inputs produce stable ZIP order, timestamps and JSON object ordering.
+These server settings belong in config.yml. Run /ba pack build and upload the exact pack/BlocksAdder.zip to a direct HTTP(S) URL. Built-in hosting optionally serves only /BlocksAdder.zip through GET/HEAD; configure an available separate port and your public URL. DNS, TLS and router forwarding are configured separately. A failed build retains the last successful artifact.
 
-[SIZE=5][B]9. Commands and permission nodes[/B][/SIZE]
-Main aliases: /blocksadder, /ba, /badd. Each subcommand requires blocksadder.<subcommand>:
+[SIZE=5][B]Commands and permissions[/B][/SIZE]
 [CODE]/ba help
-/ba info
 /ba browse [category] [player]
-/ba recipe <item> [player]
-/ba glyph [id]
 /ba get <item> [amount]
 /ba give <player> <item> [amount] [silent]
-/ba remove <player> <item> [amount] [silent]
-/ba drop <item> <player> [amount]
-/ba drop <item> <x> <y> <z> <world> [amount]
+/ba recipe <item> [player]
 /ba inspect
-/ba modeldata
-/ba block
-/ba repair
-/ba rename <name>
-/ba durability <remaining>
-/ba color <#RRGGBB>
 /ba validate
 /ba reload
-/ba pack <build|send|hash> [player|all]
-/ba stat <read|write|add|subtract> <player> <stat> [value]
-/ba hud <show|hide> <hud|all> [player]
-/ba tree <id>
-/ba entity spawn <id> [player]
-/ba entity remove <UUID>
-/ba emote <id|stop> [player]
-/ba sound <sound> <player> [volume] [pitch]
-/ba totem <player>[/CODE]
-blocksadder.pack.build is additionally required to build packs. blocksadder.others is additionally required to open menus, send packs, control HUDs or play emotes for other players. blocksadder.admin grants every built-in permission and defaults to operators. Public help/info/browse/recipe/glyph/pack/HUD/emote commands and ordinary use/place/break/glyphs permissions default to everyone; administrative commands default to operators.
-Category access uses blocksadder.category.* and blocksadder.category.<category>. Explicit category denial overrides the wildcard. Item amounts are 1–6,400 and split into legal stacks. Inventory overflow drops at the player. Catalog left-click shows a recipe; right-click grants an item only with blocksadder.get, and shift-right-click grants one stack.
-Shortcuts: /baget (/bget), /bagive (/bgive), /bapack (/bpack), /babrowse (/bbrowse), /bareload (/breload), /barecipe (/brecipe), /bainspect (/binspect). Reference-plugin commands and permissions are not registered.
+/ba pack <build|send|hash> [player|all][/CODE]
+Main aliases: /blocksadder, /ba and /badd. The [URL=https://github.com/lino9999/BlocksAdder#commands-and-permissions]complete README table[/URL] covers administration, model/skin, emote, liquid/fire, vehicle, generation, HUD/stat, sound, glyph, durability/color and configuration commands with their individual permissions. blocksadder.admin grants administration; ordinary building uses blocksadder.place, blocksadder.break and blocksadder.use. Controlling another player's supported features requires blocksadder.others.
+Configuration commands preview the selected edits, require repeating the same command, reject stale previews and restore previous bytes on activation failure where recovery succeeds.
 
-[SIZE=5][B]10. Limits, integrations and troubleshooting[/B][/SIZE]
-Review world.max-content-per-chunk, max-loaded-content, max-entities-per-chunk, display-view-range, growth-check-ticks and growth-batch-size in config.yml. Growth uses an indexed bounded queue. Placement indexes survive unload/restart and are separate from item model data.
-/ba validate checks candidate settings, items, recipes, gameplay and world definitions. Invalid content retains the previous live registry. /ba reload rebuilds service state; /ba pack build updates assets separately. Check the server log for precise English errors.
-Cancellable Bukkit and BlocksAdder content events are available to protection integrations. Dedicated adapters for other plugins are not bundled. Direct world writes from external plugins bypass ordinary gameplay events. Obtain the BlocksAdderApi through Bukkit ServicesManager; world/player APIs require the server thread.
-Full-body skeletal models, player disguises, controlled vehicles, custom fluid/fire simulation and automatic chunk population remain unimplemented. Original binary/API/config compatibility is not claimed. Read the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/feature-parity.md]feature comparison[/URL] and [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/verification.md]executed checks[/URL] before production migration. Client visuals, full player interaction flows and specific protection adapters need interactive testing.
-Report issues at [URL=https://github.com/lino9999/BlocksAdder/issues]GitHub[/URL] with the exact server/Java versions, reproduction steps, YAML and relevant logs.
+[SIZE=5][B]Verification and independent implementation[/B][/SIZE]
+[B]Visual checks are performed by the user.[/B] Headless tests validate server behavior and generated data, while protocol scenarios exercise specific native player actions. They do not establish full functional parity or every rendering combination. Read [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/development-verification.md]development verification[/URL] for exact artifact/version scopes.
+The [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/independent-implementation.md]distribution audit[/URL] compares built archive members, class paths, reference branding, commands, permissions and longer message literals. The implementation and configuration are independently designed. The audit does not guarantee a marketplace review outcome.
+
+[SIZE=5][B]Support[/B][/SIZE]
+Report reproducible problems through [URL=https://github.com/lino9999/BlocksAdder/issues]GitHub Issues[/URL]. Include the BlocksAdder version, exact server build, Java version, relevant bundle records and logs. Back up saved worlds and configuration before updating.

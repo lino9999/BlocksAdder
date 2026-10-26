@@ -25,14 +25,8 @@ import java.util.Locale;
 final class ItemComponents {
     private ItemComponents() {}
 
-    static void apply(ItemDefinition item, ItemMeta meta) {
+    static void apply(ItemDefinition item, ItemMeta meta, RawItemComponents.Template raw) {
         ConfigurationSection options = item.options();
-        if (options.contains("nbt") || options.contains("components_nbt_file"))
-            throw new IllegalArgumentException(
-                    "Item "
-                            + item.id()
-                            + ": raw component data requires a supported item-component adapter; it"
-                            + " cannot be silently ignored.");
         for (String flag : options.getStringList("item_flags"))
             meta.addItemFlags(ItemFlag.valueOf(flag.toUpperCase(Locale.ROOT)));
         if (options.contains("hide_tooltip") || options.contains("hide-tooltip"))
@@ -56,27 +50,25 @@ final class ItemComponents {
         if (options.contains("glint") || options.contains("enchantment_glint_override"))
             meta.setEnchantmentGlintOverride(
                     options.getBoolean("glint", options.getBoolean("enchantment_glint_override")));
-        if (options.getString("events_settings.cooldown.indicator", "")
-                .equalsIgnoreCase("VANILLA")) {
+        int cooldownTicks =
+                options.getInt(
+                        "events_cooldown", options.getInt("events_settings.cooldown.ticks", 0));
+        if (cooldownTicks > 0
+                && options.getString("events_settings.cooldown.indicator", "")
+                        .equalsIgnoreCase("VANILLA")) {
             var cooldown = meta.getUseCooldown();
             cooldown.setCooldownGroup(
                     new NamespacedKey(
                             "blocksadder",
                             "action/" + item.id().namespace() + "/" + item.id().value()));
-            cooldown.setCooldownSeconds(
-                    Math.max(
-                                    1,
-                                    options.getInt(
-                                            "events_cooldown",
-                                            options.getInt("events_settings.cooldown.ticks", 1)))
-                            / 20f);
+            cooldown.setCooldownSeconds(cooldownTicks / 20f);
             meta.setUseCooldown(cooldown);
         }
         enchants(item, meta);
         potion(item, meta);
         book(item, meta);
-        equipment(item, meta);
-        armor(item, meta);
+        equipment(item, meta, raw.contains("equippable"), raw.contains("glider"));
+        armor(item, meta, raw.contains("dyed_color"));
     }
 
     private static void enchants(ItemDefinition item, ItemMeta meta) {
@@ -175,11 +167,11 @@ final class ItemComponents {
         book.setPages(pages.stream().map(Text::color).toList());
     }
 
-    private static void armor(ItemDefinition item, ItemMeta meta) {
+    private static void armor(ItemDefinition item, ItemMeta meta, boolean preserveColor) {
         ConfigurationSection config =
                 item.options().getConfigurationSection("specific_properties.armor");
         if (config == null) return;
-        if (config.contains("color")) {
+        if (config.contains("color") && !preserveColor) {
             if (!(meta instanceof LeatherArmorMeta armor))
                 throw new IllegalArgumentException(
                         "Legacy armor color requires a leather armor material: " + item.id());
@@ -197,9 +189,16 @@ final class ItemComponents {
         }
     }
 
-    private static void equipment(ItemDefinition item, ItemMeta meta) {
+    private static void equipment(
+            ItemDefinition item,
+            ItemMeta meta,
+            boolean preserveEquippable,
+            boolean preserveGlider) {
         ConfigurationSection options = item.options();
         ConfigurationSection config = options.getConfigurationSection("equipment");
+        if (config != null && config.contains("glider") && !preserveGlider)
+            meta.setGlider(config.getBoolean("glider"));
+        if (preserveEquippable) return;
         String legacyModel =
                 options.getString(
                         "equipment.legacy_armor_rendering_id",
@@ -245,7 +244,6 @@ final class ItemComponents {
                 component.setSwappable(config.getBoolean("swappable"));
             if (config.contains("damage_on_hurt"))
                 component.setDamageOnHurt(config.getBoolean("damage_on_hurt"));
-            if (config.contains("glider")) meta.setGlider(config.getBoolean("glider"));
         }
         meta.setEquippable(component);
     }

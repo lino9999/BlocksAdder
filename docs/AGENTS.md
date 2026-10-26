@@ -6,9 +6,11 @@ Read this file and the relevant document before searching the repository. Produc
 
 - `src/main/java/io/github/lino9999/blocksadder/BlocksAdderPlugin.java`: lifecycle and service composition.
 - `content/`: validated namespaced definitions and registry snapshots.
+- `content/BundleDocument`: required `blocksadder/bundle-1` typed-record format and reversible editor projection. Do not restore foreign flat-YAML aliases. Read `docs/configuration.md` before adding a new entry kind.
 - `item/`: item creation and persistent identity. `ConsumableSupport` adapts the differing public Spigot/Paper consumable APIs; do not replace it with a direct Spigot-only call.
+- `itembehavior/`: original ordered item-event plans, precise cooldowns, delayed jobs and native equipment transitions; `gameplay/ItemActionService` also retains the canonical right-click shortcut. Read `docs/item-behaviors.md` before changing these paths.
 - `world/`: custom block, display furniture, entity and crop lifecycle.
-- `world/WorldFurniture`: furniture footprint/render/interaction bridge. Placement records retain face/yaw; version two reads version one with face UP. Footprint protection uses `allowFurnitureCell` inside the guarded native-place context.
+- `world/WorldFurniture`: furniture footprint/render/interaction bridge. Placement version three retains face/yaw/fractional origin/frame rotation and reads versions one/two. Footprint protection uses `allowFurnitureCell` inside the guarded native-place context. `completePlacement` seals successful placement rollback state; model callbacks use protected `useFurniture`/`attackFurniture`.
 - `blockstate/`: reserved state allocation and native block model compilation; `WorldBlockStates` connects placement/persistence to this adapter.
 - `mining/`: timed mining, tool/tier rules, progress and native start/abort lifecycle.
 - `model/`: skeletal rigs, Blockbench/legacy imports, animations, viewers and player disguises.
@@ -36,6 +38,8 @@ Start with `rg --files src docs`. Use `rg -n` scoped to the relevant package. Ne
 The active goal is full functional parity. `docs/parity-progress.md` tracks development beyond preview 1.0.0. Do not redefine success around the already implemented subset. Keep the original feature checklist and client acceptance requirements open until each has concrete evidence. Current development version is 1.1.0-SNAPSHOT; do not overwrite the historical 1.0.0 release or its checksum report with a different artifact.
 
 The user explicitly owns visual checks. Do not launch or control a graphical Minecraft client for this task. Continue implementing visual features and verifying their generated data and server behavior; record rendered appearance as user verification, without making that handoff a blocker for coding, server checks or packaging.
+
+The user requires an independently designed configuration and implementation. Do not translate decompiled classes individually. `tools/audit_distribution.py` checks the exact built JAR against the supplied reference without running it; `docs/independent-implementation.md` records the scope and limits. Public examples must use BlocksAdder bundle records. Original research artifacts and external configuration files must never enter the product JAR or Git history.
 
 ## Invariants
 

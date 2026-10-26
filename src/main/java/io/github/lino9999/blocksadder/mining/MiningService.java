@@ -84,7 +84,7 @@ public final class MiningService implements Listener, AutoCloseable {
         String id = world.identify(block).orElse(null);
         MiningProfile profile = id == null ? null : profiles.get(id);
         if (profile == null) {
-            if (id != null) { world.breakPlaced(block.getLocation(), player, false); return true; }
+            if (id != null && world.kind(block).filter(io.github.lino9999.blocksadder.world.ContentKind.BLOCK::equals).isPresent()) { world.breakPlaced(block.getLocation(), player, false); return true; }
             return false;
         }
         if (!player.hasPermission("blocksadder.break") || player.getGameMode() == GameMode.ADVENTURE || player.getGameMode() == GameMode.SPECTATOR) return true;
