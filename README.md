@@ -35,7 +35,7 @@ BlocksAdder's core has no mandatory plugin dependencies. Advanced packet feature
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.3). It uses the bundle format documented here; full functional reconstruction remains in progress.
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.4). It uses the bundle format documented here; full functional reconstruction remains in progress.
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.
@@ -118,7 +118,7 @@ Vehicle, disguise and undisguise commands require `blocksadder.others` when targ
 
 Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/babrowse` (`/bbrowse`), `/bareload` (`/breload`), `/barecipe` (`/brecipe`) and `/bainspect` (`/binspect`). They accept the same arguments as their matching subcommands. Reference-plugin commands, aliases and permission nodes are not registered.
 
-`blocksadder.admin` grants every built-in permission and defaults to operators. Public browsing/help/info/recipe/glyph/pack/HUD/emote commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
+`blocksadder.admin` grants every built-in permission and defaults to operators. Public browsing/help/info/recipe/glyph/pack/HUD/emote/plant-view commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs, choose plant detail or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
 
 Gameplay permissions are `blocksadder.place`, `blocksadder.break`, `blocksadder.use`, `blocksadder.glyphs` and per-definition permissions. Category access uses `blocksadder.category.*` or `blocksadder.category.<category>`; an explicitly denied category overrides the wildcard. Catalog left-clicks show recipes; right-clicks grant items only with `blocksadder.get`. Shift-right-click grants one legal stack.
 
