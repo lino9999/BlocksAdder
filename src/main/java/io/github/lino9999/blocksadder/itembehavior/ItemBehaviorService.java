@@ -35,6 +35,9 @@ public final class ItemBehaviorService implements AutoCloseable {
     static final Set<String> TRIGGERS =
             Set.of(
                     "block_break",
+                    "flight.launch",
+                    "flight.block",
+                    "flight.entity",
                     "world.use",
                     "world.remove",
                     "world.harvest",
@@ -114,6 +117,7 @@ public final class ItemBehaviorService implements AutoCloseable {
     private final BehaviorActions compiler;
     private final WorldItemActions worldActions;
     private final WorldSweeps sweeps;
+    private final ProjectilePlans projectiles;
     private final Map<UUID, Map<String, Long>> cooldowns = new HashMap<>();
     private final Map<UUID, Map<String, Event>> admitted = new HashMap<>();
     private final Map<UUID, Set<BukkitTask>> jobs = new HashMap<>();
@@ -164,6 +168,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         this.compiler = new BehaviorActions(this, items);
         this.worldActions = new WorldItemActions(this, registry, items);
         this.sweeps = new WorldSweeps(plugin, () -> worldAccess);
+        this.projectiles = new ProjectilePlans(this, items);
     }
 
     public void validate() {
@@ -248,6 +253,7 @@ public final class ItemBehaviorService implements AutoCloseable {
             events = new ItemBehaviorEvents(this, items, plugin);
             Bukkit.getPluginManager().registerEvents(events, plugin);
             Bukkit.getPluginManager().registerEvents(sweeps, plugin);
+            Bukkit.getPluginManager().registerEvents(projectiles, plugin);
         }
         events.reset();
     }
@@ -430,7 +436,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         Boolean last = null;
         Set<String> successes = new HashSet<>(), failures = new HashSet<>();
         for (Step step : plan.steps()) {
-            if (trigger.startsWith("world.") && context.stack() == null) break;
+            if ((trigger.startsWith("world.") || trigger.startsWith("flight.")) && context.stack() == null) break;
             if (!permission(context.player(), step.permission())) continue;
             if (!step.flows().isEmpty()
                     && step.flows().getFirst().matches(last, successes, failures)) {
@@ -472,7 +478,7 @@ public final class ItemBehaviorService implements AutoCloseable {
                                             && (!context.target().isValid()
                                                     || !context.target()
                                                             .getWorld()
-                                                            .equals(context.player().getWorld())))
+                                                    .equals(context.origin() == Origin.FLIGHT ? context.location().getWorld() : context.player().getWorld())))
                                         return;
                                     execute(step, context.delayed());
                                 },
@@ -572,6 +578,7 @@ public final class ItemBehaviorService implements AutoCloseable {
 
     private void cancelJobs() {
         sweeps.reset();
+        projectiles.reset();
         jobs.values().forEach(tasks -> tasks.forEach(BukkitTask::cancel));
         jobs.clear();
     }
@@ -580,6 +587,7 @@ public final class ItemBehaviorService implements AutoCloseable {
     public void close() {
         cancelJobs();
         HandlerList.unregisterAll(sweeps);
+        HandlerList.unregisterAll(projectiles);
         cooldowns.clear();
         admitted.clear();
         definitions = Map.of();
@@ -647,6 +655,13 @@ public final class ItemBehaviorService implements AutoCloseable {
         void afterWear(ItemStack before, ItemStack after) { if (matches(before)) stack = after.clone(); }
     }
 
+    enum Origin { PLAYER, FLIGHT }
+
+    interface AttributedSource extends Supplier<ItemStack> {
+        org.bukkit.entity.Entity entity();
+        org.bukkit.damage.DamageSource damageSource();
+    }
+
     record Context(
             Player player,
             LivingEntity target,
@@ -657,7 +672,11 @@ public final class ItemBehaviorService implements AutoCloseable {
             ItemStack fallback,
             List<ExpectedStack> wearSnapshots,
             Event admissionEvent,
-            java.util.function.BooleanSupplier authority) {
+            java.util.function.BooleanSupplier authority,
+            Origin origin) {
+        Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback, List<ExpectedStack> wearSnapshots, Event admissionEvent, java.util.function.BooleanSupplier authority) {
+            this(player, target, location, event, getter, setter, fallback, wearSnapshots, admissionEvent, authority, Origin.PLAYER);
+        }
         Context(Player player, LivingEntity target, Location location, Event event, Supplier<ItemStack> getter, Consumer<ItemStack> setter, ItemStack fallback, List<ExpectedStack> wearSnapshots, Event admissionEvent) {
             this(player, target, location, event, getter, setter, fallback, wearSnapshots, admissionEvent, null);
         }
@@ -710,7 +729,14 @@ public final class ItemBehaviorService implements AutoCloseable {
         }
 
         Context delayed() {
-            return new Context(player, target, location.clone(), null, getter, setter, null, null, null, authority);
+            return new Context(player, target, location.clone(), null, getter, setter, null, null, null, authority, origin);
+        }
+
+        Location effectOrigin() { return origin == Origin.FLIGHT ? location.clone() : player.getEyeLocation(); }
+        org.bukkit.entity.Entity effectSource() { return getter instanceof AttributedSource source ? source.entity() : player; }
+        void damage(LivingEntity victim, double amount) {
+            if (getter instanceof AttributedSource source) victim.damage(amount, source.damageSource());
+            else victim.damage(amount, player);
         }
 
         static Context indexed(Player player, int slot, Event event) {

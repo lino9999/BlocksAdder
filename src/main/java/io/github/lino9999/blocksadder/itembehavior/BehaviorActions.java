@@ -266,7 +266,7 @@ final class BehaviorActions {
                     throw error(item, "Particle " + particle + " requires a typed data adapter.");
                 int distance = integer(c, "distance", 7, 1, 32);
                 yield context -> {
-                    var origin = context.player().getEyeLocation();
+                    var origin = context.effectOrigin();
                     if (family.equals("play_particle"))
                         origin.getWorld().spawnParticle(particle, origin, 40, 0, 0, 0, 0);
                     else
@@ -329,7 +329,7 @@ final class BehaviorActions {
                                     && target.getLocation().distanceSquared(context.location())
                                             <= (double) range * range
                                     && (groups.isEmpty() || groups.contains(group(target)))) {
-                                target.damage(damage, context.player());
+                                context.damage(target, damage);
                                 applied = true;
                             }
                         return applied;
@@ -354,7 +354,7 @@ final class BehaviorActions {
                                         : null;
                     }
                     if (target == null || !target.isValid() || target.isDead()) return false;
-                    target.damage(damage, context.player());
+                    context.damage(target, damage);
                     return true;
                 };
             }
@@ -365,7 +365,7 @@ final class BehaviorActions {
                         context.location()
                                 .getWorld()
                                 .createExplosion(
-                                        context.location(), power, fire, blocks, context.player());
+                                        context.location(), power, fire, blocks, context.effectSource());
             }
             case "replace_properties" -> {
                 ItemStack source = reference(item, required(c, "custom_model_data.copy_from_item"));
