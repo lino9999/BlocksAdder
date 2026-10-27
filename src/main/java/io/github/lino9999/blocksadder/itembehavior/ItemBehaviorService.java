@@ -158,7 +158,7 @@ public final class ItemBehaviorService implements AutoCloseable {
         Definition definition = items.identify(context.stack()).map(definitions::get).orElse(null);
         return definition != null && sweeps.request(region, context, () -> permission(context.player(), permission) && permission(context.player(), definition.permission()));
     }
-    void breakCommitted(io.github.lino9999.blocksadder.api.event.CustomContentBreakEvent event) { sweeps.committed(event); }
+    void breakCommitted(io.github.lino9999.blocksadder.api.event.CustomContentBreakEvent event, boolean rewards) { sweeps.committed(event, rewards); }
     boolean changeWorld(io.github.lino9999.blocksadder.world.WorldChoice match, io.github.lino9999.blocksadder.world.WorldChoice into, Context context) {
         ItemStack initial = context.stack();
         if (worldAccess == null || initial == null || initial.getType().isAir()) return false;

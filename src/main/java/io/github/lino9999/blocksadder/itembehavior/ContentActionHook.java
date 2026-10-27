@@ -7,6 +7,7 @@ public interface ContentActionHook {
     interface BreakAttempt {
         boolean allowed();
         void committed();
+        default void committed(boolean rewards) { committed(); }
     }
     BreakAttempt beforeBreak(CustomContentBreakEvent event);
     default boolean beforeUse(CustomContentInteractEvent event) { return true; }

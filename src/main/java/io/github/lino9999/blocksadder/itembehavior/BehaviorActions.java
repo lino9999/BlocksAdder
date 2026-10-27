@@ -65,7 +65,7 @@ final class BehaviorActions {
         java.util.Set<String> fields =
                 switch (family) {
                     case "world_change" -> java.util.Set.of("match", "into");
-                    case "world_sweep" -> java.util.Set.of("region", "frame", "select");
+                    case "world_sweep" -> java.util.Set.of("region", "frame", "select", "preserve", "rewards");
                     case "cancel" -> java.util.Set.of();
                     case "feed" -> java.util.Set.of("amount", "saturation");
                     case "play_sound", "stop_sound" ->

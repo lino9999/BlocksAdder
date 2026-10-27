@@ -46,10 +46,13 @@ final class WorldItemActions implements ContentActionHook {
             private boolean committed;
             @Override public boolean allowed() { return !event.isCancelled(); }
             @Override public void committed() {
+                committed(event.isDropItems());
+            }
+            @Override public void committed(boolean rewards) {
                 requireThread();
                 if (committed) return;
                 committed = true;
-                behaviors.breakCommitted(event);
+                behaviors.breakCommitted(event, rewards);
                 if (source != null) source.committed = true;
                 if (!wear || player.getGameMode() != GameMode.SURVIVAL || player.getInventory().getHeldItemSlot() != expectedSlot) return;
                 ItemStack held = player.getInventory().getItemInMainHand();

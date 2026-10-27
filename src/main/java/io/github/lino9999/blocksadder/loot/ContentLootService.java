@@ -36,6 +36,8 @@ public final class ContentLootService {
     private final Supplier<ContentRegistry> registry;
     private final ItemService items;
     private Map<String, List<Rule>> rules = Map.of();
+    private io.github.lino9999.blocksadder.world.BreakRewardRouting rewardRouting;
+    public void setRewardRouting(io.github.lino9999.blocksadder.world.BreakRewardRouting routing) { rewardRouting = java.util.Objects.requireNonNull(routing); }
 
     public ContentLootService(Supplier<ContentRegistry> registry, ItemService items) { this.registry = registry; this.items = items; }
     public void validate(ContentRegistry candidate) { load(candidate); }
@@ -188,6 +190,17 @@ public final class ContentLootService {
     public void execute(Plan plan, Location location, Player player) {
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Crop loot requires the server thread.");
         Location origin = location.clone().add(0.5, 0.5, 0.5);
+        if (rewardRouting != null) {
+            if (!rewardRouting.allows(location.getBlock(), player)) return;
+            origin = rewardRouting.destination(origin, player);
+        }
+        execute(plan, location, player, origin);
+    }
+
+    public void execute(Plan plan, Location location, Player player, Location destination) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Crop loot requires the server thread.");
+        Location origin = destination.clone();
+        if (origin.getWorld() == null || !origin.getWorld().isChunkLoaded(origin.getBlockX() >> 4, origin.getBlockZ() >> 4)) return;
         for (ItemStack drop : plan.drops) origin.getWorld().dropItemNaturally(origin, drop.clone());
         if (plan.experience > 0) origin.getWorld().spawn(origin, ExperienceOrb.class, orb -> orb.setExperience(plan.experience));
         for (Command action : plan.commands) {

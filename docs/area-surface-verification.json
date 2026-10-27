@@ -1,0 +1,566 @@
+{
+  "recorded_at": "2026-10-27T07:59:01.185135+00:00",
+  "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+  "jar_bytes": 1256584,
+  "passed": true,
+  "assertions": 2049,
+  "accepted_server_processes": 20,
+  "method": "Exact-candidate isolated real protocol players and controlled public Bukkit event/API, lifecycle, data and core bundle scenarios. No graphical Minecraft client or supplied original plugin was executed.",
+  "targeted_results": [
+    {
+      "suite": "extended-area-mining",
+      "server": "spigot21",
+      "mode": "extended",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "frozen_inputs_sha256": "74d460b90a043c6f876429cbb67cefcc6a15d85698f4169ac451cc7e48be6787",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:48:15] [Server thread/INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot21-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot21-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "paper21",
+      "mode": "extended",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "frozen_inputs_sha256": "5386a231e05c6fbbdb7a53a498bd86b1429fdbaf040eefeecda93d9a21fbd8c3",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:49:28 INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper21-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper21-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "paper2611",
+      "mode": "extended",
+      "client_version": "26.1.1",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "frozen_inputs_sha256": "e0b7d1ae6fb999b6a60c09f02e613b531a88d5f6f287f85d2f69a3ec1213ee3a",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:49:11 INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper2611-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper2611-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "paper2612",
+      "mode": "extended",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "frozen_inputs_sha256": "e2f752162c13b4e62f9a9c71831622a45aa3846eae39cc7000b3ecea781122f0",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:50:22 INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper2612-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper2612-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "spigot2612",
+      "mode": "extended",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "frozen_inputs_sha256": "a95525970d236d8c50fbe0eee1ff79ad8627ecc7c51d447b9a0706e0380e65cc",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:50:22] [Server thread/INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot2612-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot2612-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "paper262",
+      "mode": "extended",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "frozen_inputs_sha256": "f2185c2a906668cc5d677ae4c5d96b4f0d0b40bdda854831f77be73931358bd1",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:51:16 INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper262-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper262-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "spigot262",
+      "mode": "extended",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "frozen_inputs_sha256": "f3a57c4693ca81c98ed601f0f30a3b6ad1938190333d9e92862d958d082bc1bd",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:51:38] [Server thread/INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot262-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot262-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "spigot263",
+      "mode": "extended",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "frozen_inputs_sha256": "f166f8b6a52e90a3c5da9cd39ae24790c144f5dd07e8e4fb8f98cbbeedc6f47b",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:52:08] [Server thread/INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot263-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/spigot263-extended-linked1/bots.log"
+    },
+    {
+      "suite": "extended-area-mining",
+      "server": "paper263",
+      "mode": "extended",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_build_sha256": "0c9ff70d59fa22521c4a86601bcd42fd7c323c79772fed1ef3fa351859b90851",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "7ec45fe590424f888bf8aa87091a9fa1fbbe70c11c58dfdcce9559022d88643c"
+      },
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "frozen_inputs_sha256": "01d46ed08ebd6b7cb11f6f47c3a88e6250457203cf1e9e77671d3f282cebd494",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 166,
+      "summary": "[08:47:52 INFO]: [Sweep17Probe] SWEEP17_VERIFICATION: PASS passed=166 failed=0 cases=54",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper263-extended-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/0c9ff70d59fa/paper263-extended-linked1/bots.log"
+    },
+    {
+      "suite": "area-mining-regression",
+      "server": "spigot21",
+      "mode": "legacy",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "97c6c558337420790e54ca80f028f58aa11d437b93d0bf80a72f3da24e586e2a",
+      "probe_build_sha256": "90560494338d21e06bd204f1383e4a3d4ee54520062df5c9b6d6864b113d3c2b",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "35b2758162617d9cdde4db281941cc064cad076e24f0f204b81dcae303154904"
+      },
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "frozen_inputs_sha256": "1fd6cf4bfa0b4aa7c99609a9d507af7da40ce8b3ab03bcb50e28160d04ff39f4",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 75,
+      "summary": "[08:58:29] [Server thread/INFO]: [Sweep17Probe] SWEEP_VERIFICATION: PASS passed=75 failed=0",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/90560494338d/spigot21-legacy-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/90560494338d/spigot21-legacy-linked1/bots.log"
+    },
+    {
+      "suite": "area-mining-regression",
+      "server": "paper263",
+      "mode": "legacy",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "probe_jar_sha256": "97c6c558337420790e54ca80f028f58aa11d437b93d0bf80a72f3da24e586e2a",
+      "probe_build_sha256": "90560494338d21e06bd204f1383e4a3d4ee54520062df5c9b6d6864b113d3c2b",
+      "probe_source_sha256": {
+        "Sweep17Probe.java": "c45982f0afd28515a921b2351bfb68bf88cea6b6c0a12ae22a819972e8edc2f0",
+        "SweepProbe.java": "35b2758162617d9cdde4db281941cc064cad076e24f0f204b81dcae303154904"
+      },
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "frozen_inputs_sha256": "4734efcb54d2dc12061c024b45bc696c33de7df7fd4564fbcb05fdbdb795a226",
+      "frozen_inputs_unchanged": true,
+      "passed": true,
+      "assertions": 75,
+      "summary": "[08:58:06 INFO]: [Sweep17Probe] SWEEP_VERIFICATION: PASS passed=75 failed=0",
+      "local_log": ".work/sweep17/probe/servers/79e1c0fba956/90560494338d/paper263-legacy-linked1/console.log",
+      "bot_log": ".work/sweep17/probe/servers/79e1c0fba956/90560494338d/paper263-legacy-linked1/bots.log"
+    }
+  ],
+  "bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:52:50] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/spigot21/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:53:21 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/paper21/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:53:36 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/paper2611/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:53:51 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/paper2612/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:54:21] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/spigot2612/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:54:53] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/spigot262/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:55:07 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/paper262/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:55:21] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/spigot263/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "summary": "[08:55:34 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/sweep17/bundle/79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092/paper263/console.log",
+      "suite": "core-bundle",
+      "assertions": 45
+    }
+  ],
+  "packaged_geometry_helper": {
+    "marker": "SWEEP_GEOMETRY_VERIFICATION",
+    "status": "passed",
+    "recorded_utc": "2026-10-27T06:04:37.6390152Z",
+    "java_release": 21,
+    "assertions": 1196821,
+    "sources": [
+      {
+        "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRegion.java",
+        "sha256": "cc7b06a888799a8c28abcfe1b9adc5d30e9db06289ed66841a975f107b1da623"
+      },
+      {
+        "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepGeometry.java",
+        "sha256": "36bacb23b78fc28bbdfc75ceafe2a95a4d338de38b529c53f445de353bea955a"
+      },
+      {
+        "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRewards.java",
+        "sha256": "0ce67bb8d16ba42ef593d0ae3346013aeb32274548dcf8414922fb1e00378ccc"
+      }
+    ],
+    "test": {
+      "path": ".work/sweep17/geometry/SweepGeometryTest.java",
+      "sha256": "e6ac694471a1fdd7cdea8d8c01711d2d327882a64f84fe5ce76e03cb37d1e320"
+    },
+    "scope": [
+      "In-memory SDK configuration and independently compiled Java 21 geometry",
+      "Six clicked-face bases with asymmetric bounded boxes and world-coordinate surface sorting",
+      "Legacy world/facing ordering across cardinal centers, adjacent float tie boundaries, wraps and large finite yaw",
+      "All column heights 2 through 343 with four horizontal faces and above/equal/below player anchoring",
+      "Origin exclusion after transform/column shift, uniqueness, maximum 342 extras and immutable lists",
+      "Nonfinite runtime orientation/player-height rejection only where those inputs are needed",
+      "Strict region union, frame, integer coordinate/height, preserve and reward grammar validation",
+      "Existing custom selector validation and immutable parsed state retention"
+    ],
+    "exclusions": [
+      "No shared Maven target build",
+      "No native server or player protocol scenario",
+      "No original plugin execution or copied original implementation",
+      "No WorldSweeps eligibility, rewards execution, scheduling, face provenance or native selector parsing acceptance",
+      "No rendered client appearance proof"
+    ],
+    "packaged_candidate": {
+      "status": "passed",
+      "recorded_utc": "2026-10-27T07:47:22.5405392Z",
+      "jar_path": "target/BlocksAdder-1.1.0-SNAPSHOT.jar",
+      "jar_sha256": "79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092",
+      "assertions": 1196821,
+      "source_hashes": [
+        {
+          "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRegion.java",
+          "sha256": "cc7b06a888799a8c28abcfe1b9adc5d30e9db06289ed66841a975f107b1da623"
+        },
+        {
+          "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepGeometry.java",
+          "sha256": "36bacb23b78fc28bbdfc75ceafe2a95a4d338de38b529c53f445de353bea955a"
+        },
+        {
+          "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRewards.java",
+          "sha256": "0ce67bb8d16ba42ef593d0ae3346013aeb32274548dcf8414922fb1e00378ccc"
+        }
+      ],
+      "test_sha256": "e6ac694471a1fdd7cdea8d8c01711d2d327882a64f84fe5ce76e03cb37d1e320",
+      "sources_match_recorded_hashes": true,
+      "java_release": 21,
+      "jar_first": true,
+      "private_production_helpers_on_classpath": false,
+      "output": "SWEEP_GEOMETRY_VERIFICATION passed=1196821",
+      "scope": [
+        "In-memory SDK configuration and independently compiled Java 21 geometry",
+        "Six clicked-face bases with asymmetric bounded boxes and world-coordinate surface sorting",
+        "Legacy world/facing ordering across cardinal centers, adjacent float tie boundaries, wraps and large finite yaw",
+        "All column heights 2 through 343 with four horizontal faces and above/equal/below player anchoring",
+        "Origin exclusion after transform/column shift, uniqueness, maximum 342 extras and immutable lists",
+        "Nonfinite runtime orientation/player-height rejection only where those inputs are needed",
+        "Strict region union, frame, integer coordinate/height, preserve and reward grammar validation",
+        "Existing custom selector validation and immutable parsed state retention"
+      ],
+      "exclusions": [
+        "No shared Maven target build",
+        "No native server or player protocol scenario",
+        "No original plugin execution or copied original implementation",
+        "No WorldSweeps eligibility, rewards execution, scheduling, face provenance or native selector parsing acceptance",
+        "No rendered client appearance proof"
+      ]
+    },
+    "packaged_candidate_history": [
+      {
+        "status": "passed",
+        "recorded_utc": "2026-10-27T06:17:37.7010241Z",
+        "jar_path": "target/BlocksAdder-1.1.0-SNAPSHOT.jar",
+        "jar_sha256": "0ca7e4cac6517bb15ad51a620fe004333805ec5cd3ad740b96fc74fdb46ea328",
+        "assertions": 1196821,
+        "sources_match_recorded_hashes": true,
+        "test_sha256": "e6ac694471a1fdd7cdea8d8c01711d2d327882a64f84fe5ce76e03cb37d1e320",
+        "classpath_order": [
+          "target/BlocksAdder-1.1.0-SNAPSHOT.jar",
+          ".work/sweep17/geometry/packaged-test-classes",
+          "provided Spigot 1.21.11 API",
+          "provided Guava 33.5.0-jre",
+          "provided Commons Lang 3.20.0"
+        ],
+        "private_production_helpers_on_classpath": false,
+        "output": "SWEEP_GEOMETRY_VERIFICATION passed=1196821"
+      },
+      {
+        "status": "passed",
+        "recorded_utc": "2026-10-27T07:35:09.4102219Z",
+        "jar_path": "target/BlocksAdder-1.1.0-SNAPSHOT.jar",
+        "jar_sha256": "6a05d0c0308feaa2721107f506b1b2e89e2dc10f8607952a14aa26faa48462bf",
+        "assertions": 1196821,
+        "source_hashes": [
+          {
+            "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRegion.java",
+            "sha256": "cc7b06a888799a8c28abcfe1b9adc5d30e9db06289ed66841a975f107b1da623"
+          },
+          {
+            "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepGeometry.java",
+            "sha256": "36bacb23b78fc28bbdfc75ceafe2a95a4d338de38b529c53f445de353bea955a"
+          },
+          {
+            "path": "src/main/java/io/github/lino9999/blocksadder/itembehavior/SweepRewards.java",
+            "sha256": "0ce67bb8d16ba42ef593d0ae3346013aeb32274548dcf8414922fb1e00378ccc"
+          }
+        ],
+        "test_sha256": "e6ac694471a1fdd7cdea8d8c01711d2d327882a64f84fe5ce76e03cb37d1e320",
+        "sources_match_recorded_hashes": true,
+        "java_release": 21,
+        "jar_first": true,
+        "private_production_helpers_on_classpath": false,
+        "output": "SWEEP_GEOMETRY_VERIFICATION passed=1196821",
+        "scope": [
+          "In-memory SDK configuration and independently compiled Java 21 geometry",
+          "Six clicked-face bases with asymmetric bounded boxes and world-coordinate surface sorting",
+          "Legacy world/facing ordering across cardinal centers, adjacent float tie boundaries, wraps and large finite yaw",
+          "All column heights 2 through 343 with four horizontal faces and above/equal/below player anchoring",
+          "Origin exclusion after transform/column shift, uniqueness, maximum 342 extras and immutable lists",
+          "Nonfinite runtime orientation/player-height rejection only where those inputs are needed",
+          "Strict region union, frame, integer coordinate/height, preserve and reward grammar validation",
+          "Existing custom selector validation and immutable parsed state retention"
+        ],
+        "exclusions": [
+          "No shared Maven target build",
+          "No native server or player protocol scenario",
+          "No original plugin execution or copied original implementation",
+          "No WorldSweeps eligibility, rewards execution, scheduling, face provenance or native selector parsing acceptance",
+          "No rendered client appearance proof"
+        ]
+      }
+    ]
+  },
+  "reward_storage_proxy_helper": {
+    "scope": "Public Bukkit SDK proxy JVM checks, no native server",
+    "java_release": 21,
+    "passed": true,
+    "routing_checks": 45,
+    "storage_checks": 36,
+    "sha256": {
+      "src/main/java/io/github/lino9999/blocksadder/world/BreakRewardRouting.java": "3e3a31d0c7d03a8ed972c04672b6ef27be4499ad4091ffee1c6e778a88dbe857",
+      "src/main/java/io/github/lino9999/blocksadder/world/NativeContainerRewards.java": "79c778eb01301a8036f3403efe4d61b0ad9263df62fa367aafeb0b4d16d908e2",
+      ".work/sweep17/RewardRoutingCheck.java": "c7dd6fae5359169d5da8b943fe7fa05fe90d2a82aa9faac43813b61adca0bce4",
+      ".work/sweep17/NativeContainerRewardCheck.java": "6a7f46469cb0d4c97902e330443dcc13041cd237f56ad9e851180949e9e37e91",
+      "src/main/java/io/github/lino9999/blocksadder/environment/EnvironmentGameRules.java": "ea2de2fd31a1adf9364a66c7f3af3b8190fd5d8b7e9147c972113065af4f66f7"
+    },
+    "not_covered": [
+      "native temporary-tail registration ordering",
+      "real native full-metadata cargo release",
+      "furnace recipe experience cache",
+      "non-Container storage block payloads",
+      "crash atomicity and offline actor plus unloaded rollback source"
+    ],
+    "native_rule_recovery": {
+      "scope": "Private public-SDK JVM proxies and frozen endpoint SDK/static diagnosis; no new native server run",
+      "cause": "Paper26.3 does not expose GameRule.BLOCK_DROPS, producing observed NoSuchFieldError after clearing inventory",
+      "fix": "Existing cached public lookup adapter resolves canonical/legacy block-drop rule; unavailable values preserve cargo by returning payload. Finish exceptions recover only untransferred slots.",
+      "java_release": 21,
+      "routing_checks": 45,
+      "storage_checks": 36,
+      "sha256": {
+        "src/main/java/io/github/lino9999/blocksadder/environment/EnvironmentGameRules.java": "ea2de2fd31a1adf9364a66c7f3af3b8190fd5d8b7e9147c972113065af4f66f7",
+        "src/main/java/io/github/lino9999/blocksadder/world/NativeContainerRewards.java": "79c778eb01301a8036f3403efe4d61b0ad9263df62fa367aafeb0b4d16d908e2",
+        ".work/sweep17/NativeContainerRewardCheck.java": "6a7f46469cb0d4c97902e330443dcc13041cd237f56ad9e851180949e9e37e91"
+      }
+    }
+  },
+  "reference_contract": {
+    "path": ".work/sweep17/contract.md",
+    "sha256": "b8eaa816b9b68ef8a74dcb9e1971393ca139c9f507736d4e1107c39a28a3dd0d",
+    "retained_rea_inventory": "ev_5a4a4ddc4581dedc578bda1fe894acfd4ea4202a51e709148d11b4f32a6e72d1",
+    "reference_executed": false
+  },
+  "coverage": [
+    "Six actual protocol dig faces with conflicting view direction; native redstone activation/decay, public accepted/cancelled exact fade-receipt cases, timed custom mining longer than the contact lease, native abort and source transitions.",
+    "Clicked-surface boxes, ordered selector fallback, both upward-column anchors, vertical-face rejection, maximum 343-cell column and shared scheduling bound.",
+    "Retained exact player, source slot/full stack, origin backing/placement, reload, teleport, residency and callback authority.",
+    "Resource and mechanism preservation; natural, none, origin and Silk Touch reward policies, authoritative native/custom origin suppression and native drop cancellation.",
+    "Native marked item metadata/quantity after merging, portable cancellable/redirectable owned move preflight and external relocation ownership.",
+    "Container cargo metadata and quantity with no duplicate inventory return, native drop flags and cancellation, custom and configured loot destination and actual experience pickup accounting.",
+    "Configured gameplay loot retained across a registry reload; native paired-half protection and one native wear operation.",
+    "The earlier 75-check area assertions repeated on Spigot 1.21.11 and Paper 26.3, with a public client-channel readiness gate before its initial input; nine same-artifact core/bundle runs."
+  ],
+  "limits": [
+    "Counts mix native player input, public API/event, lifecycle and generated/data assertions. They do not count distinct graphical interactions or establish complete original feature parity.",
+    "Geometry/configuration and proxy helper checks are separate from the server total. Proxy evidence does not establish native event order by itself.",
+    "AreaRewardMoveEvent protects captured native item relocation only. Custom loot and container escrow choose a destination before spawning and retain their own native spawn protections.",
+    "Native experience remains at each additional cell. The router does not claim arbitrary ItemSpawnEvent traffic, third-party rewards, furnace recipe-experience caches or payloads of non-Container storage blocks.",
+    "Container escrow is not crash-atomic. Offline actor plus unloaded rollback source cannot guarantee immediate return; unsupported machine/storage behavior should be excluded with preserve: [mechanisms] or selectors.",
+    "Capture and geometry bounds intentionally reject or leave unowned overflow. No missing chunk is loaded and no world/entity scan is introduced.",
+    "Failed development preflights are excluded. They exposed native redstone activation/decay, invalid fixture ray/metadata assumptions, a lost first legacy input before channel readiness, duplicate public spawn notifications for the same native XP UUID, Spigot container spills and differing native item teleport behavior. Corrections retain native XP pickup and full metadata/quantity assertions and were retested with frozen candidate/probe inputs.",
+    "Original behavior observations use retained genuine REA inventory plus explicitly scoped ordinary offline ZIP/JVM inspection. No fresh successful REA analysis or original runtime execution is claimed.",
+    "The user owns rendered appearance checks. Full reconstruction, other feature families and broader third-party combinations remain open.",
+    "Automatic cleanup review previously rejected deletion with blocked by policy. Ignored temporary verification files remain local; no deletion bypass or test input is included in Git or the product JAR."
+  ]
+}

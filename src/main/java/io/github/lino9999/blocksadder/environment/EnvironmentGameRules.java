@@ -10,6 +10,20 @@ public final class EnvironmentGameRules {
 
     private EnvironmentGameRules() {}
 
+    public static Boolean blockDrops(World world) {
+        if (world == null) return null;
+        for (String name : new String[]{"minecraft:block_drops", "block_drops", "doTileDrops"}) {
+            try {
+                GameRule<?> rule = (GameRule<?>) LOOKUP.invoke(null, name);
+                if (rule == null) continue;
+                Object value = world.getGameRuleValue(rule);
+                if (value instanceof Boolean enabled) return enabled;
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError unavailable) {
+            }
+        }
+        return null;
+    }
+
     public static GameRule<?> fireSpreadRule() {
         try {
             return (GameRule<?>) LOOKUP.invoke(null, "minecraft:fire_spread_radius_around_player");

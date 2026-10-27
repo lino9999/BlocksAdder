@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -14,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -48,42 +48,59 @@ final class WorldSweeps implements Listener {
         if (!resident(origin) || !origin.getWorld().equals(player.getWorld())) return false;
         ItemStack held = player.getInventory().getItemInMainHand();
         if (!held.equals(context.stack())) return false;
-        var sweep = new Sweep(player, event, origin, access.get().target(origin).orElse(null), player.getInventory().getHeldItemSlot(), new ItemBehaviorService.ExpectedStack(held), allowed);
+        var surface = region.requiresSurface() ? access.get().surface(origin, player).orElse(null) : null;
+        var location = player.getLocation();
+        var offsets = region.offsets(location.getYaw(), surface, origin.getY(), location.getY());
+        if (offsets.isEmpty()) return false;
+        var sweep = new Sweep(player, event, origin, access.get().target(origin).orElse(null), player.getInventory().getHeldItemSlot(), new ItemBehaviorService.ExpectedStack(held), allowed, region.rewards());
         if (context.wearSnapshots() != null) context.wearSnapshots().add(sweep.expected);
-        float yaw = player.getLocation().getYaw();
-        BlockFace forward = switch (Math.floorMod(Math.round(yaw / 90), 4)) {
-            case 1 -> BlockFace.WEST;
-            case 2 -> BlockFace.NORTH;
-            case 3 -> BlockFace.EAST;
-            default -> BlockFace.SOUTH;
-        };
-        for (int x = region.minX(); x <= region.maxX(); x++)
-            for (int y = region.minY(); y <= region.maxY(); y++)
-                for (int z = region.minZ(); z <= region.maxZ(); z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
-                    int[] offset = region.offset(x, y, z, forward);
-                    int targetY = origin.getY() + offset[1];
-                    int targetX = origin.getX() + offset[0], targetZ = origin.getZ() + offset[2];
-                    if (targetY < origin.getWorld().getMinHeight() || targetY >= origin.getWorld().getMaxHeight()
-                            || !origin.getWorld().isChunkLoaded(targetX >> 4, targetZ >> 4)) continue;
-                    Block block = origin.getWorld().getBlockAt(targetX, targetY, targetZ);
-                    var target = access.get().target(block).orElse(null);
-                    if (target != null && target.kind() != ContentKind.BLOCK || target == null && (block.getType().isAir() || block.isLiquid() || block.getType().getHardness() < 0)) continue;
-                    if (!region.choices().isEmpty() && region.choices().stream().noneMatch(choice -> choice.kind() == null
-                            ? target == null && block.getBlockData().matches(choice.data())
-                            : target != null && target.id().equals(choice.id()) && target.kind() == choice.kind())) continue;
-                    sweep.cells.add(new Cell(block, block.getBlockData().clone(), target));
-                }
+        for (var offset : offsets) {
+            int targetY = origin.getY() + offset.y();
+            int targetX = origin.getX() + offset.x(), targetZ = origin.getZ() + offset.z();
+            if (targetY < origin.getWorld().getMinHeight() || targetY >= origin.getWorld().getMaxHeight()
+                    || !origin.getWorld().isChunkLoaded(targetX >> 4, targetZ >> 4)) continue;
+            Block block = origin.getWorld().getBlockAt(targetX, targetY, targetZ);
+            var target = access.get().target(block).orElse(null);
+            if (target != null && target.kind() != ContentKind.BLOCK || target == null && (block.getType().isAir() || block.isLiquid() || block.getType().getHardness() < 0)) continue;
+            if (preserved(region, block, target)) continue;
+            if (!region.choices().isEmpty() && region.choices().stream().noneMatch(choice -> choice.kind() == null
+                    ? target == null && block.getBlockData().matches(choice.data())
+                    : target != null && target.id().equals(choice.id()) && target.kind() == choice.kind())) continue;
+            sweep.cells.add(new Cell(block, block.getBlockData().clone(), target));
+        }
         if (sweep.cells.isEmpty()) return false;
         pending.put(player.getUniqueId(), sweep);
         if (task == null) task = Bukkit.getScheduler().runTaskTimer(plugin, this::advance, 1, 1);
         return true;
     }
 
-    void committed(CustomContentBreakEvent event) {
+    private static boolean preserved(SweepRegion region, Block block, ItemWorldAccess.Target target) {
+        Material type = block.getType();
+        if (region.preserveResources() && (target != null || type.name().endsWith("_ORE")
+                || type == Material.ANCIENT_DEBRIS || type == Material.CRYING_OBSIDIAN)) return true;
+        if (!region.preserveMechanisms() || target != null) return false;
+        var data = block.getBlockData();
+        return block.getState() instanceof org.bukkit.block.TileState || data instanceof org.bukkit.block.data.Powerable
+                || data instanceof org.bukkit.block.data.AnaloguePowerable || org.bukkit.Tag.DOORS.isTagged(type)
+                || org.bukkit.Tag.TRAPDOORS.isTagged(type) || org.bukkit.Tag.RAILS.isTagged(type) || org.bukkit.Tag.BEDS.isTagged(type)
+                || switch (type) {
+                    case CRAFTING_TABLE, CARTOGRAPHY_TABLE, FLETCHING_TABLE, SMITHING_TABLE, LOOM, STONECUTTER,
+                            GRINDSTONE, COMPOSTER, ANVIL, CHIPPED_ANVIL, DAMAGED_ANVIL, REDSTONE_WIRE,
+                            REDSTONE_TORCH, REDSTONE_WALL_TORCH, REPEATER, COMPARATOR, TRIPWIRE, TRIPWIRE_HOOK -> true;
+                    default -> false;
+                };
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onOriginDrops(BlockDropItemEvent event) {
+        Sweep sweep = pending.get(event.getPlayer().getUniqueId());
+        if (sweep != null && !sweep.started && sweep.player == event.getPlayer() && sweep.origin.equals(event.getBlock())) sweep.originDrops = event;
+    }
+
+    void committed(CustomContentBreakEvent event, boolean rewards) {
         if (event.getPlayer() == null) return;
         Sweep sweep = pending.get(event.getPlayer().getUniqueId());
-        if (sweep != null && sweep.event == event) sweep.committed = true;
+        if (sweep != null && sweep.event == event) { sweep.committed = true; sweep.committedRewards = rewards; }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -126,6 +143,9 @@ final class WorldSweeps implements Listener {
                         : sweep.committed;
                 if (!committed) { pending.remove(sweep.player.getUniqueId(), sweep); continue; }
                 sweep.committedData = sweep.origin.getBlockData().clone();
+                if (sweep.event instanceof BlockBreakEvent nativeEvent && !nativeEvent.isDropItems()
+                        || sweep.event instanceof CustomContentBreakEvent customEvent && (!sweep.committedRewards || !customEvent.isDropItems())
+                        || sweep.originDrops != null && sweep.originDrops.isCancelled()) sweep.rewards = new SweepRewards(SweepRewards.Mode.NONE, false);
                 sweep.started = true;
             }
             while (budget > 0 && sweep.cursor < sweep.cells.size()) {
@@ -134,7 +154,7 @@ final class WorldSweeps implements Listener {
                 budget--;
                 if (!cell.current() || cell.target == null && access.get().target(cell.block).isPresent()) continue;
                 executing = sweep;
-                try { access.get().extraBreak(cell.block, sweep.player); }
+                try { access.get().extraBreak(cell.block, sweep.player, sweep.rewards, sweep.origin.getLocation().add(.5, .5, .5)); }
                 catch (RuntimeException failure) {
                     plugin.getLogger().warning("Area breaking stopped: " + failure.getMessage());
                     sweep.cursor = sweep.cells.size();
@@ -188,15 +208,19 @@ final class WorldSweeps implements Listener {
         private final java.util.function.BooleanSupplier allowed;
         private final List<Cell> cells = new ArrayList<>();
         private boolean committed;
+        private boolean committedRewards = true;
         private boolean started;
         private int cursor;
         private PlayerItemDamageEvent damage;
         private ItemStack beforeDamage;
         private BlockData committedData;
+        private SweepRewards rewards;
+        private BlockDropItemEvent originDrops;
 
-        Sweep(Player player, Event event, Block origin, ItemWorldAccess.Target originTarget, int slot, ItemBehaviorService.ExpectedStack expected, java.util.function.BooleanSupplier allowed) {
+        Sweep(Player player, Event event, Block origin, ItemWorldAccess.Target originTarget, int slot, ItemBehaviorService.ExpectedStack expected, java.util.function.BooleanSupplier allowed, SweepRewards rewards) {
             this.player = player; this.event = event; this.origin = origin; this.originTarget = originTarget; this.slot = slot; this.expected = expected;
             this.allowed = allowed;
+            this.rewards = rewards;
         }
     }
 }

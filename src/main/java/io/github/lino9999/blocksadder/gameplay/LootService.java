@@ -35,6 +35,8 @@ final class LootService implements Listener {
     private final ItemService items;
     private final NamespacedKey customEntityKey;
     private List<LootTable> tables = List.of();
+    private io.github.lino9999.blocksadder.world.BreakRewardRouting rewardRouting;
+    void setRewardRouting(io.github.lino9999.blocksadder.world.BreakRewardRouting routing) { rewardRouting = java.util.Objects.requireNonNull(routing); }
 
     LootService(JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items) {
         this.plugin = plugin;
@@ -109,13 +111,17 @@ final class LootService implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDrops(BlockDropItemEvent event) {
+        if (rewardRouting != null && !rewardRouting.allows(event.getBlock(), event.getPlayer())) return;
         Material material = event.getBlockState().getType();
         List<LootTable> selected = eligible("block", material.name(), event.getBlock().getLocation(), event.getPlayer());
         if (selected.isEmpty()) return;
         if (selected.stream().anyMatch(LootTable::replace)) event.getItems().clear();
         Location location = event.getBlock().getLocation().add(0.5, 0.5, 0.5);
+        Location destination = rewardRouting == null ? location : rewardRouting.destination(location, event.getPlayer());
+        List<ItemStack> rewards = roll(selected).stream().map(ItemStack::clone).toList();
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!event.isCancelled() && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) roll(selected).forEach(stack -> location.getWorld().dropItemNaturally(location, stack));
+            if (!event.isCancelled() && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)
+                    && destination.getWorld().isChunkLoaded(destination.getBlockX() >> 4, destination.getBlockZ() >> 4)) rewards.forEach(stack -> destination.getWorld().dropItemNaturally(destination, stack));
         });
     }
 

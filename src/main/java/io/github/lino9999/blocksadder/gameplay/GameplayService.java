@@ -46,6 +46,7 @@ public final class GameplayService implements Listener, AutoCloseable {
     }
 
     public void setWorldAccess(io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess world) { actions.setWorldAccess(world); }
+    public void setRewardRouting(io.github.lino9999.blocksadder.world.BreakRewardRouting routing) { loot.setRewardRouting(routing); }
     public void setCommandPlaceholders(java.util.function.Function<Player, java.util.function.Function<String, String>> resolver) { actions.setCommandPlaceholders(resolver); }
     public io.github.lino9999.blocksadder.itembehavior.ContentActionHook contentActions() { return actions.contentActions(); }
 

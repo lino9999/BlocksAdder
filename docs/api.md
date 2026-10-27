@@ -56,3 +56,9 @@ Native effects and custom item activation are described in [effects and totems](
 ## Quantity HUD integration
 
 The public service adds `adjustStat(player, id, delta)`, `hud(player, id, visible)`, `hudVisible(player, id)` and getter/setter `hudGlyphs(player, id[, glyphs])`. These operations require the server thread. Meter API bypass returns the unchanged current value. Custom glyph sequences are immutable copied IDs, bounded across the player's current art and cleared on quit/successful reload. See [HUD configuration, policy and API examples](hud-meters.md). Nested, asynchronous and stopping content reloads are rejected before publication.
+
+## Area reward relocation
+
+`AreaRewardMoveEvent` is a cancellable server-thread preflight for captured native item rewards in `world_sweep` origin mode. It exposes `getItem()`, `getPlayer()`, `getSourceBlock()`, `getFrom()`, `getTo()` and `setTo(Location)`. Locations are copied. Cancellation leaves the item at its current source position; listeners may redirect to a finite, resident destination. The router checks cancellation, scope, event membership and the item's unchanged source after callbacks before invoking public `Item.teleport`.
+
+This event covers relocation of existing native items. Custom loot and supported container escrow select their destination before spawning and retain their respective spawn/event rules. A platform may also emit its native teleport event. See [area mining](area-mining.md) for capture bounds, supported payloads and reward policies.

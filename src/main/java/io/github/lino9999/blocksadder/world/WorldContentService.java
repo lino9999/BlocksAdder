@@ -107,6 +107,22 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private final WorldBlockEditor blockEditor = new WorldBlockEditor();
     private java.util.function.Predicate<Block> externalOwnership = block -> false;
     private java.util.function.BiPredicate<Player, Block> extraBreaker = (player, block) -> false;
+    private java.util.function.BiFunction<Player, Block, Optional<BlockFace>> surfaceProvider = (player, block) -> Optional.empty();
+    private BreakRewardRouting rewardRouting;
+    private final Map<BlockPosition, java.util.ArrayDeque<NativeReward>> nativeRewards = new java.util.HashMap<>();
+    private int nativeRewardCount;
+
+    public void setRewardRouting(BreakRewardRouting routing) {
+        requireServerThread(); rewardRouting = java.util.Objects.requireNonNull(routing); contentLoot.setRewardRouting(routing);
+    }
+    public void setSurfaceProvider(java.util.function.BiFunction<Player, Block, Optional<BlockFace>> provider) {
+        requireServerThread(); surfaceProvider = java.util.Objects.requireNonNull(provider);
+    }
+    @Override public Optional<BlockFace> surface(Block block, Player player) { requireServerThread(); return surfaceProvider.apply(player, block); }
+    @Override public boolean extraBreak(Block block, Player player, io.github.lino9999.blocksadder.itembehavior.SweepRewards rewards, Location origin) {
+        requireServerThread();
+        return rewardRouting != null && rewardRouting.run(block, player, rewards, origin, managed(block) == null, () -> extraBreak(block, player));
+    }
 
     public void setExtraBreaker(java.util.function.BiPredicate<Player, Block> breaker) { requireServerThread(); extraBreaker = java.util.Objects.requireNonNull(breaker); }
 
@@ -117,7 +133,12 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
                 || !block.getWorld().isChunkLoaded(block.getX() >> 4, block.getZ() >> 4) || externalOwnership.test(block)) return false;
         var target = managed(block);
         if (target != null) return target.kind() == ContentKind.BLOCK && extraBreaker.test(player, block);
-        return !block.getType().isAir() && !block.isLiquid() && block.getType().getHardness() >= 0 && player.breakBlock(block);
+        ContentRegistry expected = registry.get();
+        return !block.getType().isAir() && !block.isLiquid() && block.getType().getHardness() >= 0
+                && (player.getGameMode() == GameMode.CREATIVE || block.isPreferredTool(player.getInventory().getItemInMainHand()))
+                && NativeBreakGuard.allow(block, player, this::dispatchBreakProtection,
+                candidate -> !closed && registry.get() == expected && managed(candidate) == null && !externalOwnership.test(candidate))
+                && player.breakBlock(block);
     }
 
     public void setExternalOwnership(java.util.function.Predicate<Block> ownership) { requireServerThread(); externalOwnership = java.util.Objects.requireNonNull(ownership); }
@@ -237,6 +258,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         cropDestruction.close();
         removalPlans.close();
         closed = true;
+        nativeRewards.clear(); nativeRewardCount = 0;
         if (growthTask != null) growthTask.cancel();
         growthTask = null;
         flushAndClear();
@@ -629,9 +651,54 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         if (!plan.matched()) return;
         var previous = block.getBlockData();
         Location location = block.getLocation();
+        boolean rewardsAllowed = rewardRouting == null || rewardRouting.allows(block, player);
+        Location rewardDestination = rewardRouting == null ? location.clone().add(.5, .5, .5)
+                : rewardRouting.destination(location.clone().add(.5, .5, .5), player);
+        BlockPosition position = BlockPosition.of(block);
+        if (nativeRewardCount >= 1024) return;
+        var receipts = nativeRewards.computeIfAbsent(position, ignored -> new java.util.ArrayDeque<>());
+        if (receipts.size() >= 16) return;
+        NativeReward reward = new NativeReward(event, previous.clone());
+        receipts.addLast(reward); nativeRewardCount++;
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!closed && !event.isCancelled() && event.isDropItems() && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4) && !location.getBlock().getBlockData().equals(previous)) contentLoot.execute(plan, location, player);
+            var current = nativeRewards.get(position);
+            if (current == null || !current.remove(reward)) return;
+            nativeRewardCount--;
+            if (current.isEmpty()) nativeRewards.remove(position, current);
+            if (rewardsAllowed && reward.accepted && (reward.drops == null || !reward.drops.isCancelled())
+                    && !closed && !event.isCancelled() && event.isDropItems()
+                    && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)
+                    && !location.getBlock().getBlockData().equals(previous)) contentLoot.execute(plan, location, player, rewardDestination);
         });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void finishNativeRewards(BlockBreakEvent event) {
+        var receipts = nativeRewards.get(BlockPosition.of(event.getBlock()));
+        if (receipts != null) for (NativeReward reward : receipts) if (reward.event == event) {
+            reward.accepted = !event.isCancelled() && event.isDropItems()
+                    && event.getBlock().getBlockData().equals(reward.data);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void observeNativeRewardDrops(org.bukkit.event.block.BlockDropItemEvent event) {
+        var receipts = nativeRewards.get(BlockPosition.of(event.getBlock()));
+        if (receipts == null) return;
+        var iterator = receipts.descendingIterator();
+        while (iterator.hasNext()) {
+            NativeReward reward = iterator.next();
+            if (reward.accepted && reward.drops == null && reward.event.getPlayer() == event.getPlayer()
+                    && reward.data.equals(event.getBlockState().getBlockData())) { reward.drops = event; return; }
+        }
+    }
+
+    private static final class NativeReward {
+        private final BlockBreakEvent event;
+        private final org.bukkit.block.data.BlockData data;
+        private org.bukkit.event.block.BlockDropItemEvent drops;
+        private boolean accepted;
+        private NativeReward(BlockBreakEvent event, org.bukkit.block.data.BlockData data) { this.event = event; this.data = data; }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -873,6 +940,11 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     private BreakProtection breakProtection(PlacedContent placed, Player player) {
         if (player == null) return new BreakProtection(true, true);
         BlockBreakEvent event = new BlockBreakEvent(placed.position().location().getBlock(), player);
+        dispatchBreakProtection(event);
+        return new BreakProtection(!event.isCancelled(), event.isDropItems());
+    }
+
+    private void dispatchBreakProtection(BlockBreakEvent event) {
         boolean previousSynthetic = syntheticBreak;
         syntheticBreak = true;
         try {
@@ -880,7 +952,6 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
         } finally {
             syntheticBreak = previousSynthetic;
         }
-        return new BreakProtection(!event.isCancelled(), event.isDropItems());
     }
 
     public boolean canBreak(Location location, Player player) {
@@ -894,6 +965,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
 
     public boolean breakPlaced(Location location, Player player, boolean dropItems) {
         requireServerThread();
+        if (rewardRouting != null) dropItems &= rewardRouting.allows(location.getBlock(), player);
         PlacedContent placed = managed(location.getBlock());
         return placed != null && breakContent(placed, player, false, false, dropItems);
     }
@@ -1247,7 +1319,7 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
             placed.nextGrowth(nextGrowth(settings(definition, ContentKind.CROP)));
             render(placed);
             save(placed.position().chunk());
-            if (attempt != null) attempt.committed();
+            if (attempt != null) attempt.committed(allowedDrops);
             return true;
         }
         Location dropLocation = placed.position().location().add(0.5, 0.5, 0.5);
@@ -1264,13 +1336,15 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
                 for (String drop : settings(definition, ContentKind.CROP).getStringList("drops")) rewards.add(parseDrop(drop));
             }
         }
+        if (rewardRouting != null && !rewardRouting.prepareStorage(placed.position().location().getBlock(), player, allowedDrops)) return false;
         unregister(placed);
         clearBacking(placed);
         save(placed.position().chunk());
-        if (attempt != null) attempt.committed();
+        if (attempt != null) attempt.committed(allowedDrops);
         if (supportedCrop != null) supportedCrop.commit(allowedDrops);
         if (environment != null) environment.committed(allowedDrops);
-        for (ItemStack reward : rewards) dropLocation.getWorld().dropItemNaturally(dropLocation, reward);
+        Location destination = rewardRouting == null ? dropLocation : rewardRouting.destination(dropLocation, player);
+        for (ItemStack reward : rewards) destination.getWorld().dropItemNaturally(destination, reward);
         if (drops && cropPlan != null && cropPlan.configured()) contentLoot.execute(cropPlan, placed.position().location(), player);
         if (blockPlan != null && blockPlan.matched()) contentLoot.execute(blockPlan, placed.position().location(), player);
         if (placed.kind() == ContentKind.BLOCK) sounds.broken(placed.position().location(), placed.id(), player);

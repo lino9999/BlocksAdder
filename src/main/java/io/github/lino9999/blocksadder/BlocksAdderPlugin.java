@@ -55,6 +55,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     private boolean reloadingContent;
     private boolean stopping;
     private io.github.lino9999.blocksadder.integration.PlaceholderService placeholders;
+    private io.github.lino9999.blocksadder.world.BreakRewardRouting rewardRouting;
 
     @Override
     public void onEnable() {
@@ -68,6 +69,9 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             placeholders = new io.github.lino9999.blocksadder.integration.PlaceholderService(this, gameplay, () -> content);
             gameplay.setCommandPlaceholders(placeholders::commands);
             world = new WorldContentService(this, () -> content, items);
+            rewardRouting = new io.github.lino9999.blocksadder.world.BreakRewardRouting(this);
+            world.setRewardRouting(rewardRouting);
+            gameplay.setRewardRouting(rewardRouting);
             gameplay.setWorldAccess(world);
             world.setActions(gameplay.contentActions());
             nativeBlocks = new NativeBlockService(this, () -> content, world);
@@ -78,6 +82,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             packs.setPlaceholderFonts(placeholders::active);
             mining = new MiningService(this, () -> content, items, world);
             world.setExtraBreaker(mining::breakExtra);
+            world.setSurfaceProvider(mining::surface);
             models = new ModelService(this, () -> content, items);
             world.setHelperTarget(models::targetOf);
             world.setEntityCleanup(entity -> models.byEntity(entity).ifPresent(models::detach));
@@ -138,6 +143,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             manager.registerEvents(recipes, this);
             manager.registerEvents(menus, this);
             manager.registerEvents(packs, this);
+            manager.registerEvents(rewardRouting, this);
             getServer().getServicesManager().register(BlocksAdderApi.class, this, this, ServicePriority.Normal);
             placeholders.start();
             getLogger().info("BlocksAdder " + getDescription().getVersion() + " by Lino enabled with " + content.items().size() + " item definitions.");
@@ -244,6 +250,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     public void onDisable() {
         stopping = true;
         if (placeholders != null) placeholders.close();
+        if (rewardRouting != null) { rewardRouting.close(); org.bukkit.event.HandlerList.unregisterAll(rewardRouting); }
         if (menus != null) menus.close();
         if (mining != null) mining.close();
         if (generation != null) generation.close();

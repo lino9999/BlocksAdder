@@ -41,6 +41,7 @@ public final class MiningService implements Listener, AutoCloseable {
     private final WorldContentService world;
     private Map<String, MiningProfile> profiles = Map.of();
     private final Map<UUID, Session> sessions = new HashMap<>();
+    private final SurfaceContacts surfaces;
     private BukkitTask task;
     private long tick;
     private io.github.lino9999.blocksadder.sound.ContentSoundSink sounds;
@@ -52,6 +53,7 @@ public final class MiningService implements Listener, AutoCloseable {
         this.registry = registry;
         this.items = items;
         this.world = world;
+        this.surfaces = new SurfaceContacts(world::target);
     }
 
     public void validate(ContentRegistry candidate) {
@@ -81,6 +83,7 @@ public final class MiningService implements Listener, AutoCloseable {
 
     public boolean begin(Player player, Block block) {
         requireThread();
+        surfaces.retain(player, block);
         String id = world.identify(block).orElse(null);
         MiningProfile profile = id == null ? null : profiles.get(id);
         if (profile == null) {
@@ -99,7 +102,7 @@ public final class MiningService implements Listener, AutoCloseable {
             current.lastSwing = tick;
             return true;
         }
-        cancel(player);
+        stop(player);
         if (player.getGameMode() == GameMode.CREATIVE || profile.hardness() <= 0) {
             world.breakPlaced(block.getLocation(), player, true);
             return true;
@@ -133,19 +136,48 @@ public final class MiningService implements Listener, AutoCloseable {
     }
 
     public void cancel(Player player) {
+        surfaces.remove(player);
+        stop(player);
+    }
+
+    private void stop(Player player) {
         Session session = sessions.remove(player.getUniqueId());
         if (session != null) cracks(player, session, 0);
+    }
+
+    public java.util.Optional<org.bukkit.block.BlockFace> surface(Player player, Block block) {
+        return surfaces.peek(player, block);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void captureSurface(org.bukkit.event.player.PlayerInteractEvent event) { surfaces.capture(event); }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void damageSurface(BlockDamageEvent event) { surfaces.damaged(event); }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void fadeSurface(org.bukkit.event.block.BlockFadeEvent event) { surfaces.faded(event); }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void finishSurface(org.bukkit.event.block.BlockBreakEvent event) {
+        if (!world.syntheticBreak()) surfaces.remove(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(org.bukkit.event.player.PlayerInteractEvent event) {
         if (event.getAction() != Action.LEFT_CLICK_BLOCK || event.getClickedBlock() == null || event.getHand() != EquipmentSlot.HAND) return;
-        if (begin(event.getPlayer(), event.getClickedBlock())) event.setCancelled(true);
+        if (begin(event.getPlayer(), event.getClickedBlock())) {
+            Session session = sessions.get(event.getPlayer().getUniqueId());
+            if (session != null && session.block.equals(event.getClickedBlock())) surfaces.owned(event.getPlayer(), event.getClickedBlock());
+            else surfaces.remove(event.getPlayer());
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(BlockDamageEvent event) {
         if (profiles.containsKey(world.identify(event.getBlock()).orElse(""))) {
+            surfaces.owned(event.getPlayer(), event.getBlock());
             event.setCancelled(true);
             begin(event.getPlayer(), event.getBlock());
         }
@@ -156,6 +188,7 @@ public final class MiningService implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSwing(PlayerAnimationEvent event) {
+        surfaces.touch(event.getPlayer());
         Session session = sessions.get(event.getPlayer().getUniqueId());
         if (session != null) session.lastSwing = tick;
     }
@@ -195,11 +228,13 @@ public final class MiningService implements Listener, AutoCloseable {
                 else if (!profile.hitSound().isBlank()) player.getWorld().playSound(session.block.getLocation(), profile.hitSound(), 0.25f, 0.8f);
             }
             if (session.progress >= 1) {
-                cancel(player);
+                stop(player);
                 ItemStack expected = tool.clone();
                 int slot = player.getInventory().getHeldItemSlot();
-                if (world.breakPlaced(session.block.getLocation(), player, !profile.correctToolDrops() || correct)
-                        && player.getInventory().getHeldItemSlot() == slot && player.getInventory().getItemInMainHand().equals(expected)) damageTool(player);
+                try {
+                    if (world.breakPlaced(session.block.getLocation(), player, !profile.correctToolDrops() || correct)
+                            && player.getInventory().getHeldItemSlot() == slot && player.getInventory().getItemInMainHand().equals(expected)) damageTool(player);
+                } finally { surfaces.remove(player); }
             } else {
                 int stage = Math.min(9, (int) (session.progress * 10));
                 if (stage != session.stage) {
@@ -271,6 +306,7 @@ public final class MiningService implements Listener, AutoCloseable {
             if (player != null) cancel(player);
         }
         sessions.clear();
+        surfaces.clear();
         if (task != null) task.cancel();
         task = null;
     }

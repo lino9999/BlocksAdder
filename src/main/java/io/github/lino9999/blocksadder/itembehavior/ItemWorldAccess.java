@@ -11,6 +11,10 @@ public interface ItemWorldAccess {
     Optional<Target> target(Block block);
     Optional<Target> target(Entity entity);
     default boolean extraBreak(Block block, org.bukkit.entity.Player player) { return false; }
+    default boolean extraBreak(Block block, org.bukkit.entity.Player player, SweepRewards rewards, Location origin) {
+        return rewards.mode() == SweepRewards.Mode.NATURAL && !rewards.requireSilk() && extraBreak(block, player);
+    }
+    default Optional<org.bukkit.block.BlockFace> surface(Block block, org.bukkit.entity.Player player) { return Optional.empty(); }
     default boolean change(Location location, io.github.lino9999.blocksadder.world.WorldChoice match,
             io.github.lino9999.blocksadder.world.WorldChoice into, org.bukkit.entity.Player player, java.util.function.BooleanSupplier source) { return false; }
 
