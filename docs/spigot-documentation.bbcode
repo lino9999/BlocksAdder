@@ -156,3 +156,5 @@ play_totem_animation:
 The display uses a copy of the configured item, retains its material/model/component data and restores the current client hand in a finally block. Server inventory/counts and health remain unchanged. Source changes, reloads and disconnects cancel stale delayed item plans. An unsupported or lossy public component round trip rejects the display before use.
 Use [B]/ba totem <player> [item] [--quiet][/B] with permission [B]blocksadder.totem[/B]. The optional item is a custom namespaced ID; --quiet hides the success confirmation. Omit it for the vanilla animation.
 [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/effects-and-totems.md]Full payload table, native compatibility notes, API and verification boundaries[/URL]
+
+[B]Development preview 13 camera compatibility:[/B] fixes the tested Paper 26.3/ProtocolLib movement disconnect. Native camera input and lifecycle pass on nine builds; exact server/protocol scope and remaining visual checks are recorded in the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/camera-input.md]camera verification guide[/URL].

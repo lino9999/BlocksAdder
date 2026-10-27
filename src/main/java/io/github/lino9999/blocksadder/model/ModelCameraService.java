@@ -130,9 +130,7 @@ final class ModelCameraService implements Listener, AutoCloseable {
         Session session = sessions.remove(viewer.getUniqueId());
         if (session == null) return false;
         try {
-            if (viewer.isOnline()) {
-                protocol.end(viewer, session.anchor);
-            }
+            protocol.end(viewer, session.anchor);
         } catch (RuntimeException | LinkageError exception) {
             plugin.getLogger().warning("Model camera packets could not be restored for " + viewer.getName() + ": " + exception.getMessage());
         } finally {

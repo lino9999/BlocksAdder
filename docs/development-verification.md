@@ -1,5 +1,10 @@
 # Development verification
 
+## Development preview 13: native camera input
+
+The exact 1125987-byte JAR (`17ea3e277d0456baf6b5855a658b22546777b70aeeb3654810c84add2e2a2151`) passed 3,334 scoped assertions in 26 accepted server processes. Native cameras passed 37 checks on each of nine builds; emotes passed 73 on each 1.21.11 fork; ProtocolLib callback/mask/totem integration passed 156 on four endpoints including Paper 26.3. Typed effect/totem endpoint regressions and nine core bundle runs passed. Java 21 was used for 1.21.11 and Java 25 for 26.x. [Design, diagnostic controls and limits](camera-input.md), [exact results](camera-input-verification.json), [distribution audit](camera-input-audit.json). No graphical client or original JAR was executed. Historical reports below retain their original scope.
+
+
 Effect/totem candidate `6e9fbf645cbb4cc50dd023741385f543de59ca1b3c3ff12617367835e7f290f0` adds independently designed typed native effect payloads and component-preserving custom item activation. Public SDK aliases/data adapters, opaque RGB, six native directions and explicit dragon-breath sound semantics correct provider differences. Native record playback uses the typed song API when present and a bounded canonical-key legacy bridge, validated against actual client configuration registry IDs; stop uses event 1011. Totem copies retain their material/metadata, gain display-only death protection and restore current equipment in nested finally blocks without server inventory writes.
 
 The exact JAR passed **9,842 scoped assertions across 25 accepted server processes**: 8,081 effect/totem checks on nine builds, 888 shared particle regressions on four endpoints, 468 optional ProtocolLib callback/mask checks on Spigot/Paper 1.21.11 and Paper 26.2, plus 405 core/bundle assertions on nine builds. [Exact results](effects-totems-verification.json) separate native input/packets, API/validation and headless checks. The [distribution audit](effects-totems-audit.json) found empty collision lists across 370 own classes. See [configuration/API](effects-and-totems.md).

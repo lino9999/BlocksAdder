@@ -21,10 +21,11 @@ import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 final class ProtocolLibModelProtocol implements ModelProtocol {
     private final ProtocolManager manager;
-    private final Map<UUID, Rotation> cameras = new ConcurrentHashMap<>();
+    private final Map<PlayerIdentity, AtomicReference<Rotation>> cameras = new ConcurrentHashMap<>();
     private final Map<UUID, Mask> masks = new ConcurrentHashMap<>();
     private final Map<Integer, Mask> maskedEntities = new ConcurrentHashMap<>();
 
@@ -33,23 +34,27 @@ final class ProtocolLibModelProtocol implements ModelProtocol {
         if (!PacketType.Play.Server.CAMERA.isSupported() || !PacketType.Play.Server.MOUNT.isSupported()
                 || !PacketType.Play.Server.GAME_STATE_CHANGE.isSupported()) throw new IllegalStateException("This ProtocolLib build does not support the required camera packets.");
         PacketType[] movement = java.util.stream.Stream.of(PacketType.Play.Client.POSITION, PacketType.Play.Client.POSITION_LOOK,
-                PacketType.Play.Client.LOOK, PacketType.Play.Client.FLYING, PacketType.Play.Client.VEHICLE_MOVE,
-                PacketType.Play.Server.ENTITY_EQUIPMENT, PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Server.SET_SLOT,
-                PacketType.Play.Server.SET_PLAYER_INVENTORY).filter(PacketType::isSupported).toArray(PacketType[]::new);
+                PacketType.Play.Client.LOOK, PacketType.Play.Client.FLYING, PacketType.Play.Client.VEHICLE_MOVE)
+                .filter(PacketType::isSupported).toArray(PacketType[]::new);
         manager.addPacketListener(new PacketAdapter(PacketAdapter.params().plugin(plugin).listenerPriority(ListenerPriority.HIGHEST)
-                .optionSync().types(movement)) {
+                .types(movement)) {
             @Override public void onPacketReceiving(PacketEvent event) {
                 if (event.isCancelled()) return;
-                UUID id = event.getPlayer().getUniqueId();
-                if (!cameras.containsKey(id)) return;
+                AtomicReference<Rotation> rotation = cameras.get(new PlayerIdentity(event.getPlayer()));
+                if (rotation == null) return;
                 event.setCancelled(true);
                 if (event.getPacketType().equals(PacketType.Play.Client.LOOK) || event.getPacketType().equals(PacketType.Play.Client.POSITION_LOOK)) {
                     Float yaw = event.getPacket().getFloat().readSafely(0);
                     Float pitch = event.getPacket().getFloat().readSafely(1);
-                    if (yaw != null && pitch != null && Float.isFinite(yaw) && Float.isFinite(pitch)) cameras.put(id, new Rotation((yaw % 360 + 540) % 360 - 180, Math.clamp(pitch, -89.9f, 89.9f)));
+                    if (yaw != null && pitch != null && Float.isFinite(yaw) && Float.isFinite(pitch)) rotation.set(new Rotation((yaw % 360 + 540) % 360 - 180, Math.clamp(pitch, -89.9f, 89.9f)));
                 }
             }
-
+        });
+        PacketType[] inventory = java.util.stream.Stream.of(PacketType.Play.Server.ENTITY_EQUIPMENT,
+                PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.SET_PLAYER_INVENTORY)
+                .filter(PacketType::isSupported).toArray(PacketType[]::new);
+        manager.addPacketListener(new PacketAdapter(PacketAdapter.params().plugin(plugin).listenerPriority(ListenerPriority.HIGHEST)
+                .types(inventory)) {
             @Override public void onPacketSending(PacketEvent event) {
                 if (!event.isCancelled()) mask(event);
             }
@@ -60,21 +65,23 @@ final class ProtocolLibModelProtocol implements ModelProtocol {
     @Override public String reason() { return "Model camera packets are available."; }
 
     @Override public void begin(Player player, Entity camera) {
-        cameras.put(player.getUniqueId(), new Rotation(player.getLocation().getYaw(), player.getLocation().getPitch()));
+        cameras.put(new PlayerIdentity(player), new AtomicReference<>(new Rotation(player.getLocation().getYaw(), player.getLocation().getPitch())));
         sendCamera(player, camera.getEntityId());
         passengers(player, camera.getEntityId(), new int[]{player.getEntityId()});
         gameMode(player, 3);
     }
 
     @Override public void end(Player player, Entity camera) {
-        cameras.remove(player.getUniqueId());
+        cameras.remove(new PlayerIdentity(player));
+        if (!player.isOnline()) return;
         sendCamera(player, player.getEntityId());
         passengers(player, camera.getEntityId(), new int[0]);
         gameMode(player, player.getGameMode().getValue());
     }
 
     @Override public Rotation rotation(Player player) {
-        return cameras.getOrDefault(player.getUniqueId(), new Rotation(player.getLocation().getYaw(), player.getLocation().getPitch()));
+        AtomicReference<Rotation> rotation = cameras.get(new PlayerIdentity(player));
+        return rotation == null ? new Rotation(player.getLocation().getYaw(), player.getLocation().getPitch()) : rotation.get();
     }
 
     @Override public void equipment(Player player, Set<EquipmentSlot> hidden) {
@@ -177,4 +184,9 @@ final class ProtocolLibModelProtocol implements ModelProtocol {
     }
 
     private record Mask(int entity, Set<EquipmentSlot> slots) {}
+
+    private record PlayerIdentity(Player player) {
+        @Override public int hashCode() { return System.identityHashCode(player); }
+        @Override public boolean equals(Object other) { return other instanceof PlayerIdentity identity && player == identity.player; }
+    }
 }

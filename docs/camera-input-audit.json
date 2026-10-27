@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-27T02:31:12.079802+00:00",
+  "method": "Offline ZIP bytes, all JVM constant pools, string literals and declared manifest keys. Neither artifact was executed.",
+  "reference": {
+    "sha256": "cedc3ff88d57fb303e865b017d8e090da0f9f203d3922ff7887e27342f0c053d",
+    "files": 2094,
+    "classes": 1946
+  },
+  "candidate": {
+    "sha256": "17ea3e277d0456baf6b5855a658b22546777b70aeeb3654810c84add2e2a2151",
+    "files": 378,
+    "classes": 372
+  },
+  "identical_nonempty_files": [],
+  "identical_class_paths": [],
+  "foreign_class_paths": [],
+  "reference_branding_traces": [],
+  "shared_declared_permissions": [],
+  "shared_declared_commands": [],
+  "shared_command_or_alias_names": [],
+  "shared_readable_message_literals": [],
+  "shared_long_message_literals": [],
+  "analysis_or_test_inputs_in_jar": [],
+  "bundled_yaml_files": [
+    "config.yml",
+    "contents/blocksadder/configs/examples.yml",
+    "plugin.yml"
+  ],
+  "limitations": [
+    "Different bytes, names and literals do not prove independent authorship of every algorithm.",
+    "Common API names, Minecraft identifiers and short vocabulary are intentionally not classified as copied text.",
+    "This report does not determine copyright ownership or guarantee marketplace approval.",
+    "Behavioral equivalence and supported-version acceptance require separate runtime evidence."
+  ],
+  "passed": true
+}

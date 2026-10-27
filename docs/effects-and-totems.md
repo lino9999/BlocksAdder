@@ -116,3 +116,7 @@ Frozen JAR SHA-256 `6e9fbf645cbb4cc50dd023741385f543de59ca1b3c3ff12617367835e7f2
 **Open integration issue:** native players disconnected before input with the tested ProtocolLib 5.5 snapshot in the full BlocksAdder/model integration scenario on Paper 26.3. A separate ProtocolLib-only/no-listener control passed nine checks. The cause is still unresolved; this does not prove a provider-alone defect. Core actions passed on that server without ProtocolLib. Wider model/camera integration remains required work.
 
 The exact artifact is downloadable in [development preview 12](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.12). Its [source CI](https://github.com/lino9999/BlocksAdder/actions/runs/40436012255) passed on Java 21/25, and the downloaded JAR matched the frozen checksum; see [publication evidence](effects-totems-release.json).
+
+## Later camera compatibility correction
+
+Preview 13 fixes the receiving movement-listener path behind preview 12's Paper 26.3 disconnect. Its exact candidate passes the 156-check callback/mask/totem suite there, including native movement. The original preview-12 report above is historical evidence for that older artifact. See [camera input](camera-input.md) and [exact new results](camera-input-verification.json).
