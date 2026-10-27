@@ -43,6 +43,7 @@ Read this file and the relevant document before searching the repository. Produc
 - `pack/`: deterministic ZIP generation, model definitions and delivery.
 - `pack/EquipmentAssetCompiler`: native armor layer definitions and texture placement.
 - `command/`: commands, permissions, browsing and recipe UI.
+- `itembehavior/CommandTemplate`, `ItemBehaviorService.command`, `integration/placeholder/CommandPlaceholderResolver` and `docs/command-placeholders.md`: explicit per-command incoming PlaceholderAPI scalar bindings. Keep labels literal, provider output a single bounded identifier/number fragment, expansion one-pass and Bukkit/provider reads on the main thread. Validate authority before/after every known callback and before dispatch, including provider generation, exact player/source, bounded inventory snapshot, permissions, registry and action revision. Compile the item ID into the command so earlier ordered consumption retains its admitted definition. Incoming resolution is independent from export prefix ownership/configuration. Never add arbitrary player-text/free-text dispatch or describe scalar grammar as semantic security for privileged templates.
 - `api/`: integration entry point and cancellable events.
 - `docs/api.md`: public service access and operation/threading contracts.
 - `src/main/resources/contents/`: original example content belonging to this project.

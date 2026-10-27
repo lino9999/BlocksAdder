@@ -66,6 +66,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             recipes = new RecipeService(this, () -> content, items);
             gameplay = new GameplayService(this, () -> content, items);
             placeholders = new io.github.lino9999.blocksadder.integration.PlaceholderService(this, gameplay, () -> content);
+            gameplay.setCommandPlaceholders(placeholders::commands);
             world = new WorldContentService(this, () -> content, items);
             gameplay.setWorldAccess(world);
             world.setActions(gameplay.contentActions());

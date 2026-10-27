@@ -12,7 +12,7 @@ BlocksAdder by **Lino** is a Java plugin for building namespaced server content 
 
 **Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
 
-**Active development:** `main` is `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Preview 15 adds optional PlaceholderAPI exports for glyphs, font identifiers, signed pixel spacing and persistent player meters. Its exact JAR passed 2,100 scoped assertions in 22 accepted server processes, including the real provider on nine Spigot/Paper builds, core loading without it and HUD/reload regressions. See [placeholders](docs/placeholders.md), [exact verification](docs/placeholder-verification.json), [HUDs and meters](docs/hud-meters.md), [development evidence](docs/development-verification.md) and [remaining parity work](docs/parity-progress.md). Historical previews retain their own reports.
+**Active development:** `main` is `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Preview 16 adds explicit PlaceholderAPI scalar arguments in administrator-configured item commands, with fixed labels, one-pass expansion and checks after provider callbacks. Its exact JAR passed 2,018 scoped assertions in 26 accepted server processes, including incoming integration on nine Spigot/Paper builds, provider-absent tests and outgoing/held/projectile/core regressions. See [command placeholders](docs/command-placeholders.md), [exact verification](docs/command-placeholders-verification.json), [exports](docs/placeholders.md), [development evidence](docs/development-verification.md) and [remaining parity work](docs/parity-progress.md). Historical previews retain their own reports.
 
 **Camera compatibility:** preview 13 resolves the Paper 26.3 disconnect observed in preview 12 with the tested ProtocolLib 5.5 snapshot. Native look, movement cancellation and camera lifecycle passed on all nine builds; callback, masking and custom-totem integration also passed on Paper 26.3. [Exact artifacts and limits](docs/camera-input-verification.json). Rendered appearance remains a user check.
 
@@ -28,6 +28,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Player content:** persistent bounded meters, eligible-time regeneration, bossbar/text HUDs, image pips, frames, custom glyph sequences, environmental rules, source-specific bypass, item actions, cooldowns and potion effects.
 - **Font images and audio:** bitmap font providers, permission-aware chat/sign/book aliases, custom sound definitions and sound/totem commands.
 - **PlaceholderAPI exports:** optional [glyph, raw character, font, pixel movement and player meter placeholders](docs/placeholders.md), with canonical namespaced IDs, asynchronous snapshots and generated spacing references for participating pack fonts.
+- **PlaceholderAPI command inputs:** per-command [trusted scalar substitution](docs/command-placeholders.md) with `placeholder_api: true`, fixed command labels, bounded single-pass resolution and callback-time source and lifecycle checks.
 - **Loot and entities:** block, entity and fishing tables; configured vanilla living entities with custom stats, equipment and drops; manually generated custom trees.
 - **Resource packs:** sorted ZIP output, stable hashes, modern item definitions, model/font/sound generation, asset merging, size limits, manual delivery and optional built-in HTTP hosting.
 - **Administration and integrations:** paginated catalog, recipe previews, item management, candidate validation, reload rollback, Bukkit service API and cancellable content events.
@@ -44,11 +45,13 @@ BlocksAdder's core has no mandatory plugin dependencies. Advanced packet feature
 
 Install PlaceholderAPI separately to enable the optional `blocksadder` export expansion. `integrations.placeholders` defaults to true; use `/ba reload` after changing it and rebuild/distribute the pack while the adapter is active. For example, `%blocksadder_meter_garden:stamina%` exports a registered meter and `%blocksadder_glyph_garden:heart%` exports a registered glyph. Scalar placeholders require the consumer to select the glyph's configured font. See the [complete placeholder reference](docs/placeholders.md) for all five families, numeric fallbacks, trusted-template permission rules and provider lifecycle limits.
 
+Named item-event commands can separately opt in to [incoming PlaceholderAPI arguments](docs/command-placeholders.md). This defaults to false, requires trusted command templates/providers and accepts bounded scalar results rather than free text. Incoming resolution is independent of the outgoing expansion setting; static commands remain provider-independent. Structural validation does not establish semantic safety for privileged or nested administrator commands.
+
 ## Requirements and installation
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.15). It uses the bundle format documented here; full functional reconstruction remains in progress.
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.16). It uses the bundle format documented here; full functional reconstruction remains in progress.
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.

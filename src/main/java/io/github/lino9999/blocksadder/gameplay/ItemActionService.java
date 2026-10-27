@@ -70,6 +70,7 @@ final class ItemActionService implements Listener, AutoCloseable {
     }
 
     void setWorldAccess(io.github.lino9999.blocksadder.itembehavior.ItemWorldAccess world) { behaviors.setWorldAccess(world); }
+    void setCommandPlaceholders(java.util.function.Function<Player, java.util.function.Function<String, String>> resolver) { behaviors.setCommandPlaceholders(resolver); }
     io.github.lino9999.blocksadder.itembehavior.ContentActionHook contentActions() {
         var physical = behaviors.contentActions();
         return new io.github.lino9999.blocksadder.itembehavior.ContentActionHook() {

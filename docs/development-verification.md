@@ -1,5 +1,9 @@
 # Development verification
 
+## Development preview 16: trusted command placeholders
+
+The exact 1,215,448-byte JAR (`3c63a399897aab1a049ea674654c2703d506af263a79ca30d0f56a7afd7be55e`) passed 2,018 scoped assertions in 26 accepted server processes. Each of nine builds passed 89 real-provider incoming command checks, with one native held-use input, actual quit/rejoin and public event/API adversaries. Provider-absent endpoint tests, outgoing exports, held interactions, projectiles and nine core/bundle runs passed on the same artifact. The packaged helper separately passed 170 assertions and 1,000 concurrent renders. Java 21 is used for 1.21.11 and Java 25 for 26.x. [Guide](command-placeholders.md), [exact report](command-placeholders-verification.json), [distribution audit](command-placeholders-audit.json). Disk-full interruptions are excluded from acceptance; preserved temporary world data was compressed and new runtime JAR copies use immutable hardlinks. No GUI client or original JAR was executed.
+
 ## Development preview 15: optional PlaceholderAPI exports
 
 The exact 1,206,863-byte JAR (`10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576`) passed 2,100 scoped assertions in 22 accepted server processes. Official PlaceholderAPI 2.12.3 passed 133 checks on each of nine builds; native HUD and optional ProtocolLib callback regressions passed on Spigot 1.21.11 and Paper 26.3; core/bundle checks passed on nine builds without PlaceholderAPI. Java 21 is used for 1.21.11 and Java 25 for 26.x. Snapshot concurrency, font merging and exhaustive signed spacing helpers are separate source-level proof. [Guide](placeholders.md), [exact results](placeholder-verification.json), [distribution audit](placeholder-audit.json). The provider's plain re-enable singleton limitation, private controlled public lifecycle replay and external/scalar font limits remain explicit. No GUI client or original JAR was executed.

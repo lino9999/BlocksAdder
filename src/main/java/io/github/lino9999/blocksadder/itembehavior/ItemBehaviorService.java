@@ -125,6 +125,14 @@ public final class ItemBehaviorService implements AutoCloseable {
     private Map<String, Definition> definitions = Map.of();
     private ItemBehaviorEvents events;
     private ItemWorldAccess worldAccess;
+    private long revision;
+    private boolean closed;
+    private java.util.function.Function<Player, java.util.function.Function<String, String>> commandPlaceholders = player -> null;
+
+    public void setCommandPlaceholders(java.util.function.Function<Player, java.util.function.Function<String, String>> resolver) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Command placeholder connections require the server thread.");
+        commandPlaceholders = java.util.Objects.requireNonNull(resolver);
+    }
 
     public void setWorldAccess(ItemWorldAccess worldAccess) {
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("World action connections require the server thread.");
@@ -245,6 +253,8 @@ public final class ItemBehaviorService implements AutoCloseable {
                             style));
         }
         if (!activate) return;
+        revision++;
+        closed = false;
         cancelJobs();
         cooldowns.clear();
         admitted.clear();
@@ -434,8 +444,10 @@ public final class ItemBehaviorService implements AutoCloseable {
                     definition.color(),
                     definition.style());
         Boolean last = null;
+        long expectedRevision = revision;
         Set<String> successes = new HashSet<>(), failures = new HashSet<>();
         for (Step step : plan.steps()) {
+            if (closed || revision != expectedRevision) break;
             if ((trigger.startsWith("world.") || trigger.startsWith("flight.")) && context.stack() == null) break;
             if (!permission(context.player(), step.permission())) continue;
             if (!step.flows().isEmpty()
@@ -515,10 +527,6 @@ public final class ItemBehaviorService implements AutoCloseable {
     }
 
     void validatePlaceholders(String command) {
-        if (Pattern.compile("%[^%\\r\\n]+%").matcher(command).find())
-            throw new IllegalArgumentException(
-                    "External command placeholders require an explicitly supported trusted"
-                            + " placeholder adapter.");
         var matcher = PLACEHOLDER.matcher(command);
         while (matcher.find())
             if (!PLACEHOLDERS.contains(matcher.group().substring(1, matcher.group().length() - 1)))
@@ -545,6 +553,44 @@ public final class ItemBehaviorService implements AutoCloseable {
         if (PLACEHOLDER.matcher(input).find())
             throw new IllegalStateException("This command requires a target player.");
         return input;
+    }
+
+    boolean command(String itemId, CommandTemplate template, boolean console, boolean silent, String expected, String permission, Context context) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Configured commands require the server thread.");
+        long expectedRevision = revision;
+        ContentRegistry expectedRegistry = registry.get();
+        Player player = context.player();
+        UUID identity = player.getUniqueId();
+        org.bukkit.World playerWorld = player.getWorld();
+        int slot = player.getInventory().getHeldItemSlot();
+        ItemStack[] inventory = template.external() ? player.getInventory().getContents() : null;
+        if (inventory != null) for (int index = 0; index < inventory.length; index++)
+            if (inventory[index] != null) inventory[index] = inventory[index].clone();
+        ItemStack source = context.source();
+        ItemStack current = context.stack();
+        ItemStack expectedSource = source == null ? null : source.clone();
+        ItemStack expectedCurrent = current == null ? null : current.clone();
+        Definition definition = definitions.get(itemId);
+        if (definition == null) return false;
+        boolean targetLive = context.target() != null && context.target().isValid();
+        java.util.function.BooleanSupplier admitted = () -> !closed && revision == expectedRevision
+                && registry.get() == expectedRegistry && plugin.isEnabled()
+                && player.isOnline() && !player.isDead() && Bukkit.getPlayer(identity) == player
+                && player.getWorld() == playerWorld
+                && player.getGameMode() != org.bukkit.GameMode.SPECTATOR
+                && permission(player, permission) && permission(player, definition.permission())
+                && (context.origin() != Origin.PLAYER || context.authority() != null || player.getInventory().getHeldItemSlot() == slot)
+                && (context.authority() == null || context.authority().getAsBoolean())
+                && java.util.Objects.equals(expectedCurrent, context.stack())
+                && java.util.Objects.equals(expectedSource, context.source())
+                && (inventory == null || java.util.Arrays.equals(inventory, player.getInventory().getContents()))
+                && (!targetLive || context.target().isValid());
+        if (!admitted.getAsBoolean()) return false;
+        java.util.function.Function<String, String> resolver = template.external() ? commandPlaceholders.apply(player) : null;
+        if (template.external() && resolver == null) return false;
+        String rendered = template.render(literal -> expand(literal, context), resolver, admitted);
+        if (rendered == null || !admitted.getAsBoolean()) return false;
+        return console ? CommandOutput.dispatch(rendered, silent, expected) : player.performCommand(rendered);
     }
 
     private void position(Map<String, String> result, String prefix, Location location) {
@@ -585,6 +631,8 @@ public final class ItemBehaviorService implements AutoCloseable {
 
     @Override
     public void close() {
+        closed = true;
+        revision++;
         cancelJobs();
         HandlerList.unregisterAll(sweeps);
         HandlerList.unregisterAll(projectiles);

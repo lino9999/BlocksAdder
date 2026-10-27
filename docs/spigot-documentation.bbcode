@@ -183,3 +183,11 @@ Glyph exports are trusted server-template data and do not enforce chat glyph per
 
 The expansion persists through /papi reload and preserves foreign expansion ownership. Plain plugin-manager disable/enable can leave official PlaceholderAPI 2.12.3 without its initialized singleton; BlocksAdder then reports the failed adapter connection while core features remain available. Restart the server for provider lifecycle changes. A private fixture's controlled public onLoad replay is not generic hot-reload support. Rendered appearance remains the user's check; this reference does not claim a completed native compatibility matrix.
 [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/placeholders.md]Full placeholder syntax, threading, font merging and lifecycle reference[/URL]
+
+[B]PlaceholderAPI command templates[/B]
+Add placeholder_api: true to an administrator-configured execute_commands entry to resolve external values in its arguments. The default is false. The command label must remain a literal; replacements accept only 1-1024 ASCII letters, digits, underscore, dot, colon, plus or minus. Templates/results are limited to 8192 characters and 32 external tokens. Spaces, formatting, slashes, free-text output and recursive expansion are unsupported.
+
+Example command: ba stat write {player} garden:mirror %blocksadder_meter_garden:stamina%
+Use as_console: true and silent: true for this registered plugin command. See the complete bundle example in the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/command-placeholders.md]command-placeholder guide[/URL].
+
+Resolution uses the acting player on the main thread. Missing/uninitialized providers, unknown or unsafe output and invalidated source/inventory/permission/registry/provider state fail the action without dispatch. Delays resolve at execution time. Incoming support is independent of the outgoing export setting/prefix; the example above itself requires the BlocksAdder meter export. Trust configured commands and installed expansion plugins: scalar validation does not prove semantic safety for privileged templates or roll back external callback side effects.

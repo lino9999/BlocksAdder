@@ -39,6 +39,7 @@ public final class PlaceholderService implements Listener, AutoCloseable {
     private BukkitTask retry;
     private boolean pendingConnect;
     private ContentRegistry reloadBase;
+    private long providerRevision;
 
     public PlaceholderService(JavaPlugin plugin, GameplayService gameplay, Supplier<ContentRegistry> registry) {
         this.plugin = plugin;
@@ -55,6 +56,16 @@ public final class PlaceholderService implements Listener, AutoCloseable {
     }
 
     public boolean active() { return active; }
+
+    public java.util.function.Function<String, String> commands(Player player) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Command placeholders require the server thread.");
+        if (closed || !Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) return null;
+        long expected = providerRevision;
+        try {
+            return io.github.lino9999.blocksadder.integration.placeholder.CommandPlaceholderResolver.open(plugin, player,
+                    () -> !closed && providerRevision == expected);
+        } catch (RuntimeException | LinkageError unavailable) { return null; }
+    }
 
     public void validate(ContentRegistry candidate) { new PlaceholderView(candidate).retire(); }
 
@@ -203,13 +214,14 @@ public final class PlaceholderService implements Listener, AutoCloseable {
 
     @EventHandler public void providerEnabled(PluginEnableEvent event) {
         if (event.getPlugin().getName().equals("PlaceholderAPI")) {
+            providerRevision++;
             if (connecting) pendingConnect = true;
             else connect();
         }
     }
 
     @EventHandler public void providerDisabled(PluginDisableEvent event) {
-        if (event.getPlugin().getName().equals("PlaceholderAPI")) { pendingConnect = false; disconnect(); }
+        if (event.getPlugin().getName().equals("PlaceholderAPI")) { providerRevision++; pendingConnect = false; disconnect(); }
     }
 
     private void disconnect() {
@@ -229,6 +241,7 @@ public final class PlaceholderService implements Listener, AutoCloseable {
     }
 
     @Override public void close() {
+        providerRevision++;
         closed = true;
         pendingConnect = false;
         disconnect();

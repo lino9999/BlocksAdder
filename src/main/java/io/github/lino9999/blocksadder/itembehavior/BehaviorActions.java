@@ -396,15 +396,18 @@ final class BehaviorActions {
                                 "as_console",
                                 "silent",
                                 "flow_success_if_message_contains",
+                                "placeholder_api",
                                 "delay")
                         .contains(key)) throw error(item, "Unsupported command field: " + key);
-            String command = required(config, "command").trim();
-            if (command.startsWith("/")) command = command.substring(1);
+            String command = required(config, "command");
+            if (config.contains("placeholder_api") && !(config.get("placeholder_api") instanceof Boolean))
+                throw error(item, "placeholder_api must be a boolean.");
+            CommandTemplate template = CommandTemplate.compile(command, config.getBoolean("placeholder_api", false));
             service.validatePlaceholders(command);
             boolean console = config.getBoolean("as_console");
             boolean silent = config.getBoolean("silent", true);
             String expected = config.getString("flow_success_if_message_contains");
-            if (console && (silent || expected != null) && !CommandOutput.supported(command))
+            if (console && (silent || expected != null) && !CommandOutput.supported(template.label()))
                 throw error(
                         item,
                         "Silent console dispatch and output conditions require a registered Bukkit"
@@ -415,14 +418,9 @@ final class BehaviorActions {
                         item,
                         "Player command output cannot be captured through the public command API;"
                                 + " output conditions require as_console.");
-            String executable = command;
             Action action =
-                    context ->
-                            console
-                                    ? CommandOutput.dispatch(
-                                            service.expand(executable, context), silent, expected)
-                                    : context.player()
-                                            .performCommand(service.expand(executable, context));
+                    context -> service.command(item.id().toString(), template, console, silent, expected,
+                            group.getString("permission", ""), context);
             result.add(
                     service.step(
                             item,

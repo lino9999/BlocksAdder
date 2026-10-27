@@ -1,6 +1,6 @@
 # PlaceholderAPI exports
 
-BlocksAdder can expose glyphs, font identifiers, pixel spacing and player meter values to plugins that consume [PlaceholderAPI](https://github.com/PlaceholderAPI/PlaceholderAPI). These are outgoing, read-only exports. A consuming plugin must support PlaceholderAPI parsing in the particular field where you use them. This adapter does not add automatic parsing of arbitrary external placeholders to BlocksAdder commands, actions or HUD titles.
+BlocksAdder can expose glyphs, font identifiers, pixel spacing and player meter values to plugins that consume [PlaceholderAPI](https://github.com/PlaceholderAPI/PlaceholderAPI). These are outgoing, read-only exports. A consuming plugin must support PlaceholderAPI parsing in the particular field where you use them. Configured item-event commands have a separate, per-command opt-in for [incoming PlaceholderAPI values](command-placeholders.md); arbitrary action fields and HUD titles do not gain automatic external parsing.
 
 ## Enable the adapter
 
