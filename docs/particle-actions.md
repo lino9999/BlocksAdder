@@ -92,7 +92,7 @@ play_particle:
 
 Retained static reference evidence identifies particle actions and a typed-data helper; it does not establish original support for these custom color, destination or emission fields. This is an independently designed BlocksAdder schema. The supplied original plugin was not executed.
 
-Public contracts: [Spigot Particle](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html), [Trail](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.Trail.html), [Spell](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.Spell.html), [Vibration](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Vibration.html). Server packet acceptance and rendered appearance are separate evidence; the user owns visual checks. Typed `play_effect` data remains separate work.
+Public contracts: [Spigot Particle](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html), [Trail](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.Trail.html), [Spell](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.Spell.html), [Vibration](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Vibration.html). Server packet acceptance and rendered appearance are separate evidence; the user owns visual checks. Typed native effects and custom totem displays are documented in [effects and totems](effects-and-totems.md).
 
 ## Verification checkpoint
 

@@ -291,6 +291,14 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     public double stat(Player player, String id, double value) { return gameplay.stat(player, id, value); }
 
     @Override
+    public boolean playTotem(Player player, String item) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Totem animation requires the server thread.");
+        if (item == null) return io.github.lino9999.blocksadder.gameplay.TotemAnimation.play(player);
+        if (find(item).isEmpty()) return false;
+        return io.github.lino9999.blocksadder.gameplay.TotemAnimation.prepare(createItem(item, 1)).play(player, () -> true);
+    }
+
+    @Override
     public boolean removeBlock(Location location, Player player, boolean drops) { return world.breakPlaced(location, player, drops); }
 
     @Override

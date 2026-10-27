@@ -105,7 +105,9 @@ final class ProtocolLibModelProtocol implements ModelProtocol {
                     case HEAD -> EquipmentSlot.HEAD;
                     default -> null;
                 };
-                values.add(new Pair<>(pair.getFirst(), slot != null && mask.slots.contains(slot) ? new ItemStack(Material.AIR) : pair.getSecond()));
+                boolean temporaryTotem = slot == EquipmentSlot.HAND && id == event.getPlayer().getEntityId()
+                        && io.github.lino9999.blocksadder.gameplay.TotemAnimation.temporaryDisplay(event.getPlayer(), pair.getSecond());
+                values.add(new Pair<>(pair.getFirst(), slot != null && mask.slots.contains(slot) && !temporaryTotem ? new ItemStack(Material.AIR) : pair.getSecond()));
             }
             PacketContainer copy = packet.shallowClone();
             copy.getSlotStackPairLists().write(0, values);

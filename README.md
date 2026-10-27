@@ -12,7 +12,9 @@ BlocksAdder by **Lino** is a Java plugin for building namespaced server content 
 
 **Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
 
-**Active development:** `main` is now `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Development adds timed mining, native block states, skeletal rigs/disguises, vehicles, automatic generation, fluid/fire engines, richer crops, recipe adapters, environmental rules, conditional world changes, protected area mining, native projectile plans and typed particle effects. The latest preview passed 2,863 scoped assertions across 22 accepted server processes: typed particle input/API/data checks on nine builds, projectile regressions on four endpoints and core/bundle checks on nine builds. [Development verification](docs/development-verification.md) identifies exact artifacts and boundaries. Preview 6 also has a [seven-build native 26.x matrix](docs/native-26x-verification.md). The [parity tracker](docs/parity-progress.md) retains remaining requirements. Historical previews and reports remain available.
+**Active development:** `main` is now `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Development adds timed mining, native block states, skeletal rigs/disguises, vehicles, automatic generation, fluid/fire engines, richer crops, recipe adapters, environmental rules, conditional world changes, protected area mining, native projectile plans, typed effects and custom totem displays. The latest candidate passed 9,842 scoped assertions across 25 accepted server processes: new native effect/totem input/API/data checks on nine builds, particle regressions on four endpoints, optional ProtocolLib callbacks on three endpoints and core/bundle checks on nine builds. [Development verification](docs/development-verification.md) identifies exact artifacts and boundaries. Preview 6 also has a [seven-build native 26.x matrix](docs/native-26x-verification.md). The [parity tracker](docs/parity-progress.md) retains remaining requirements. Historical previews and reports remain available.
+
+**Known integration issue:** the tested ProtocolLib 5.5 snapshot with the full BlocksAdder/model integration scenario on Paper 26.3 disconnected native players before input. A ProtocolLib-only control passed; the cause remains unresolved. Core effect/totem checks on 26.3 passed without ProtocolLib. See [exact scopes and limits](docs/effects-totems-verification.json).
 
 ## Features
 
@@ -31,6 +33,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Placed-content actions:** independent [use, removal and harvest plans](docs/world-plans.md), with permission/cancellation checks and retained source identity for delayed work.
 - **Held interactions:** [shared native routing](docs/held-world-interactions.md) for both hands, managed helpers and furniture models, with protected cancellation and callback-safe consumption.
 - **Environmental rules:** [crop destruction and block explosion rules](docs/environment-removal.md), with optional prevention, committed effects, guarded delays and chunk-based cleanup.
+- **Effects and totems:** [typed native effects and custom item animations](docs/effects-and-totems.md), with cross-fork record handling, bounded emission and inventory-preserving equipment views.
 - **Particle actions:** [typed cloud and line effects](docs/particle-actions.md), including colors, native/custom item particles, block states, trails, following vibrations and bounded emission settings.
 - **Projectile plans:** [native launch and block/entity impacts](docs/projectile-actions.md), independent ammunition identity, offhand use, retained delayed effects and protected damage attribution.
 - **Area mining:** [bounded native/custom block regions](docs/area-mining.md), with per-cell protection, tool and reward rules, confirmed durability, filters and a shared work budget.
@@ -86,7 +89,7 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | `/ba entity remove <UUID>` | `blocksadder.entity` | Remove a loaded tagged custom entity. |
 | `/ba emote <id\|list\|info\|stop\|stop-now> [player]` | `blocksadder.emote` | Inspect, play or stop a skeletal emote, existing rig clip or frame-effect timeline. |
 | `/ba sound <sound> <player> [volume] [pitch]` | `blocksadder.sound` | Play a namespaced sound. |
-| `/ba totem <player>` | `blocksadder.totem` | Play the vanilla totem effect. |
+| `/ba totem <player> [item] [--quiet]` | `blocksadder.totem` | Play a vanilla/custom item animation; optionally hide confirmation. |
 
 The development branch additionally provides these commands; they are absent from the historical 1.0.0 JAR:
 

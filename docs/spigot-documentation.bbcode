@@ -137,3 +137,22 @@ play_particle:
 [/CODE]
 A line accepts integer distance 1–32 and samples every half block. Optional emit settings are count, spread, speed, offset and force, with a 4,096-particle action budget. Count zero enables the native directional mode. Unloaded samples/destinations are skipped without loading their chunks. Trails and vibrations can target emitter, player or victim; an unshifted player/victim vibration can follow its native entity. Newer geyser particles require a server that provides them.
 [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/particle-actions.md]Full payload table, destination rules and verification scope[/URL]
+
+[SIZE=5][B]Native effects and custom totems[/B][/SIZE]
+play_effect accepts a strict payload selected by the server's public effect API. Use block for block materials, face for one of six native directions, shade for quoted hexadecimal RGB, amount for bone meal, axis for X/Y/Z, and the documented native value/boolean fields for other families. Optional emit.radius is 1–256 (default 64); emit.offset is a finite three-number world-axis vector within ±64. Unloaded chunks are skipped.
+[CODE]
+play_effect:
+  name: SMOKE
+  payload:
+    face: UP
+  emit:
+    radius: 48
+[/CODE]
+RECORD_PLAY accepts record: minecraft:music_disc_cat or a registered native song key; record: minecraft:air stops playback. Obsolete door/trapdoor/gate effects and Spigot's removed event 2005 are rejected. Dragon breath uses an explicit audible boolean so its sound control has the same meaning across forks.
+[CODE]
+play_totem_animation:
+  item: symbols:crest
+[/CODE]
+The display uses a copy of the configured item, retains its material/model/component data and restores the current client hand in a finally block. Server inventory/counts and health remain unchanged. Source changes, reloads and disconnects cancel stale delayed item plans. An unsupported or lossy public component round trip rejects the display before use.
+Use [B]/ba totem <player> [item] [--quiet][/B] with permission [B]blocksadder.totem[/B]. The optional item is a custom namespaced ID; --quiet hides the success confirmation. Omit it for the vanilla animation.
+[URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/effects-and-totems.md]Full payload table, native compatibility notes, API and verification boundaries[/URL]

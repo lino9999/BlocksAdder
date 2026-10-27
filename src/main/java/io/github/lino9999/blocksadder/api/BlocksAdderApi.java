@@ -20,6 +20,7 @@ public interface BlocksAdderApi {
     Entity spawnEntity(Location location, String id);
     double stat(Player player, String id);
     double stat(Player player, String id, double value);
+    boolean playTotem(Player player, String item);
     boolean removeBlock(Location location, Player player, boolean drops);
     boolean placeLiquid(Location location, String id, Player player);
     boolean placeFire(Location location, String id, Player player);

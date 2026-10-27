@@ -6,7 +6,6 @@ import io.github.lino9999.blocksadder.item.ItemService;
 import io.github.lino9999.blocksadder.item.ItemWear;
 
 import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
@@ -95,7 +94,7 @@ final class BehaviorActions {
                             java.util.Set.of("name", "amount");
                     case "play_particle", "shoot_particle" ->
                             java.util.Set.of("name", "id", "distance", "payload", "emit");
-                    case "play_effect" -> java.util.Set.of("name", "id");
+                    case "play_effect" -> java.util.Set.of("name", "id", "payload", "emit");
                     case "play_totem_animation" -> java.util.Set.of("item");
                     case "damage_entity", "damage_entity_in_sight" ->
                             java.util.Set.of("damage", "distance");
@@ -266,24 +265,17 @@ final class BehaviorActions {
             }
             case "play_effect" -> {
                 Effect effect =
-                        Effect.valueOf(
+                        EffectEmission.named(
                                 required(c, c.contains("name") ? "name" : "id")
                                         .toUpperCase(Locale.ROOT));
-                if (effect.getData() != null)
-                    throw error(item, "Effect " + effect + " requires typed effect data.");
-                yield context -> {
-                    context.location().getWorld().playEffect(context.location(), effect, null);
-                    return true;
-                };
+                yield EffectEmission.compile(effect, c);
             }
             case "play_totem_animation" -> {
-                if (c.contains("item"))
-                    throw error(
-                            item,
-                            "A custom totem animation item requires a client component adapter.");
+                var display = c.contains("item") ? io.github.lino9999.blocksadder.gameplay.TotemAnimation.prepare(reference(item, required(c, "item"))) : null;
                 yield context -> {
-                    context.player().playEffect(EntityEffect.TOTEM_RESURRECT);
-                    return true;
+                    if (display == null) return io.github.lino9999.blocksadder.gameplay.TotemAnimation.play(context.player());
+                    ItemStack expected = context.stack() == null ? null : context.stack().clone();
+                    return display.play(context.player(), () -> expected != null && expected.equals(context.stack()));
                 };
             }
             case "damage_entity", "damage_entity_in_sight", "damage_near_entities" -> {

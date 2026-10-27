@@ -168,9 +168,12 @@ public final class ContentCommand implements TabExecutor {
                     Text.send(sender, "Sound sent.");
                 }
                 case "totem" -> {
-                    usage(args, 2, "totem <player>");
-                    target(args[1]).playEffect(org.bukkit.EntityEffect.TOTEM_RESURRECT);
-                    Text.send(sender, "Totem animation sent.");
+                    usage(args, 2, "totem <player> [item] [--quiet]");
+                    if (args.length > 4 || args.length == 4 && (args[2].equals("--quiet") || !args[3].equals("--quiet"))) throw new IllegalArgumentException("Use /ba totem <player> [item] [--quiet].");
+                    boolean quiet = args[args.length - 1].equals("--quiet");
+                    String item = args.length > 2 && !args[2].equals("--quiet") ? args[2] : null;
+                    if (!plugin.playTotem(target(args[1]), item)) throw new IllegalArgumentException("Totem animation could not start. Check the player and item ID.");
+                    if (!quiet) Text.send(sender, "Totem animation sent.");
                 }
                 default -> throw new IllegalArgumentException("Use /ba help.");
             }
@@ -360,7 +363,7 @@ public final class ContentCommand implements TabExecutor {
         Text.send(sender, "/ba pack <build|send|hash> [player|all] | reload | validate | info");
         Text.send(sender, "/ba stat <read|write|add|subtract> <player> <stat> [value] | hud <show|hide> <hud> [player]");
         Text.send(sender, "/ba tree <id> | entity <spawn|remove> <id|UUID> [player] | emote <id|list|info|stop|stop-now> [player]");
-        Text.send(sender, "/ba sound <sound> <player> [volume] [pitch] | totem <player>");
+        Text.send(sender, "/ba sound <sound> <player> [volume] [pitch] | totem <player> [item] [--quiet]");
         Text.send(sender, "/ba model <list|attach|play|detach|info|bones|bone|color|glow|mount|lock|camera|variables|variable|skin> | disguise <model> [player] | undisguise [player]");
         Text.send(sender, "/ba vehicle <list|spawn|info|mount|dismount|remove|fuel>");
         Text.send(sender, "/ba config <item|namespace|recipes> <disable|delete> <identifier>");
@@ -401,7 +404,7 @@ public final class ContentCommand implements TabExecutor {
                 case "undisguise" -> choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                 case "liquid", "fire" -> { if (args.length == 2) choices.addAll(action.equals("fire") ? List.of("inspect", "place", "remove", "age") : List.of("inspect", "place", "remove")); if (args.length == 3 && args[1].equals("place")) choices.addAll(plugin.content().sections(action.equals("fire") ? "fires" : "liquids").keySet()); }
                 case "sound" -> { if (args.length == 2) choices.addAll(plugin.content().sections("sounds").keySet()); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }
-                case "totem" -> choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                case "totem" -> { if (args.length == 2) choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); else if (args.length == 3) { choices.addAll(plugin.content().items().stream().map(item -> item.id().toString()).toList()); choices.add("--quiet"); } else if (args.length == 4) choices.add("--quiet"); }
                 default -> { }
             }
         }

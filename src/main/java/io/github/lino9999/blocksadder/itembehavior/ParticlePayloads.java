@@ -8,9 +8,9 @@ import org.bukkit.Vibration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import static io.github.lino9999.blocksadder.itembehavior.VisualOptions.*;
 
 final class ParticlePayloads {
     private ParticlePayloads() {}
@@ -118,39 +118,6 @@ final class ParticlePayloads {
         };
     }
 
-    static ConfigurationSection section(ConfigurationSection parent, String key) {
-        if (parent.contains(key) && !parent.isConfigurationSection(key)) throw new IllegalArgumentException("Particle option must be a section: " + key);
-        return parent.getConfigurationSection(key);
-    }
-
-    static void fields(ConfigurationSection config, Set<String> allowed) {
-        for (String field : config.getKeys(false)) if (!allowed.contains(field)) throw new IllegalArgumentException("Unknown particle option: " + field);
-    }
-
-    static Vector vector(ConfigurationSection config, String field, Vector fallback, double limit) {
-        if (!config.contains(field)) return fallback.clone();
-        List<?> raw = config.getList(field);
-        if (raw == null || raw.size() != 3) throw new IllegalArgumentException("Particle vectors require exactly three numbers: " + field);
-        double[] values = new double[3];
-        for (int index = 0; index < 3; index++) {
-            if (!(raw.get(index) instanceof Number number) || !Double.isFinite(number.doubleValue()) || Math.abs(number.doubleValue()) > limit)
-                throw new IllegalArgumentException("Particle vector component is invalid: " + field);
-            values[index] = number.doubleValue();
-        }
-        return new Vector(values[0], values[1], values[2]);
-    }
-
-    static boolean flag(ConfigurationSection config, String key, boolean fallback) {
-        if (config.contains(key) && !config.isBoolean(key)) throw new IllegalArgumentException("Particle flag must be boolean: " + key);
-        return config.getBoolean(key, fallback);
-    }
-
-    private static Color color(ConfigurationSection config, String key, String fallback) {
-        Object raw = config.get(key, fallback);
-        if (!(raw instanceof String value) || !value.matches("#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?")) throw new IllegalArgumentException("Particle shades require #RRGGBB or #AARRGGBB: " + key);
-        return value.length() == 7 ? Color.fromRGB(Integer.parseInt(value.substring(1), 16)) : Color.fromARGB((int) Long.parseLong(value.substring(1), 16));
-    }
-
     private record Point(String anchor, Vector shift, boolean follow) {
         static Point parse(ConfigurationSection config, boolean vibration) {
             if (config == null) return new Point("emitter", new Vector(0, 0, 1), false);
@@ -171,7 +138,7 @@ final class ParticlePayloads {
             };
             if (target == null || !target.getWorld().equals(emitter.getWorld())) return null;
             target.add(shift);
-            return ParticleEmission.resident(target) ? target : null;
+            return resident(target) ? target : null;
         }
     }
 }
