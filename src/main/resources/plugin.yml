@@ -101,6 +101,15 @@ permissions:
     default: true
   blocksadder.hud:
     default: true
+  blocksadder.bypass.meter.api:
+    description: Prevent API writes to player meters.
+    default: false
+  blocksadder.bypass.meter.command:
+    description: Prevent command writes to player meters.
+    default: false
+  blocksadder.bypass.meter.automatic:
+    description: Prevent automatic and item-action writes or depletion effects for player meters.
+    default: false
   blocksadder.plants:
     description: Choose personal plant detail and visibility.
     default: true

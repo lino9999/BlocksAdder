@@ -37,6 +37,7 @@ Read this file and the relevant document before searching the repository. Produc
 - `sound/`: custom block cues, resource-pack aliases and optional ProtocolLib packet rewriting.
 - `integration/`: optional typed tile-NBT conditions, with ProtocolLib classes isolated in `integration/protocol/`.
 - `gameplay/`: player stats, HUDs, glyphs, loot and actions.
+- `gameplay/hud/`, `StatHudService` and `docs/hud-meters.md`: meter-owned bounds/policies and eligible player clocks, pips/frames/custom art, named fonts and bounded neutral-width positioning. Keep all player access on the server thread, exact-player quit/respawn ownership and validation before publication. Automatic bypass covers timers/native changes/held actions; environmental world/mode filters do not suppress creative held-item admission. Preserve immutable glyph/component snapshots, aggregate budgets and reserved `blocksadder:layout` font. `BlocksAdderPlugin.reloadContent` rejects nested/asynchronous/stopping reloads; never remove that callback guard. Native observer limits and exhaustive helper encoding are separate proof scopes.
 - `itembehavior/`: original item event plans, action execution and native trigger adapters; keep inventory source validation separate from retained event identity.
 - `pack/`: deterministic ZIP generation, model definitions and delivery.
 - `pack/EquipmentAssetCompiler`: native armor layer definitions and texture placement.

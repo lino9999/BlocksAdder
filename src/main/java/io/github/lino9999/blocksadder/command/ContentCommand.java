@@ -213,13 +213,13 @@ public final class ContentCommand implements TabExecutor {
         if (!action.equals("read")) {
             usage(args, 5, "stat <write|add|subtract> <player> <stat> <value>");
             double input = decimal(args[4], -1.0e12, 1.0e12);
-            value = switch (action) {
+            double changed = switch (action) {
                 case "write" -> input;
-                case "add" -> value + input;
-                case "subtract" -> value - input;
+                case "add" -> input;
+                case "subtract" -> -input;
                 default -> throw new IllegalArgumentException("Use read, write, add or subtract.");
             };
-            value = plugin.gameplay().stat(target, args[3], value);
+            value = plugin.gameplay().commandStat(target, args[3], changed, !action.equals("write"));
         }
         Text.send(sender, target.getName() + " | " + args[3] + " = " + value);
     }

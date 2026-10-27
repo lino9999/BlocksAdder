@@ -52,9 +52,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     private BlockBehaviorService blockBehavior;
     private io.github.lino9999.blocksadder.sound.BlockSoundService sounds;
     private io.github.lino9999.blocksadder.furniture.FurnitureService furniture;
+    private boolean reloadingContent;
+    private boolean stopping;
 
     @Override
     public void onEnable() {
+        stopping = false;
         try {
             saveDefaultConfig();
             if (!new java.io.File(getDataFolder(), "contents").exists()) saveResource("contents/blocksadder/configs/examples.yml", false);
@@ -166,6 +169,14 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     }
 
     public void reloadContent() throws Exception {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Content reload requires the server thread.");
+        if (stopping || reloadingContent) throw new IllegalStateException("Content is already changing or stopping.");
+        reloadingContent = true;
+        try { reloadContentNow(); }
+        finally { reloadingContent = false; }
+    }
+
+    private void reloadContentNow() throws Exception {
         if (world != null && world.replacingContent()) throw new IllegalStateException("Content cannot reload while a world replacement is committing.");
         ContentRegistry candidate = validateContent();
         ContentRegistry previous = content;
@@ -221,6 +232,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     @Override
     public void onDisable() {
+        stopping = true;
         if (menus != null) menus.close();
         if (mining != null) mining.close();
         if (generation != null) generation.close();
@@ -289,6 +301,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     @Override
     public double stat(Player player, String id, double value) { return gameplay.stat(player, id, value); }
+
+    @Override public double adjustStat(Player player, String id, double delta) { return gameplay.adjustStat(player, id, delta); }
+    @Override public void hud(Player player, String id, boolean visible) { gameplay.hud(player, id, visible); }
+    @Override public boolean hudVisible(Player player, String id) { return gameplay.hudVisible(player, id); }
+    @Override public java.util.List<String> hudGlyphs(Player player, String id) { return gameplay.hudGlyphs(player, id); }
+    @Override public void hudGlyphs(Player player, String id, java.util.List<String> glyphs) { gameplay.hudGlyphs(player, id, glyphs); }
 
     @Override
     public boolean playTotem(Player player, String item) {

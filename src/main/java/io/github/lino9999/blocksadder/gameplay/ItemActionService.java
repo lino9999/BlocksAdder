@@ -59,7 +59,7 @@ final class ItemActionService implements Listener, AutoCloseable {
                             }
 
                             public void set(Player player, String id, double value) {
-                                stats.stat(player, id, value);
+                                stats.action(player, id, value);
                             }
                         });
     }
@@ -256,10 +256,7 @@ final class ItemActionService implements Listener, AutoCloseable {
         action.stats()
                 .forEach(
                         (stat, change) -> {
-                            double value = stats.stat(player, stat) + change;
-                            if (Double.isInfinite(value))
-                                value = value > 0 ? Double.MAX_VALUE : -Double.MAX_VALUE;
-                            stats.stat(player, stat, value);
+                            stats.actionDelta(player, stat, change);
                         });
         if (!action.sound().isBlank()) player.playSound(player.getLocation(), action.sound(), 1, 1);
         if (!action.message().isBlank()) Text.send(player, glyphs.expand(action.message()));

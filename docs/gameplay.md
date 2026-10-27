@@ -83,7 +83,7 @@ huds:
     permission: blocksadder.hud
 ```
 
-Stats are stored in player persistent data. Reads and writes clamp to the configured bounds; missing values use `default`. Bounds and values must be finite numbers, with `max > min`. Regeneration runs once per 20 server ticks for online players. Negative regeneration is allowed. Stat updates require the server thread.
+Stats are stored in player persistent data. Reads and writes clamp to the configured bounds; missing values use `default`. Bounds and values must be finite numbers, with `max > min`. Regeneration runs once per 20 eligible player ticks; the meter rules in the HUD guide determine admission. Negative regeneration is allowed. Stat updates require the server thread.
 
 HUD types are `bossbar` and `actionbar`. Titles support `{player}`, `{value}`, `{min}`, `{max}` and `{percent}` plus `&` color codes. Several actionbar HUDs combine into one line. Bossbar colors and styles use Bukkit `BarColor` and `BarStyle` names. HUD visibility is remembered per player; `hud(player, "all", false)` hides every configured HUD. Permission removal hides a HUD on the next update. Hidden or disconnected players have no active bossbar objects retained. HUD updates run once per second, not once per tick.
 
@@ -191,3 +191,7 @@ Timelines combine a main-hand swing, supported particles, sounds and optional me
 ## Verification boundary
 
 These services were compiled with Java 21 against Spigot API 1.21.11. Compilation establishes API availability, not client rendering or complete interaction behavior. See `verification.md` for the final recorded server and client checks. Recipe exactness, permissions and transactional reload paths need integration coverage whenever these schemas change.
+
+## Expanded image HUDs and meter rules
+
+Development preview 14 adds full/partial/empty image bars, quantity-selected frames and API-owned custom sequences, with named fonts, bounded offsets, world/mode visibility, source-aware bypass and eligible player timers. See the complete current-format [HUD and meter guide](hud-meters.md) and [exact candidate evidence](hud-meters-verification.json). Environmental admission applies to timers/native changes; held-item stat actions retain creative use while respecting automatic bypass.

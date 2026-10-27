@@ -1,0 +1,567 @@
+{
+  "recorded_at": "2026-10-27T03:48:57.466827+00:00",
+  "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+  "jar_bytes": 1169657,
+  "assertions": 2670,
+  "accepted_server_processes": 25,
+  "passed": true,
+  "method": "Exact-candidate isolated native protocol players, public Bukkit API/state and generated asset checks. No graphical client or supplied original artifact was executed.",
+  "targeted_results": [
+    {
+      "server": "spigot21",
+      "suite": "hud",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:40:10] [Server thread/INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot21/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot21/bots.log"
+    },
+    {
+      "server": "paper21",
+      "suite": "hud",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:40:54 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper21/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper21/bots.log"
+    },
+    {
+      "server": "paper2611",
+      "suite": "hud",
+      "client_version": "26.1.1",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:41:03 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper2611/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper2611/bots.log"
+    },
+    {
+      "server": "paper2612",
+      "suite": "hud",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:41:45 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper2612/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper2612/bots.log"
+    },
+    {
+      "server": "spigot2612",
+      "suite": "hud",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:42:05] [Server thread/INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot2612/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot2612/bots.log"
+    },
+    {
+      "server": "paper262",
+      "suite": "hud",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:42:36 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper262/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper262/bots.log"
+    },
+    {
+      "server": "spigot262",
+      "suite": "hud",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:43:13] [Server thread/INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot262/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot262/bots.log"
+    },
+    {
+      "server": "spigot263",
+      "suite": "hud",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:43:25] [Server thread/INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot263/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-spigot263/bots.log"
+    },
+    {
+      "server": "paper263",
+      "suite": "hud",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[04:39:49 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "local_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper263/console.log",
+      "bot_log": ".work/hud14/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/hud-paper263/bots.log"
+    },
+    {
+      "suite": "hud-callback-integration",
+      "server": "spigot21",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "probe_jar_sha256": "b8032969544415a12a575d40be1d8ee3428eae58a2f3e59f8b009d32a3523cfb",
+      "probe_source_sha256": "70612f3e10420ac98fe581c387135252c4a6bf29ea69581a205da9064ffaba58",
+      "protocol_jar_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "client_sha256": {
+        ".work\\hud14\\hud-bots.cjs": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+        ".work\\hud14\\hud-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\hud14\\hud-wire.cjs": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 175,
+      "summary": "[04:43:59] [Server thread/INFO]: [HudCallbackProbe] HUD_CALLBACK_VERIFICATION: PASS passed=175 failed=0 bossCallbacks=1 actionbarCallbacks=1 nestedRejected=2 callbackErrors=0 nativeCommands=4",
+      "local_log": ".work/hud14/callback-probe/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/spigot21/console.log",
+      "bot_log": ".work/hud14/callback-probe/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/spigot21/bots.log"
+    },
+    {
+      "suite": "hud-callback-integration",
+      "server": "paper263",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "probe_jar_sha256": "b8032969544415a12a575d40be1d8ee3428eae58a2f3e59f8b009d32a3523cfb",
+      "probe_source_sha256": "70612f3e10420ac98fe581c387135252c4a6bf29ea69581a205da9064ffaba58",
+      "protocol_jar_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "client_sha256": {
+        ".work\\hud14\\hud-bots.cjs": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+        ".work\\hud14\\hud-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\hud14\\hud-wire.cjs": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 175,
+      "summary": "[04:43:46 INFO]: [HudCallbackProbe] HUD_CALLBACK_VERIFICATION: PASS passed=175 failed=0 bossCallbacks=1 actionbarCallbacks=1 nestedRejected=2 callbackErrors=0 nativeCommands=4",
+      "local_log": ".work/hud14/callback-probe/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/paper263/console.log",
+      "bot_log": ".work/hud14/callback-probe/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/paper263/bots.log"
+    },
+    {
+      "server": "spigot21",
+      "suite": "camera",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 37,
+      "summary": "[04:44:36] [Server thread/INFO]: [ModelCameraProbe] MODEL_CAMERA_SERVER_VERIFICATION: PASS tests=37 failed=0 actor={nonself=5, mode3=5, anchor=13, clear=4, reset=4, lastMode=3, camera=9, mount=5, spawnBefore=5, anchorSeen=-1} observer={nonself=0, mode3=0, anchor=-1, clear=0, reset=0, lastMode=-1, camera=0, mount=0, spawnBefore=0, anchorSeen=0}",
+      "probe_sha256": "6db5096dcc09e46dc01c79dac48c019a6f4b7fdc519795d6cc490a32214bf59d",
+      "probe_source_sha256": "622e714f0a9a1d5ccfe87335a8c510c81af0e5270a5734154c62f22389c9a268",
+      "client_sha256": "168f428417ebaf2ef05652fad370925dd059176c32f5a7db697db94aeb2a889e",
+      "native_codec_sha256": "78b8c87764f1c693644982ef8b23b1799c4639079a4f0c66451ef9cb18f74cc8",
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "local_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/camera-spigot21/console.log",
+      "bot_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/camera-spigot21/bots.log"
+    },
+    {
+      "server": "paper263",
+      "suite": "camera",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 37,
+      "summary": "[04:44:27 INFO]: [ModelCameraProbe] MODEL_CAMERA_SERVER_VERIFICATION: PASS tests=37 failed=0 actor={nonself=5, mode3=5, anchor=13, clear=4, reset=4, lastMode=3, camera=9, mount=5, spawnBefore=5, anchorSeen=-1} observer={nonself=0, mode3=0, anchor=-1, clear=0, reset=0, lastMode=-1, camera=0, mount=0, spawnBefore=0, anchorSeen=0}",
+      "probe_sha256": "6db5096dcc09e46dc01c79dac48c019a6f4b7fdc519795d6cc490a32214bf59d",
+      "probe_source_sha256": "622e714f0a9a1d5ccfe87335a8c510c81af0e5270a5734154c62f22389c9a268",
+      "client_sha256": "168f428417ebaf2ef05652fad370925dd059176c32f5a7db697db94aeb2a889e",
+      "native_codec_sha256": "78b8c87764f1c693644982ef8b23b1799c4639079a4f0c66451ef9cb18f74cc8",
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "local_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/camera-paper263/console.log",
+      "bot_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/camera-paper263/bots.log"
+    },
+    {
+      "server": "spigot21",
+      "suite": "emote",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 73,
+      "summary": "[04:45:21] [Server thread/INFO]: [ModelEmoteProbe] MODEL_EMOTE_SERVER_VERIFICATION: PASS tests=73 failed=0 packets={slot5=1, slot37=2, slot36=3, camera=2, slot45=1}",
+      "probe_sha256": "ef4c36026c0c4818cb2820c1fbf8e571332fa3c9df91c12d33e65903c4f059cc",
+      "probe_source_sha256": "eba239a590a24c7cf5ebed220ae106a82710b7cb9bc8adb8d0f937da392acf9f",
+      "client_sha256": "ae22a1581f5f3e2081eb256fca17cbd011d9c9ee7e19f28fce39a4ce6d38b67d",
+      "native_codec_sha256": "78b8c87764f1c693644982ef8b23b1799c4639079a4f0c66451ef9cb18f74cc8",
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "local_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/emote-spigot21/console.log",
+      "bot_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/emote-spigot21/bots.log"
+    },
+    {
+      "server": "paper21",
+      "suite": "emote",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "passed": true,
+      "assertions": 73,
+      "summary": "[04:45:23 INFO]: [ModelEmoteProbe] MODEL_EMOTE_SERVER_VERIFICATION: PASS tests=73 failed=0 packets={slot5=0, slot37=0, slot36=3, camera=2, slot45=0}",
+      "probe_sha256": "ef4c36026c0c4818cb2820c1fbf8e571332fa3c9df91c12d33e65903c4f059cc",
+      "probe_source_sha256": "eba239a590a24c7cf5ebed220ae106a82710b7cb9bc8adb8d0f937da392acf9f",
+      "client_sha256": "ae22a1581f5f3e2081eb256fca17cbd011d9c9ee7e19f28fce39a4ce6d38b67d",
+      "native_codec_sha256": "78b8c87764f1c693644982ef8b23b1799c4639079a4f0c66451ef9cb18f74cc8",
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "local_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/emote-paper21/console.log",
+      "bot_log": ".work/camera-input-fix/servers/3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad/emote-paper21/bots.log"
+    },
+    {
+      "server": "paper-26.3",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "probe_jar_sha256": "e5d3135a9d27d91206a180871d6ee31f6c432f78d1c84f2e4b2cb15a4cefc417",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "suite": "effect",
+      "passed": true,
+      "assertions": 1029,
+      "summary": "[04:47:45 INFO]: [EffectProbe] EFFECT_VERIFICATION: PASS passed=1029 failed=0",
+      "local_log": ".work/effect-paper263/console.log",
+      "bot_log": ".work/effect-paper263/bots.log"
+    }
+  ],
+  "bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:45:41] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-spigot21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:46:04 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-paper21/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:46:18 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-paper2611/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:46:31 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-paper2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:46:41] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-spigot2612/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:46:59] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-spigot262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:47:11 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-paper262/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:47:24] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-spigot263/console.log",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "summary": "[04:47:36 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/hud-bundle-paper263/console.log",
+      "assertions": 45
+    }
+  ],
+  "supplemental_owned_helpers": {
+    "art": {
+      "recorded_at": "2026-10-27T03:27:04.913901+00:00",
+      "scope": "Owned pure helper verification compiled and run against the exact final plugin JAR, plus provided public SDK/dependency libraries. Not native client, server integration or rendered proof.",
+      "jar_sha256": "4ca0504e34630130250420ba493c33b4db43ce317894dbf2196e977f66181975",
+      "java": 21,
+      "passed": true,
+      "ordinary_assertions": 58,
+      "exhaustive_signed_shift_encodings": 2097153,
+      "shift_domain": [
+        -1048576,
+        1048576
+      ],
+      "source_digest_convention": "SHA-256 of UTF-8 source with CRLF normalized to LF.",
+      "source_sha256": {
+        "src/main/java/io/github/lino9999/blocksadder/gameplay/hud/HudArt.java": "7fad969fda0696d2b66faea99541045dc8cce038358b6bd579db746bcefee0c7",
+        "src/main/java/io/github/lino9999/blocksadder/gameplay/hud/MeterMath.java": "2dc4b05584106659a3efc2d700744bb561c04bb9db4301379c5c068656b5f88d",
+        "src/main/java/io/github/lino9999/blocksadder/pack/HudSpaceFont.java": "f5f2f2a93d092da2ea39b709aa0a8ef06d65093844bec122d88c768fae78b300",
+        ".work/hud14/HudArtCheck.java": "47a66f67968eb46e661324fb66a6dc8a044a4ff2691822f674ab0c3d99cbe6ec"
+      },
+      "result": "HUD_ART_OWNED_HELPERS: PASS ordinary=58 exhaustive_signed_shifts=2097153 native=false rendered=false",
+      "coverage": [
+        "Pip full/partial/empty and left order",
+        "Every individual glyph font and exact advance",
+        "Finite extreme range, near-equal finite range and subnormal midpoint",
+        "Floor frame boundaries and clamps",
+        "Configuration shape/type/range rejection",
+        "Missing/ambiguous glyph and invalid selected catalog references",
+        "Custom list limits, canonicalization and snapshots",
+        "Mutable Bungee component and registry mutation isolation",
+        "Every signed integer shift in the supported range, decoded through generated provider data and font identity"
+      ],
+      "limits": [
+        "The newly added fixedGlyphs aggregate service budget is outside these unchanged 58 art/helper assertions; root owns its separate verification.",
+        "Observer caps of 256 runs,4096 text characters and32 fonts can truncate maximum-budget native outputs; current selected native suites remain scoped separately."
+      ]
+    },
+    "policy": {
+      "recorded_at": "2026-10-27T03:21:54.311612+00:00",
+      "suite": "HUD_POLICY_PURE",
+      "java": 21,
+      "passed": true,
+      "assertions": 81,
+      "failed": 0,
+      "method": "Independent javac --release 21 compilation to private classes, dynamic Bukkit interface proxies, and real Spigot PermissibleBase permission admission. No server process or original target executed.",
+      "source_lf_sha256": {
+        "src/main/java/io/github/lino9999/blocksadder/gameplay/hud/MeterPolicy.java": "f0593f98f7913ce432186d1e773318b66d39849303f728b66f05d0a1d67a26ca",
+        "src/main/java/io/github/lino9999/blocksadder/gameplay/hud/HudWorlds.java": "5121947b6f47f3eef9a838e585bfe1478d220000d39ff73e9b70d9d8044e5717",
+        "src/main/java/io/github/lino9999/blocksadder/content/ContentId.java": "fc4422afc838baf45cff74ae6c504f4bd81d6b143421c24bf879ed176b3542a8",
+        ".work/hud14/PolicyProbe.java": "797eba002bcd59a9bf8463d9b580e56a81a3cb5b260f87476e62b3871d6c95ae"
+      },
+      "compiled_policy_sha256": "07b73285ad8ce9b600ebb77a4a1c7d25b745e3c403f03378de5446641b91958d",
+      "scopes": [
+        "OP implicit unknown nodes versus explicit positive and negative assignments",
+        "Separate global/API/command/per-meter/configured permission locks",
+        "Creative/spectator and include-prefix/exclude world rules",
+        "Unloaded and out-of-height predicates never touch blocks",
+        "Independent minimum-only and maximum-only sky-light guards",
+        "Malformed nested records/types/counts/finite values reject before activation",
+        "Immutable compiled pulse list",
+        "Independent signed food gain/loss multipliers, default and disabled axes, shorthand compatibility and mutually exclusive strict directional input"
+      ],
+      "limitations": [
+        "No registered-biome or valid potion registry behavior is claimed; native-server tests own those paths.",
+        "No native callbacks, server persistence, rendered HUD or player packet assertions."
+      ],
+      "baseline_assertions": 61,
+      "directional_food_assertions": 20,
+      "summary": "HUD_POLICY_PURE: PASS passed=81 failed=0"
+    },
+    "observer": {
+      "recorded_at": "2026-10-27T03:21:56.746609+00:00",
+      "scope": "Private observer synthetic codecs and mock control replay. No server or network client was launched by this worker. Not native, server integration or rendered acceptance.",
+      "passed": true,
+      "codec_assertions": 31,
+      "mock_control_assertions": 8,
+      "source_digest_convention": "SHA-256 of UTF-8 source with CRLF normalized to LF.",
+      "source_sha256": {
+        "hud-bots.cjs": "646f1e2d6646822ca863d8237e8050f7571e1c4cc81b20b9dbc9dfce669cf58d",
+        "hud-wire.cjs": "e2f32b66f85e7bb40e404ae776307137326a1477e1f7267ed131d78878729db6",
+        "hud-codec.cjs": "5d5115b9246300971c9afefb2cd967e5d20d4f02572178034732dcd044fbedcf",
+        "hud-codec-check.cjs": "73bf0770a343bb74d5584781103daa963ccf669592c9e4fb7362b10e29eeecf1",
+        "hud-observer-control-check.cjs": "c18d0d015b9db09cb44f57cdf9f50d806cc49441cca7e1245986dd6400ee810a"
+      },
+      "primary_observation": {
+        "artifact": ".work\\hud14\\servers\\538aca7ede21ebb37b70f35b2ec903a9d9b03b41061a60c5a84d1a9c0df5d92c\\hud-paper263\\versions\\26.3\\paper-26.3.jar",
+        "member": "net/minecraft/nbt/ListTag.class",
+        "member_sha256": "4131719108d8df82abc26e62aa0f2a1e814b9b91c98c96706b67a03ffd8de1ba",
+        "method": "Ordinary javap -p -c; no original reference artifact executed.",
+        "finding": "Heterogeneous list members with raw child tag10 unwrap exactly one compound containing solely the empty-string marker key."
+      },
+      "results": [
+        "HUD_OBSERVER_CODEC_HELPERS: PASS checks=31 native=false rendered=false",
+        "HUD_OBSERVER_CONTROL_HELPERS: PASS checks=8 network=false native=false rendered=false"
+      ]
+    },
+    "binary_reuse": {
+      "tested_helper_jar_sha256": "4ca0504e34630130250420ba493c33b4db43ce317894dbf2196e977f66181975",
+      "candidate_jar_sha256": "3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad",
+      "identical_helper_classes": [
+        {
+          "class": "io/github/lino9999/blocksadder/content/ContentId.class",
+          "sha256": "4c6c421298b417fdb4695ee9cc40986a14d3bcaa40a453b4ca413fcfcd7dd9b7"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/content/ContentRegistry.class",
+          "sha256": "afdda13906299cd59e548e880757c40b625d10cc06ca6fb6e83a8ee91c97084f"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/gameplay/hud/HudArt$Choice.class",
+          "sha256": "e490b7da50a01b49b5695167e0032b37cfdfd569e1abed5fa5b98f081d5661b4"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/gameplay/hud/HudArt$Draw.class",
+          "sha256": "fc04d052ba927ef671d5faa0420c507b6d9638f7b69c51d6b8c30742a513933c"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/gameplay/hud/HudArt$Glyph.class",
+          "sha256": "af1027b859fe72a23848c39c1e3a3aa7fb3b3ed4c3cf7989cac55dd956528fd9"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/gameplay/hud/HudArt.class",
+          "sha256": "47478aaea48e12792082586b50a6c24623f74805c315fca4c31bcbb1efd4c634"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/gameplay/hud/MeterMath.class",
+          "sha256": "9bd9d16f3af24a794dc2b33b358565aefc3da0e2498b48e2c3d1e5cb7363b64c"
+        },
+        {
+          "class": "io/github/lino9999/blocksadder/pack/HudSpaceFont.class",
+          "sha256": "ffa2feeba59bc112be99c3e7a5005da7843fc5e89505274fcde5a446bcf35908"
+        }
+      ],
+      "scope": "Unchanged helper class bytes and matching source fingerprints establish reuse of the recorded art/spacing checks; no native or rendered proof is inferred."
+    }
+  },
+  "original_contract": {
+    "artifact_sha256": "cedc3ff88d57fb303e865b017d8e090da0f9f203d3922ff7887e27342f0c053d",
+    "retained_archive_evidence": "ev_5a4a4ddc4581dedc578bda1fe894acfd4ea4202a51e709148d11b4f32a6e72d1",
+    "method": "Retained REA archive inventory plus explicitly labelled scoped ordinary offline JVM/ZIP contract inspection. No original implementation, configurations, messages, fonts or assets were copied.",
+    "observed_features": [
+      "persistent custom quantities",
+      "full/partial/empty glyph status bars and left/right fill",
+      "bounded quantity frame selection",
+      "per-player mutable glyph sequences and offsets",
+      "world/game-mode/air/riding/show-permission visibility",
+      "distinct API/command/automatic mutation bypass",
+      "eligible player timers, biome/light predicates, food and respawn changes, depleted damage/potions"
+    ],
+    "intentional_bug_avoidance": [
+      "meter-owned bounds and policy instead of first/last HUD coupling",
+      "consistent automatic bypass across every trigger/action path",
+      "self commands respect command bypass",
+      "finite bounded values and stable overflow-safe arithmetic",
+      "value-based biome keys and resident checks",
+      "main-thread player access with owned lifecycle clocks"
+    ],
+    "rea_follow_up": {
+      "operation": "inspect_analysis_view retained summary",
+      "outcome": "Host timed out after 450 seconds without a REA result; no fresh Evidence ID was produced and REA operation completion was not established."
+    }
+  },
+  "prototype_diagnostics": [
+    "The initial mixed rich/plain actionbar check failed because the private observer did not unwrap Minecraft heterogeneous NBT-list empty-key compounds. Official ListTag bytecode corroborated the wrapper format; the decoder was corrected and the unchanged native text assertion passed on the final candidate.",
+    "Creative held-item meter actions retain their existing admission; environmental world/game-mode gates apply to timers/native environmental changes, while automatic bypass applies to both."
+  ],
+  "limits": [
+    "The user owns rendered image/animation appearance, font alignment and graphical acceptance.",
+    "Native fixtures use selected bounded components and three fonts; observer caps are lower than some production aggregate budgets and explicitly flag truncation. Maximum production-budget packet observation is not certified.",
+    "Owned helper counts and exhaustive signed shifts are separate from native assertions and server-process totals.",
+    "Arbitrary external stat/permission/actionbar providers, every source/rendering combination and full reference-plugin parity remain open."
+  ]
+}

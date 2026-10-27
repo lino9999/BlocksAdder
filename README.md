@@ -12,7 +12,7 @@ BlocksAdder by **Lino** is a Java plugin for building namespaced server content 
 
 **Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
 
-**Active development:** `main` is `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Development adds mining, native block states, skeletal rigs/disguises, vehicles, generation, fluid/fire engines, recipes, environmental rules, world changes, area mining, projectiles, particles, typed effects and custom totems. Preview 13 fixes camera input on Paper 26.3 with ProtocolLib. Its exact JAR passed 3,334 scoped assertions in 26 accepted server processes, including native cameras on all nine supported builds. See [current verification](docs/camera-input.md), [development evidence](docs/development-verification.md) and the [remaining parity requirements](docs/parity-progress.md). Historical previews retain their own reports.
+**Active development:** `main` is `1.1.0-SNAPSHOT`, continuing toward full functional reconstruction. Preview 14 adds quantity image HUDs, custom glyph sequences, eligible player timers, environmental meter rules and source-specific mutation bypass. Its exact JAR passed 2,670 scoped assertions in 25 accepted server processes, including native HUD scenarios on nine Spigot/Paper builds. See [HUDs and meters](docs/hud-meters.md), [exact verification](docs/hud-meters-verification.json), [development evidence](docs/development-verification.md) and [remaining parity work](docs/parity-progress.md). Historical previews retain their own reports.
 
 **Camera compatibility:** preview 13 resolves the Paper 26.3 disconnect observed in preview 12 with the tested ProtocolLib 5.5 snapshot. Native look, movement cancellation and camera lifecycle passed on all nine builds; callback, masking and custom-totem integration also passed on Paper 26.3. [Exact artifacts and limits](docs/camera-input-verification.json). Rendered appearance remains a user check.
 
@@ -25,7 +25,7 @@ Development guides: [items and event actions](docs/item-behaviors.md), [mining](
 - **Furniture:** display models, interaction hitboxes, optional collision, seats and cleanup on unload or reload.
 - **Crops:** configurable model stages, loaded-chunk growth, farmland requirements, repeat harvesting, custom produce and [personal distance/detail settings](docs/crop-views.md).
 - **Recipes:** shaped, shapeless, furnace, blasting, smoking, campfire, stonecutting, smithing and anvil recipes with exact custom ingredients.
-- **Player content:** persistent bounded stats, regeneration, bossbar/actionbar HUDs, item actions, cooldowns, potion effects and simple gesture/particle/sound timelines.
+- **Player content:** persistent bounded meters, eligible-time regeneration, bossbar/text HUDs, image pips, frames, custom glyph sequences, environmental rules, source-specific bypass, item actions, cooldowns and potion effects.
 - **Font images and audio:** bitmap font providers, permission-aware chat/sign/book aliases, custom sound definitions and sound/totem commands.
 - **Loot and entities:** block, entity and fishing tables; configured vanilla living entities with custom stats, equipment and drops; manually generated custom trees.
 - **Resource packs:** sorted ZIP output, stable hashes, modern item definitions, model/font/sound generation, asset merging, size limits, manual delivery and optional built-in HTTP hosting.
@@ -45,7 +45,7 @@ BlocksAdder's core has no mandatory plugin dependencies. Advanced packet feature
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.13). It uses the bundle format documented here; full functional reconstruction remains in progress.
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the [current development preview](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.14). It uses the bundle format documented here; full functional reconstruction remains in progress.
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.
@@ -128,7 +128,7 @@ Vehicle, disguise and undisguise commands require `blocksadder.others` when targ
 
 Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/babrowse` (`/bbrowse`), `/bareload` (`/breload`), `/barecipe` (`/brecipe`) and `/bainspect` (`/binspect`). They accept the same arguments as their matching subcommands. Reference-plugin commands, aliases and permission nodes are not registered.
 
-`blocksadder.admin` grants every built-in permission and defaults to operators. Public browsing/help/info/recipe/glyph/pack/HUD/emote/plant-view commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs, choose plant detail or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
+`blocksadder.admin` grants the command/gameplay permissions listed in its manifest children and defaults to operators. Meter bypass permissions are separate, default to false and are not included. Public browsing/help/info/recipe/glyph/pack/HUD/emote/plant-view commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs, choose plant detail or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
 
 Gameplay permissions are `blocksadder.place`, `blocksadder.break`, `blocksadder.use`, `blocksadder.glyphs` and per-definition permissions. Category access uses `blocksadder.category.*` or `blocksadder.category.<category>`; an explicitly denied category overrides the wildcard. Catalog left-clicks show recipes; right-clicks grant items only with `blocksadder.get`. Shift-right-click grants one legal stack.
 

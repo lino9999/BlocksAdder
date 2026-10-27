@@ -1,5 +1,10 @@
 # Development verification
 
+## Development preview 14: image HUDs and meter policy
+
+The exact 1169657-byte JAR (`3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad`) passed 2,670 scoped assertions in 25 accepted server processes. This includes 74 native/API/asset checks on each of nine builds, 175 optional ProtocolLib callback checks on Spigot 1.21.11 and Paper 26.3, camera/emote regressions, native effect/totem checks on Paper 26.3 and nine core bundle runs. Java 21 is used for 1.21.11 and Java 25 for 26.x. Owned pure policy/art tests, observer helpers and exhaustive signed spacing encodings are recorded separately. [Guide](hud-meters.md), [exact results](hud-meters-verification.json), [distribution audit](hud-meters-audit.json). No GUI client or original JAR was executed.
+
+
 ## Development preview 13: native camera input
 
 The exact 1125987-byte JAR (`17ea3e277d0456baf6b5855a658b22546777b70aeeb3654810c84add2e2a2151`) passed 3,334 scoped assertions in 26 accepted server processes. Native cameras passed 37 checks on each of nine builds; emotes passed 73 on each 1.21.11 fork; ProtocolLib callback/mask/totem integration passed 156 on four endpoints including Paper 26.3. Typed effect/totem endpoint regressions and nine core bundle runs passed. Java 21 was used for 1.21.11 and Java 25 for 26.x. [Design, diagnostic controls and limits](camera-input.md), [exact results](camera-input-verification.json), [distribution audit](camera-input-audit.json). No graphical client or original JAR was executed. Historical reports below retain their original scope.

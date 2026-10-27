@@ -106,6 +106,10 @@ public final class PackBuilder {
         io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendModels(entries, registry, root);
         copyAssets(entries, root.resolve("contents"), maxBytes);
         copyAssets(entries, root.resolve("resourcepack"), maxBytes);
+        if (registry.sections("huds").values().stream().anyMatch(hud -> hud.isConfigurationSection("art"))) {
+            if (entries.containsKey(HudSpaceFont.PATH)) throw new IOException("The generated HUD layout font path is reserved: " + HudSpaceFont.PATH);
+            add(entries, HudSpaceFont.PATH, HudSpaceFont.document());
+        }
         io.github.lino9999.blocksadder.crop.CropCardAssets.append(entries, registry);
         EquipmentAssetCompiler.append(entries, registry);
         io.github.lino9999.blocksadder.model.PlayerEquipmentModels.append(entries, registry);

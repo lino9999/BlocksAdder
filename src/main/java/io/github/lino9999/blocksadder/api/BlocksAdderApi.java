@@ -20,6 +20,11 @@ public interface BlocksAdderApi {
     Entity spawnEntity(Location location, String id);
     double stat(Player player, String id);
     double stat(Player player, String id, double value);
+    double adjustStat(Player player, String id, double delta);
+    void hud(Player player, String id, boolean visible);
+    boolean hudVisible(Player player, String id);
+    java.util.List<String> hudGlyphs(Player player, String id);
+    void hudGlyphs(Player player, String id, java.util.List<String> glyphs);
     boolean playTotem(Player player, String item);
     boolean removeBlock(Location location, Player player, boolean drops);
     boolean placeLiquid(Location location, String id, Player player);

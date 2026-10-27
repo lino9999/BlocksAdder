@@ -52,3 +52,7 @@ The core registers `ProjectileLaunchEvent` and `ProjectileHitEvent` adapters for
 Typed particle action configuration is documented in [particle actions](particle-actions.md). It resolves data through the running server's public Bukkit particle types; it adds no binary dependency on newer geyser classes and never loads emission/destination chunks.
 
 Native effects and custom item activation are described in [effects and totems](effects-and-totems.md). `boolean playTotem(Player player, String item)` uses a custom item ID, with `null` selecting vanilla. It requires the main thread, returns false for unknown IDs or unavailable/reentrant playback, and can reject a lossy component round trip. Custom playback sends a temporary self equipment view and restores the current hand without writing server inventory. Ordinary native item actions additionally retain complete source guards.
+
+## Quantity HUD integration
+
+The public service adds `adjustStat(player, id, delta)`, `hud(player, id, visible)`, `hudVisible(player, id)` and getter/setter `hudGlyphs(player, id[, glyphs])`. These operations require the server thread. Meter API bypass returns the unchanged current value. Custom glyph sequences are immutable copied IDs, bounded across the player's current art and cleared on quit/successful reload. See [HUD configuration, policy and API examples](hud-meters.md). Nested, asynchronous and stopping content reloads are rejected before publication.

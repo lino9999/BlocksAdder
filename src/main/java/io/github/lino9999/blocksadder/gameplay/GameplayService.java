@@ -67,9 +67,34 @@ public final class GameplayService implements Listener, AutoCloseable {
         return stats.stat(player, id, value);
     }
 
+    public double adjustStat(Player player, String id, double delta) {
+        requireServerThread();
+        return stats.adjust(player, id, delta);
+    }
+
+    public double commandStat(Player player, String id, double value, boolean relative) {
+        requireServerThread();
+        return stats.command(player, id, value, relative);
+    }
+
     public void hud(Player player, String id, boolean visible) {
         requireServerThread();
         stats.hud(player, id, visible);
+    }
+
+    public boolean hudVisible(Player player, String id) {
+        requireServerThread();
+        return stats.visible(player, id);
+    }
+
+    public java.util.List<String> hudGlyphs(Player player, String id) {
+        requireServerThread();
+        return stats.glyphs(player, id);
+    }
+
+    public void hudGlyphs(Player player, String id, java.util.List<String> glyphs) {
+        requireServerThread();
+        stats.glyphs(player, id, glyphs);
     }
 
     public Optional<String> glyph(String id) {
@@ -102,6 +127,16 @@ public final class GameplayService implements Listener, AutoCloseable {
         glyphs.remove(player);
         actions.remove(player);
         emotes.remove(player);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onFood(org.bukkit.event.entity.FoodLevelChangeEvent event) {
+        if (event.getEntity() instanceof Player player) stats.food(player, Math.clamp(event.getFoodLevel(), 0, 20) - player.getFoodLevel());
+    }
+
+    @EventHandler
+    public void onRespawn(org.bukkit.event.player.PlayerRespawnEvent event) {
+        stats.respawn(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
