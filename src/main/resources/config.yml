@@ -1,3 +1,5 @@
+integrations:
+  placeholders: true
 resource-pack:
   build-on-startup: true
   auto-apply: false

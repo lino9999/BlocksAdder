@@ -1,5 +1,7 @@
 # Verification
 
+Current development preview 15 adds optional outgoing PlaceholderAPI exports. Its exact candidate passed 2,100 scoped assertions in 22 accepted server processes, including official PlaceholderAPI 2.12.3 on nine builds and core/bundle loading without it on those builds. See [the guide](placeholders.md) and [exact report](placeholder-verification.json) for native/API/asset scope, provider lifecycle limits and separately counted pure checks. Historical evidence below retains its original scope; user visual acceptance remains separate.
+
 This page preserves the historical **1.0.0** matrix. Current **1.1.0-SNAPSHOT** evidence is in [development verification](development-verification.md), including the unchanged preview-6 JAR's [native 26.x player matrix](native-26x-verification.md). The historical limitations below describe the 1.0.0 artifact and must not be read as the current implementation status.
 
 Date: **25 October 2026**. The same release JAR passed **18 isolated server runs across 9 builds**, with **2416 successful assertions** and zero failed assertions in the final matrix. Every build completed two full process starts. This establishes the executed headless scenarios, not full reference-plugin parity or client acceptance.

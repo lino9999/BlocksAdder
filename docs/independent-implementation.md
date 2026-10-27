@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+The [placeholder audit](placeholder-audit.json) covers 401 own classes with empty collision and leak lists. The optional adapter uses a newly named expansion, identity-owned concurrent snapshots, bounded deferred resolution and the existing independent meter backend. Font export support compiles owned signed advances and preserves participating authored providers. The supplied implementation, original selectors, spacing tables, messages and configuration are not distribution inputs. [Exact runtime evidence](placeholder-verification.json) and [the guide](placeholders.md) distinguish provider behavior, scalar/font limits and remaining incoming-command parity work.
+
 Feature observations become requirements, then separate BlocksAdder services implement them. The source tree is organized around immutable registry snapshots, content validation, public Bukkit adapters, bounded scheduled queues and explicit lifecycle ownership. Item identity, world placement persistence, model rendering, generation, furniture footprints and resource-pack compilation have their own service boundaries and new API. No original package compatibility layer is exported.
 
 The content document is `blocksadder/bundle-1`: a bundle identifier and a list of typed records with `key`, `kind`, `item`, `traits` and `settings`. It is not a renamed copy of the reference configuration. The former content-alias normalization class has been removed. The loader requires this format marker and rejects flat or external documents before activation. Packaged examples and the configuration editor use the same record model.

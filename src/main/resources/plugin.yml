@@ -6,7 +6,7 @@ author: Lino
 description: Data-driven custom items, blocks, furniture, crops, recipes and resource packs.
 website: https://github.com/lino9999/BlocksAdder
 load: POSTWORLD
-softdepend: [ProtocolLib]
+softdepend: [ProtocolLib, PlaceholderAPI]
 commands:
   blocksadder:
     description: Main BlocksAdder command

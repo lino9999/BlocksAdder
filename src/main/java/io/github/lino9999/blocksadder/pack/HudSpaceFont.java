@@ -16,14 +16,18 @@ public final class HudSpaceFont {
 
     private HudSpaceFont() {}
 
-    public static BaseComponent shift(int pixels) {
+    public static String characters(int pixels) {
         if (pixels < -MAX_SHIFT || pixels > MAX_SHIFT) throw new IllegalArgumentException("HUD pixel shifts must be between -1048576 and 1048576.");
         int remaining = Math.abs(pixels);
         StringBuilder text = new StringBuilder();
         for (int power = 0; power < POWERS; power++) {
             if ((remaining & (1 << power)) != 0) text.appendCodePoint(FIRST_CHARACTER + power + (pixels < 0 ? POWERS : 0));
         }
-        TextComponent result = new TextComponent(text.toString());
+        return text.toString();
+    }
+
+    public static BaseComponent shift(int pixels) {
+        TextComponent result = new TextComponent(characters(pixels));
         result.setFont(FONT);
         result.setColor(ChatColor.WHITE);
         result.setBold(false);

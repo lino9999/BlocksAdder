@@ -40,8 +40,10 @@ public final class PackService implements Listener, AutoCloseable {
     private ExecutorService httpWorkers;
     private final Semaphore downloads = new Semaphore(8);
     private java.util.function.BooleanSupplier soundRewrites = () -> false;
+    private java.util.function.BooleanSupplier placeholderFonts = () -> false;
 
     public void setSoundRewrites(java.util.function.BooleanSupplier soundRewrites) { this.soundRewrites = java.util.Objects.requireNonNull(soundRewrites); }
+    public void setPlaceholderFonts(java.util.function.BooleanSupplier placeholderFonts) { this.placeholderFonts = java.util.Objects.requireNonNull(placeholderFonts); }
 
     public PackService(JavaPlugin plugin, Supplier<ContentRegistry> registry) {
         this.plugin = plugin;
@@ -77,9 +79,10 @@ public final class PackService implements Listener, AutoCloseable {
         ContentRegistry snapshot = registry.get();
         long limit = maxBytes;
         boolean rewriteSounds = soundRewrites.getAsBoolean();
+        boolean exportFonts = placeholderFonts.getAsBoolean();
         return CompletableFuture.supplyAsync(() -> {
             try {
-                PackArtifact result = new PackBuilder(plugin.getDataFolder().toPath()).build(snapshot, limit, rewriteSounds);
+                PackArtifact result = new PackBuilder(plugin.getDataFolder().toPath()).build(snapshot, limit, rewriteSounds, exportFonts);
                 hostedBytes = Files.readAllBytes(result.path());
                 artifact = result;
                 return result;

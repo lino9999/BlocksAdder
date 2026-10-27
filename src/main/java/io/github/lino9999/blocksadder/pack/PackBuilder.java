@@ -36,6 +36,10 @@ public final class PackBuilder {
     }
 
     public PackArtifact build(ContentRegistry registry, long maxBytes, boolean rewriteSounds) throws IOException {
+        return build(registry, maxBytes, rewriteSounds, false);
+    }
+
+    public PackArtifact build(ContentRegistry registry, long maxBytes, boolean rewriteSounds, boolean placeholderFonts) throws IOException {
         Map<String, byte[]> entries = new TreeMap<>();
         add(entries, "pack.mcmeta", Map.of("pack", Map.of("description", "BlocksAdder custom content by Lino", "min_format", 75, "max_format", 97)));
         for (var item : registry.items()) {
@@ -117,6 +121,7 @@ public final class PackBuilder {
         io.github.lino9999.blocksadder.sound.SoundAssetCompiler.append(entries, registry, rewriteSounds);
         io.github.lino9999.blocksadder.blockstate.NativeBlockAssetCompiler.appendBlockstates(entries, registry, root);
         io.github.lino9999.blocksadder.environment.FireAssetCompiler.appendBlockstates(entries, registry, root);
+        if (placeholderFonts) PlaceholderFontCompiler.append(entries, registry);
         long size = entries.values().stream().mapToLong(bytes -> bytes.length).sum();
         if (size > maxBytes) throw new IOException("Resource pack exceeds the configured uncompressed size limit.");
         Path output = root.resolve("pack");

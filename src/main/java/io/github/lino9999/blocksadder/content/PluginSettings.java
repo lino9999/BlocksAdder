@@ -10,6 +10,7 @@ public final class PluginSettings {
     public static YamlConfiguration read(File file) throws Exception {
         YamlConfiguration config = new YamlConfiguration();
         config.load(file);
+        if (config.contains("integrations.placeholders") && !(config.get("integrations.placeholders") instanceof Boolean)) throw new IllegalArgumentException("integrations.placeholders must be a boolean.");
         String url = config.getString("resource-pack.url", "").trim();
         if (!url.isBlank()) {
             URI uri = URI.create(url);

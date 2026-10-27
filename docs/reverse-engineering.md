@@ -124,6 +124,8 @@ No security verdict of “safe” is justified. There is no confirmed malicious 
 
 ## Remaining unknowns
 
+The outgoing PlaceholderAPI contract was researched from the retained complete class inventory and narrowly selected JVM/archive members without executing the supplied artifact. It exposes glyph/signed-spacing strings and stored custom player stats, with persistent internal expansion registration. BlocksAdder uses its own identifier, selectors, finite meter backend, identity snapshots and spacing code points. Namespace collision behavior, null-player failures and unguarded asynchronous Bukkit access are not reproduced. Incoming PlaceholderAPI interpolation in administrator-configured command/action paths is a separate parity requirement; exports alone do not implement it. See [the independent adapter](placeholders.md) for the supported contract and provider lifecycle limits. These scoped offline observations are not new REA Evidence; the retained archive inventory remains the cited REA artifact.
+
 - Exact runtime behavior, order of protection checks, packet handling and persistent-world formats were not established by running the original.
 - Source authenticity, provenance of the startup gate and license/redistribution rights of the original artifact are not established by its bundled license file.
 - Rendering of custom armors, emotes, font effects and model bones requires client-side visual verification on each supported protocol.

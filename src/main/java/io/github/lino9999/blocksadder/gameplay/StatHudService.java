@@ -87,6 +87,10 @@ final class StatHudService implements AutoCloseable {
 
     double stat(Player player, String id) { return meters.get(player, id); }
 
+    void observeMeters(MeterStore.Observer observer) { meters.observe(observer); }
+    void observeMeters(MeterStore.Observer observer, java.util.function.Consumer<Throwable> failure) { meters.observe(observer, failure); }
+    Map<String, Double> meterSnapshot(Player player) { return meters.snapshot(player); }
+
     double stat(Player player, String id, double value) {
         double changed = meters.set(player, id, value, MeterPolicy.Cause.API);
         update(player);

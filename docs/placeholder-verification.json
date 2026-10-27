@@ -1,0 +1,478 @@
+{
+  "recorded_at": "2026-10-27T05:08:33.930715+00:00",
+  "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+  "jar_bytes": 1206863,
+  "assertions": 2100,
+  "accepted_server_processes": 22,
+  "passed": true,
+  "method": "Exact-candidate isolated native protocol players, real official optional provider, public Bukkit API/state and generated asset checks. No graphical Minecraft client or supplied original artifact was executed.",
+  "targeted_results": [
+    {
+      "suite": "placeholder-integration",
+      "server": "spigot21",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:01:59] [Server thread/INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot21/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot21/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "paper21",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:03:04 INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper21/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper21/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "paper2611",
+      "client_version": "26.1.1",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:02:48 INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper2611/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper2611/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "paper2612",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:03:33 INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper2612/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper2612/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "spigot2612",
+      "client_version": "26.1.2",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:03:33] [Server thread/INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot2612/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot2612/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "paper262",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:04:03 INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper262/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper262/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "spigot262",
+      "client_version": "26.2",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:04:21] [Server thread/INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot262/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot262/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "spigot263",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:04:29] [Server thread/INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot263/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot263/bots.log"
+    },
+    {
+      "suite": "placeholder-integration",
+      "server": "paper263",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "0029cd8fa8dd495cd3b6820fec5cdc4875964c0f31bc16fe57743ce68226d538",
+      "probe_source_sha256": "98c7362afc5d23784c4182dcb01aa170a0d2d92303ba96006360727bc3617ed7",
+      "provider_jar_sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "client_sha256": {
+        ".work\\placeholder15\\placeholder-bots.cjs": "e62febbb0347d809f60d0a197d70a21ad7f0a00f3c7f2e5aea61c8941c2caf7c",
+        ".work\\placeholder15\\placeholder-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\placeholder15\\placeholder-wire.cjs": "1166449f91c521f8b083f6644ee46a8c770b2e2e09f3855714f5315700fa65e6"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 133,
+      "summary": "[06:01:14 INFO]: [PlaceholderProbe] PLACEHOLDER_VERIFICATION: PASS passed=133 failed=0 nativeCommands=6 nativeUses=1 guardedReads=5 unsafeReads=0 rejoins=1",
+      "local_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper263/console.log",
+      "bot_log": ".work/placeholder15/probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper263/bots.log"
+    },
+    {
+      "server": "spigot21",
+      "suite": "hud",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[06:05:48] [Server thread/INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "local_log": ".work/hud14/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/hud-spigot21/console.log",
+      "bot_log": ".work/hud14/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/hud-spigot21/bots.log"
+    },
+    {
+      "server": "paper263",
+      "suite": "hud",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "passed": true,
+      "assertions": 74,
+      "summary": "[06:06:38 INFO]: [HudProbe] HUD_VERIFICATION: PASS passed=74 failed=0 foods=2 uses=4 respawns=1",
+      "probe_sha256": "b355b0fb8a3fcb5df5623d1a1a8dd2cad9ad3dba2aed2aa40122d8e949c2a7b5",
+      "probe_source_sha256": "d854223bc325b854b6c60715112c77e0c29d58f115d0ac0b6570fa549ee8d098",
+      "client_sha256": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+      "native_codec_sha256": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0",
+      "observer_codec_sha256": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+      "server_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "local_log": ".work/hud14/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/hud-paper263/console.log",
+      "bot_log": ".work/hud14/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/hud-paper263/bots.log"
+    },
+    {
+      "suite": "hud-callback-integration",
+      "server": "spigot21",
+      "client_version": "1.21.11",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "b8032969544415a12a575d40be1d8ee3428eae58a2f3e59f8b009d32a3523cfb",
+      "probe_source_sha256": "70612f3e10420ac98fe581c387135252c4a6bf29ea69581a205da9064ffaba58",
+      "protocol_jar_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "client_sha256": {
+        ".work\\hud14\\hud-bots.cjs": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+        ".work\\hud14\\hud-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\hud14\\hud-wire.cjs": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 175,
+      "summary": "[06:07:22] [Server thread/INFO]: [HudCallbackProbe] HUD_CALLBACK_VERIFICATION: PASS passed=175 failed=0 bossCallbacks=1 actionbarCallbacks=1 nestedRejected=2 callbackErrors=0 nativeCommands=4",
+      "local_log": ".work/hud14/callback-probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot21/console.log",
+      "bot_log": ".work/hud14/callback-probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/spigot21/bots.log"
+    },
+    {
+      "suite": "hud-callback-integration",
+      "server": "paper263",
+      "client_version": "26.3",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "probe_jar_sha256": "b8032969544415a12a575d40be1d8ee3428eae58a2f3e59f8b009d32a3523cfb",
+      "probe_source_sha256": "70612f3e10420ac98fe581c387135252c4a6bf29ea69581a205da9064ffaba58",
+      "protocol_jar_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "client_sha256": {
+        ".work\\hud14\\hud-bots.cjs": "ddffbf9cfcbe4ce900a3efd2fd14f3d62b6ba95eee787764562d999dcfaac624",
+        ".work\\hud14\\hud-codec.cjs": "f54fe637e881a72ebd7078210d46aa9b5517e4a1bf3b904689e6a09f04b4fc6d",
+        ".work\\hud14\\hud-wire.cjs": "be9f1e20411ecd067e702e06ada23679a08fe4ae5cd0484e256356f5946338e0"
+      },
+      "client_unchanged_during_run": true,
+      "passed": true,
+      "assertions": 175,
+      "summary": "[06:07:44 INFO]: [HudCallbackProbe] HUD_CALLBACK_VERIFICATION: PASS passed=175 failed=0 bossCallbacks=1 actionbarCallbacks=1 nestedRejected=2 callbackErrors=0 nativeCommands=4",
+      "local_log": ".work/hud14/callback-probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper263/console.log",
+      "bot_log": ".work/hud14/callback-probe/servers/10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576/paper263/bots.log"
+    }
+  ],
+  "bundle_matrix": [
+    {
+      "server": "spigot-1.21.11",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:05:12] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-spigot21/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "paper-1.21.11",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "java": 21,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:05:45 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-paper21/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.1",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:06:04 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-paper2611/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.1.2",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:06:22 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-paper2612/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.1.2",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:06:51] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-spigot2612/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.2",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:07:24] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-spigot262/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.2",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:07:43 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-paper262/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "spigot-26.3",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:07:57] [Server thread/INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-spigot263/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    },
+    {
+      "server": "paper-26.3",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "java": 25,
+      "jar_sha256": "10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576",
+      "summary": "[06:08:15 INFO]: [BundleProbe] BUNDLE_VERIFICATION: PASS passed=45 failed=0",
+      "passed": true,
+      "local_log": ".work/placeholder-bundle-paper263/console.log",
+      "suite": "core-bundle-without-placeholderapi",
+      "assertions": 45
+    }
+  ],
+  "source_level_helpers": {
+    "snapshot": {
+      "recorded_at": "2026-10-27T04:21:50.701265+00:00",
+      "suite": "PLACEHOLDER_SNAPSHOT_PURE",
+      "scope": "Owned pure data/selector and concurrency helpers; no server, GUI, PlaceholderAPI provider or original target was executed.",
+      "java": 21,
+      "passed": true,
+      "assertions": 121,
+      "failed": 0,
+      "method": "Independent javac --release21 into private classes against existing API dependencies; Object sentinels throw from equals/hashCode/toString to detect identity delegation.",
+      "source_lf_sha256": {
+        "src/main/java/io/github/lino9999/blocksadder/integration/placeholderdata/PlaceholderView.java": "9dece959bea500a863fe0f140515c063165531dda1c5804e46eebe3fe4a6c37f",
+        "src/main/java/io/github/lino9999/blocksadder/pack/HudSpaceFont.java": "007ae4dfb990c543f7ce3a32c67ca0fbc837053d16eef375012da8ffbf0e119e",
+        ".work/placeholder15/snapshot/SnapshotCheck.java": "97f7a327331e819adfe26e842e83f8fd473def863228c0cb281ac2df8de42c0c"
+      },
+      "coverage": [
+        "Exact namespace IDs and unique/ambiguous shorthand, dotted/underscored/path keys",
+        "Glyph/font snapshots, supplementary Unicode and independent signed shift exports",
+        "Null/unknown/malformed selectors, signed integer edges and overflow rejection",
+        "Atomic finite numeric snapshot validation and copied source maps",
+        "Identity-only primary/alias ownership, immediate values and retirement",
+        "64 aliases per owner and4096 total, recovery after removals and protection of primary identities",
+        "512 deduplicated pending contexts; static/unknown/null requests do not queue",
+        "8 concurrent readers at20000 iterations with3000 main-style write/remove/recreate updates",
+        "8 concurrent queue producers at2000 requests each; queue remains exactly bounded",
+        "All retired-view request families return null and cannot be reactivated"
+      ],
+      "limitations": [
+        "Mutation/lifecycle methods are intended to be invoked serially by the main-thread integration manager. Concurrent tests cover asynchronous requests with one lifecycle writer and multiple pending producers.",
+        "External PlaceholderAPI parsing/registration, Bukkit caller resolution and actual server lifecycle require parent-owned native provider tests."
+      ]
+    },
+    "fonts": {
+      "recorded_at": "2026-10-27T04:11:41.795128+00:00",
+      "scope": "Owned Java21 source-level font merge/spacing helper checks; no server, original target or graphical client executed.",
+      "passed": true,
+      "ordinary_assertions": 67,
+      "exhaustive_signed_shifts": 2097153,
+      "source_digest_convention": "SHA-256 of UTF-8 source bytes with CRLF normalized to LF.",
+      "source_sha256": {
+        "src/main/java/io/github/lino9999/blocksadder/pack/PlaceholderFontCompiler.java": "320592fc77f4a0081a06ea204770abfb1a7b59689885b8fca0a607479a6d3051",
+        "src/main/java/io/github/lino9999/blocksadder/pack/HudSpaceFont.java": "007ae4dfb990c543f7ce3a32c67ca0fbc837053d16eef375012da8ffbf0e119e",
+        ".work/placeholder15/fonts/FontCompilerCheck.java": "b045ec462ee2810534c2c6e7c150759fbee8efb221ee5c4c7860a0ca695cc2d2"
+      },
+      "cases": [
+        "default creation and vanilla fallback order",
+        "existing provider/top-level metadata preservation",
+        "custom font merge and absent external font non-shadowing",
+        "idempotence and insertion-order independence",
+        "registry/bitmap/space/resolved-reference reserved character collisions",
+        "base/overlay inheritance, overrides and private font byte identity",
+        "cycle rejection and unavailable/TTF preservation",
+        "strict Unicode UTF8/UTF16 and duplicate-field rejection",
+        "JSON byte/depth and font-document bounds",
+        "shared pure string and component spacing encoder"
+      ],
+      "limitations": [
+        "Explicit collision inspection covers available bitmap/space providers and resolved in-pack reference graphs. Unavailable/external references and TTF/unihex coverage are not proven absent.",
+        "Available overlay font paths are merged independently; metadata-specific simultaneous overlay reference composition is not enumerated. Every participating existing document gets an unconditional owned-first reference and every available private-font override must be byte-identical.",
+        "No rendered font advance or final native pack acceptance is inferred from helper checks."
+      ]
+    }
+  },
+  "provider": {
+    "name": "PlaceholderAPI",
+    "version": "2.12.3",
+    "sha256": "fde03259f5af6938f3c33eeb4d814000a1adabf1d2304ce14970be81f609a437",
+    "release": "https://github.com/PlaceholderAPI/PlaceholderAPI/releases/tag/2.12.3",
+    "build_sdk": "2.11.7 provided only; older provider runtime versions are not certified by these runs"
+  },
+  "coverage": [
+    "Five renamed outgoing selector families, canonical and ambiguous names, finite persisted meters, exact source identity and read-only fallback.",
+    "Real PlaceholderAPI parsing, six native commands, one held-item use and one reconnect per provider run; main/worker snapshot freshness and guarded OfflinePlayer resolution.",
+    "Valid/invalid content reload and aliases, optional config toggles, provider persist reload, foreign expansion ownership including identical metadata, retired references and later reconnect.",
+    "Captured actual manager teardown after provider disable; no global singleton dependency and no foreign replacement deletion.",
+    "Deterministic active-adapter default/custom font reference generation, authored metadata preservation and owned spacing provider values.",
+    "Core/bundle loading without PlaceholderAPI on nine builds; meter/HUD native regressions without provider and optional ProtocolLib callback regressions on supported endpoints."
+  ],
+  "limits": [
+    "Counts mix native-input, public API, data, lifecycle and asset assertions. They do not imply rendered acceptance or complete feature parity.",
+    "The real PlaceholderAPI 2.12.3 plain PluginManager disable/enable cycle leaves its singleton null. Tests verify graceful adapter inactivity and continued core commands, then a private controlled public onLoad plus enable replay. This does not certify arbitrary hot reload, fresh classloader replacement or every provider version.",
+    "Scalar PlaceholderAPI strings cannot carry arbitrary font components. Named-font consumers must select the exported font. Missing external font documents are not invented.",
+    "Font collision checks cover explicit available bitmap/space and resolved reference graphs; absent external references, TTF/unihex coverage and every simultaneous overlay composition are not proven absent.",
+    "The 121 snapshot and 67 font helper assertions, concurrency schedules and 2097153 exhaustive signed shifts are source-level checks, counted separately from the native/server total.",
+    "Incoming configured-command/action PlaceholderAPI interpolation and wider named integrations remain separate parity requirements.",
+    "Original-artifact findings use retained genuine REA inventory and scoped ordinary offline JVM/archive inspection. No fresh successful REA Evidence call was obtained in this feature step.",
+    "Disposable verification materials remain ignored locally because automatic cleanup approval was rejected earlier; no alternative deletion mechanism was used. No verification inputs are tracked or present in the JAR."
+  ]
+}

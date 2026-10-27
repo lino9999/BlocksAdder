@@ -62,6 +62,21 @@ public final class GameplayService implements Listener, AutoCloseable {
         return stats.stat(player, id);
     }
 
+    public void observeMeters(io.github.lino9999.blocksadder.gameplay.hud.MeterStore.Observer observer) {
+        requireServerThread();
+        stats.observeMeters(observer);
+    }
+
+    public void observeMeters(io.github.lino9999.blocksadder.gameplay.hud.MeterStore.Observer observer, java.util.function.Consumer<Throwable> failure) {
+        requireServerThread();
+        stats.observeMeters(observer, failure);
+    }
+
+    public java.util.Map<String, Double> meterSnapshot(Player player) {
+        requireServerThread();
+        return stats.meterSnapshot(player);
+    }
+
     public double stat(Player player, String id, double value) {
         requireServerThread();
         return stats.stat(player, id, value);

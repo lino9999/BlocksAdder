@@ -54,6 +54,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     private io.github.lino9999.blocksadder.furniture.FurnitureService furniture;
     private boolean reloadingContent;
     private boolean stopping;
+    private io.github.lino9999.blocksadder.integration.PlaceholderService placeholders;
 
     @Override
     public void onEnable() {
@@ -64,6 +65,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             items = new ItemService(this, () -> content);
             recipes = new RecipeService(this, () -> content, items);
             gameplay = new GameplayService(this, () -> content, items);
+            placeholders = new io.github.lino9999.blocksadder.integration.PlaceholderService(this, gameplay, () -> content);
             world = new WorldContentService(this, () -> content, items);
             gameplay.setWorldAccess(world);
             world.setActions(gameplay.contentActions());
@@ -72,6 +74,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             blockBehavior = new BlockBehaviorService(this, () -> content, world);
             world.setBlockBehavior(blockBehavior);
             packs = new PackService(this, () -> content);
+            packs.setPlaceholderFonts(placeholders::active);
             mining = new MiningService(this, () -> content, items, world);
             world.setExtraBreaker(mining::breakExtra);
             models = new ModelService(this, () -> content, items);
@@ -135,6 +138,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             manager.registerEvents(menus, this);
             manager.registerEvents(packs, this);
             getServer().getServicesManager().register(BlocksAdderApi.class, this, this, ServicePriority.Normal);
+            placeholders.start();
             getLogger().info("BlocksAdder " + getDescription().getVersion() + " by Lino enabled with " + content.items().size() + " item definitions.");
             if (getConfig().getBoolean("resource-pack.build-on-startup", true)) packs.build().whenComplete((artifact, error) -> {
                 if (error != null) getLogger().log(Level.WARNING, "Resource pack build failed", error);
@@ -155,6 +159,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
         for (ItemDefinition item : candidate.items()) validator.create(item.id().toString(), 1);
         if (recipes != null) recipes.validate(candidate);
         if (gameplay != null) gameplay.validate(candidate);
+        if (placeholders != null) placeholders.validate(candidate);
         if (world != null) world.validate(candidate);
         if (nativeBlocks != null) nativeBlocks.validate(candidate);
         if (blockBehavior != null) blockBehavior.validate(candidate);
@@ -172,8 +177,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Content reload requires the server thread.");
         if (stopping || reloadingContent) throw new IllegalStateException("Content is already changing or stopping.");
         reloadingContent = true;
+        if (placeholders != null) placeholders.beginReload();
         try { reloadContentNow(); }
-        finally { reloadingContent = false; }
+        finally {
+            if (placeholders != null) placeholders.finishReload();
+            reloadingContent = false;
+        }
     }
 
     private void reloadContentNow() throws Exception {
@@ -233,6 +242,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     @Override
     public void onDisable() {
         stopping = true;
+        if (placeholders != null) placeholders.close();
         if (menus != null) menus.close();
         if (mining != null) mining.close();
         if (generation != null) generation.close();

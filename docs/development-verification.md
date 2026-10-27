@@ -1,5 +1,9 @@
 # Development verification
 
+## Development preview 15: optional PlaceholderAPI exports
+
+The exact 1,206,863-byte JAR (`10b1b803609defa5148aeabaee4dc52c78044e1942486cc5c2b649a2ae803576`) passed 2,100 scoped assertions in 22 accepted server processes. Official PlaceholderAPI 2.12.3 passed 133 checks on each of nine builds; native HUD and optional ProtocolLib callback regressions passed on Spigot 1.21.11 and Paper 26.3; core/bundle checks passed on nine builds without PlaceholderAPI. Java 21 is used for 1.21.11 and Java 25 for 26.x. Snapshot concurrency, font merging and exhaustive signed spacing helpers are separate source-level proof. [Guide](placeholders.md), [exact results](placeholder-verification.json), [distribution audit](placeholder-audit.json). The provider's plain re-enable singleton limitation, private controlled public lifecycle replay and external/scalar font limits remain explicit. No GUI client or original JAR was executed.
+
 ## Development preview 14: image HUDs and meter policy
 
 The exact 1169657-byte JAR (`3dfee845f34319495d37f4e57b5fc9cc612e8318882a0b2ef3844e83a769afad`) passed 2,670 scoped assertions in 25 accepted server processes. This includes 74 native/API/asset checks on each of nine builds, 175 optional ProtocolLib callback checks on Spigot 1.21.11 and Paper 26.3, camera/emote regressions, native effect/totem checks on Paper 26.3 and nine core bundle runs. Java 21 is used for 1.21.11 and Java 25 for 26.x. Owned pure policy/art tests, observer helpers and exhaustive signed spacing encodings are recorded separately. [Guide](hud-meters.md), [exact results](hud-meters-verification.json), [distribution audit](hud-meters-audit.json). No GUI client or original JAR was executed.

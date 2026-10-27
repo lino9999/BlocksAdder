@@ -22,6 +22,34 @@ public final class MeterStore {
     private List<Definition> automatic = List.of();
     private final Map<UUID, PlayerClock> clocks = new HashMap<>();
     private long revision;
+    private Observer observer = (player, id, value) -> {};
+    private java.util.function.Consumer<Throwable> observerFailure = failure -> java.util.logging.Logger.getLogger("BlocksAdder")
+            .log(java.util.logging.Level.WARNING, "A meter observer stopped after a notification failure.", failure);
+
+    @FunctionalInterface
+    public interface Observer { void changed(Player player, String id, double value); }
+
+    public void observe(Observer observer) { this.observer = java.util.Objects.requireNonNull(observer); }
+    public void observe(Observer observer, java.util.function.Consumer<Throwable> failure) {
+        this.observer = java.util.Objects.requireNonNull(observer);
+        this.observerFailure = java.util.Objects.requireNonNull(failure);
+    }
+
+    private void notifyObserver(Player player, String id, double value) {
+        Observer current = observer;
+        try { current.changed(player, id, value); }
+        catch (RuntimeException | LinkageError failure) {
+            if (observer == current) observer = (ignoredPlayer, ignoredId, ignoredValue) -> {};
+            try { observerFailure.accept(failure); }
+            catch (RuntimeException | LinkageError ignored) {}
+        }
+    }
+
+    public Map<String, Double> snapshot(Player player) {
+        Map<String, Double> values = new LinkedHashMap<>();
+        definitions.forEach((id, definition) -> values.put(id, get(player, definition)));
+        return Map.copyOf(values);
+    }
 
     public static Map<String, Definition> prepare(JavaPlugin plugin, ContentRegistry registry) {
         Map<String, Definition> prepared = new LinkedHashMap<>();
@@ -60,7 +88,9 @@ public final class MeterStore {
 
     private double get(Player player, Definition definition) {
         double value = player.getPersistentDataContainer().getOrDefault(definition.key(), PersistentDataType.DOUBLE, definition.initial());
-        return Double.isFinite(value) ? Math.clamp(value, definition.min(), definition.max()) : definition.initial();
+        double bounded = Double.isFinite(value) ? Math.clamp(value, definition.min(), definition.max()) : definition.initial();
+        notifyObserver(player, definition.id(), bounded);
+        return bounded;
     }
 
     public double set(Player player, String requested, double value, MeterPolicy.Cause cause) {
@@ -155,6 +185,7 @@ public final class MeterStore {
 
     private double commit(Player player, Definition definition, double value) {
         player.getPersistentDataContainer().set(definition.key(), PersistentDataType.DOUBLE, value);
+        notifyObserver(player, definition.id(), value);
         return value;
     }
 

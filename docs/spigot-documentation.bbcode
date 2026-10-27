@@ -160,3 +160,26 @@ Use [B]/ba totem <player> [item] [--quiet][/B] with permission [B]blocksadder.to
 [B]Development preview 13 camera compatibility:[/B] fixes the tested Paper 26.3/ProtocolLib movement disconnect. Native camera input and lifecycle pass on nine builds; exact server/protocol scope and remaining visual checks are recorded in the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/camera-input.md]camera verification guide[/URL].
 
 [B]Image HUDs and player meters:[/B] Development preview 14 adds full/partial/empty icon bars, quantity frames, custom API-controlled icon sequences, named fonts and pixel positioning. Shared meters retain independent bounds and source-specific bypass, with eligible player timers, world/biome/light rules, food/respawn changes and protected depleted effects. Read the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/hud-meters.md]HUD and meter guide[/URL] for the independent bundle schema and exact limits.
+
+[SIZE=5][B]PlaceholderAPI exports[/B][/SIZE]
+Install an official compatible PlaceholderAPI build separately and restart the server. BlocksAdder registers its internal blocksadder expansion without an eCloud download. In config.yml:
+[CODE]integrations:
+  placeholders: true[/CODE]
+Run /ba reload after changing this optional setting. False detaches the expansion while core features continue. Build and distribute the resource pack while the adapter is active to include scalar spacing support.
+
+These examples assume registered garden:heart glyph and garden:stamina meter definitions:
+[LIST]
+[*][B]%blocksadder_glyph_garden:heart%[/B]: glyph character followed by minus-one-pixel spacing.
+[*][B]%blocksadder_code_garden:heart%[/B]: raw character without spacing; this is not a numeric Unicode code point.
+[*][B]%blocksadder_font_garden:heart%[/B]: configured font identifier, defaulting to minecraft:default.
+[*][B]%blocksadder_move_-8%[/B]: signed pixel movement. Integers from -1048576 through 1048576 are accepted; zero returns an empty string.
+[*][B]%blocksadder_meter_garden:stamina%[/B]: current bounded online player value, such as 17.5 or 20.0.
+[/LIST]
+Canonical namespaced IDs are recommended. Local shorthand works only when unique within its glyph or meter catalog; underscores, dots and slashes inside keys are preserved. Ambiguous or malformed requests and unknown glyphs remain unresolved. A syntactically valid unknown meter or unavailable player produces 0.0. A previously unknown OfflinePlayer wrapper first requested asynchronously also receives 0.0 while bounded main-thread resolution is queued; later requests can read the resolved online snapshot. These exports never mutate meters or execute actions.
+
+PlaceholderAPI strings cannot carry font metadata. Configure the consumer's font explicitly, using the font export where supported. Active-adapter pack builds place the generated blocksadder:layout reference before existing providers in the default font and available registered glyph fonts, preserving authored properties and available overlays. Missing external font files are not invented. The layout font and characters U+F1000 through U+F1029 are reserved; explicit in-pack conflicts are rejected, while external font/TTF/unihex coverage cannot be exhaustively checked. Keep that range free when merging packs.
+
+Glyph exports are trusted server-template data and do not enforce chat glyph permissions. Ordinary chat/sign/book aliases retain their permission checks. Restrict template editing and apply viewer conditions in the consuming plugin when required.
+
+The expansion persists through /papi reload and preserves foreign expansion ownership. Plain plugin-manager disable/enable can leave official PlaceholderAPI 2.12.3 without its initialized singleton; BlocksAdder then reports the failed adapter connection while core features remain available. Restart the server for provider lifecycle changes. A private fixture's controlled public onLoad replay is not generic hot-reload support. Rendered appearance remains the user's check; this reference does not claim a completed native compatibility matrix.
+[URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/placeholders.md]Full placeholder syntax, threading, font merging and lifecycle reference[/URL]
