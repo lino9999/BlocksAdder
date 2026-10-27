@@ -94,7 +94,7 @@ final class BehaviorActions {
                     case "increment_player_stat", "decrement_player_stat" ->
                             java.util.Set.of("name", "amount");
                     case "play_particle", "shoot_particle" ->
-                            java.util.Set.of("name", "id", "distance");
+                            java.util.Set.of("name", "id", "distance", "payload", "emit");
                     case "play_effect" -> java.util.Set.of("name", "id");
                     case "play_totem_animation" -> java.util.Set.of("item");
                     case "damage_entity", "damage_entity_in_sight" ->
@@ -262,27 +262,7 @@ final class BehaviorActions {
                                 required(c, c.contains("name") ? "name" : "id")
                                         .replace("minecraft:", "")
                                         .toUpperCase(Locale.ROOT));
-                if (particle.getDataType() != Void.class)
-                    throw error(item, "Particle " + particle + " requires a typed data adapter.");
-                int distance = integer(c, "distance", 7, 1, 32);
-                yield context -> {
-                    var origin = context.effectOrigin();
-                    if (family.equals("play_particle"))
-                        origin.getWorld().spawnParticle(particle, origin, 40, 0, 0, 0, 0);
-                    else
-                        for (int i = 0; i <= distance * 2; i++)
-                            origin.getWorld()
-                                    .spawnParticle(
-                                            particle,
-                                            origin.clone()
-                                                    .add(origin.getDirection().multiply(i * 0.5)),
-                                            1,
-                                            0,
-                                            0,
-                                            0,
-                                            0);
-                    return true;
-                };
+                yield ParticleEmission.compile(particle, family.equals("shoot_particle"), c, input -> reference(item, input));
             }
             case "play_effect" -> {
                 Effect effect =

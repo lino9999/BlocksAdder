@@ -121,3 +121,19 @@ Report reproducible problems through [URL=https://github.com/lino9999/BlocksAdde
 [B]Area mining:[/B] Immediate held block_break plans accept world_sweep with a bounded region, optional horizontal facing frame and native/custom block selectors. Work starts after the origin commits, honors individual protection and tool rules, retains native drops/XP and stops on source replacement, exhaustion, permission loss or reload. A shared 32-cell-per-tick budget and exact placement snapshots bound work. See the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/area-mining.md]area-mining guide[/URL].
 
 [B]Projectile actions:[/B] Use traits.events.flight.launch, flight.block and flight.entity on item-bearing bundle records. Native arrows, tridents and throwable item carriers keep their own item identity, separately from held inventory. Impact receipts support delayed effects after native removal. Explicit damage attribution preserves native protection and killer credit without invoking unrelated held melee plans; particle origins follow the event. See the [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/projectile-actions.md]projectile guide[/URL] for schema, cancellation limits and lifecycle rules.
+
+[SIZE=5][B]Typed particle actions[/B][/SIZE]
+Inside an artifact's traits.events plan, use play_particle for a cloud or shoot_particle for a line. The particle name must exist on the installed server. Typed payloads include shade/scale for dust, state for native block data, item for vanilla/custom item particles and destination settings for trails/vibrations. Colors must be quoted hexadecimal strings.
+[CODE]
+play_particle:
+  name: DUST
+  payload:
+    shade: '#22b8cf'
+    scale: 1.25
+  emit:
+    count: 12
+    spread: [0.2, 0.2, 0.2]
+    speed: 0
+[/CODE]
+A line accepts integer distance 1–32 and samples every half block. Optional emit settings are count, spread, speed, offset and force, with a 4,096-particle action budget. Count zero enables the native directional mode. Unloaded samples/destinations are skipped without loading their chunks. Trails and vibrations can target emitter, player or victim; an unshifted player/victim vibration can follow its native entity. Newer geyser particles require a server that provides them.
+[URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/particle-actions.md]Full payload table, destination rules and verification scope[/URL]

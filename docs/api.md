@@ -48,3 +48,5 @@ Custom break events prepare an operation; they are not committed-removal notific
 ## Native projectile integration
 
 The core registers `ProjectileLaunchEvent` and `ProjectileHitEvent` adapters for native item-bearing projectiles with a player shooter. Configure `flight.launch/block/entity` item plans; see [projectile actions](projectile-actions.md). Server integrations should initialize the shooter and item in a public `World.spawn` pre-spawn consumer when launch actions are required. Changing an item after `Player.launchProjectile` returns cannot retroactively replay a launch; a later impact reads the native payload available then. Keep these operations on the server thread.
+
+Typed particle action configuration is documented in [particle actions](particle-actions.md). It resolves data through the running server's public Bukkit particle types; it adds no binary dependency on newer geyser classes and never loads emission/destination chunks.
