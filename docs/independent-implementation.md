@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+Preview 19 adds a BlocksAdder station list, a startup selector for Minecraft recipe outputs and tracking for open anvil results. REA supplied evidence about configuration behavior and registry effects. The implementation uses public Bukkit recipes and inventory views. The exact JAR contains 435 classes and 441 files. The audit found zero identical nonempty files, shared readable messages, shared declared commands or permissions, or reference branding traces under its comparison rules. [Preview 19 distribution audit](recipe-controls-audit.json)
+
 Preview 18 builds a fresh recipe-discovery index from BlocksAdder definitions and Bukkit recipe choices. The distribution audit examined 430 classes and 436 files. It found zero identical nonempty files, shared declared commands or permissions, foreign class paths, reference branding traces or shared readable messages under the audit rules. [Exact audit](recipe-book-audit.json)
 
 The [command-placeholder audit](command-placeholders-audit.json) covers 404 own classes with empty collision/leak lists. A new immutable template compiler, isolated public provider resolver and invocation authority checks implement explicit one-pass scalar bindings in the existing independent event-plan format. No original command expansion class, schema or string implementation is translated. [Exact evidence](command-placeholders-verification.json) separates native input, public event/API adversaries, packaged-helper checks and remaining provider/semantic limits.

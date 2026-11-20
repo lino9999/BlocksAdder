@@ -2,6 +2,10 @@ integrations:
   placeholders: true
 recipe-book:
   learn: [encounter]
+recipe-stations:
+  active: [crafting, cooking, anvil, smithing, stonecutting]
+native-recipes:
+  exclude-results: []
 resource-pack:
   build-on-startup: true
   auto-apply: false

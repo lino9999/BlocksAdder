@@ -1,5 +1,9 @@
 # Development verification
 
+## Preview 19 recipe controls
+
+The 1,288,284-byte preview 19 JAR passed 6,840 server assertions in 38 accepted processes. Each of nine Spigot and Paper builds ran three cold starts on the same isolated world, with configurations staged by live reload. Native crafting, smelting, anvil collection, ingredient and experience retention, namespace isolation and restored registry definitions were exercised. Nine builds repeated core bundle regressions. Spigot 1.21.11 and Paper 26.3 also repeated preview 18 recipe discovery. The release's station parser passed 364 separate checks. [Exact builds and results](recipe-controls-verification.json) · [Recipe controls](recipe-controls.md) · [Distribution audit](recipe-controls-audit.json)
+
 ## Preview 18 recipe book discovery
 
 The 1,275,574-byte JAR passed 1,575 assertions across 21 isolated server processes. Nine Spigot/Paper builds ran the native player discovery suite and the core bundle regression with the published YAML example. One additional Paper 1.21.11 process verified the preview 17 configuration fallback. Spigot 1.21.11 and Paper 26.3 also exercised the individual cooking, cutting and smithing inputs. The packaged policy parser passed 274 separate Java 21 assertions. The player tests inspect server knowledge after actual pickup, inventory clicks, reload and reconnect. Rendered menus and toasts await user review. [Exact results](recipe-book-verification.json) · [Recipe book guide](recipe-book.md) · [Distribution audit](recipe-book-audit.json)

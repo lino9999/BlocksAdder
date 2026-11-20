@@ -158,8 +158,15 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     }
 
     public ContentRegistry validateContent() throws Exception {
+        return validateContent(readSettings());
+    }
+
+    private YamlConfiguration readSettings() throws Exception {
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Content validation must run on the server thread.");
-        var candidateSettings = PluginSettings.read(new java.io.File(getDataFolder(), "config.yml"));
+        return PluginSettings.read(new java.io.File(getDataFolder(), "config.yml"));
+    }
+
+    private ContentRegistry validateContent(YamlConfiguration candidateSettings) throws Exception {
         ContentRegistry candidate = new ContentLoader(this).load();
         io.github.lino9999.blocksadder.pack.EquipmentAssetCompiler.validate(candidate);
         ItemService validator = new ItemService(this, () -> candidate);
@@ -194,10 +201,11 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     private void reloadContentNow() throws Exception {
         if (world != null && world.replacingContent()) throw new IllegalStateException("Content cannot reload while a world replacement is committing.");
-        ContentRegistry candidate = validateContent();
+        YamlConfiguration candidateSettings = readSettings();
+        ContentRegistry candidate = validateContent(candidateSettings);
         ContentRegistry previous = content;
         YamlConfiguration previousSettings = settings;
-        settings = PluginSettings.read(new java.io.File(getDataFolder(), "config.yml"));
+        settings = candidateSettings;
         content = candidate;
         try {
             vehicles.close();

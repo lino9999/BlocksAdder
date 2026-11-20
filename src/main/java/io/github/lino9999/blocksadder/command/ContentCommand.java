@@ -93,6 +93,7 @@ public final class ContentCommand implements TabExecutor {
                 case "reload" -> {
                     plugin.reloadContent();
                     Text.send(sender, "Configuration and content reloaded. Run /ba pack build after changing assets.");
+                    if (plugin.recipes().nativeRecipeRestartPending()) Text.send(sender, "Restart the server to apply the configured Minecraft recipe exclusions.");
                 }
                 case "validate" -> {
                     var candidate = plugin.validateContent();

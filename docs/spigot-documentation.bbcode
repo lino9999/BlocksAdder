@@ -72,6 +72,14 @@ Add another record to entries:
         S: garden:sapphire[/CODE]
 The result must be defined separately. Custom recipe ingredients use persistent identity; vanilla lookalikes do not satisfy custom ingredients. Supported recipe-specific settings and limitations are in the recipe guide.
 
+[SIZE=5][B]Recipe controls[/B][/SIZE]
+The global workstation list controls which custom recipes are available. For example, use this config.yml fragment to enable custom crafting and cooking and to remove vanilla recipes for iron ingots.
+[CODE]recipe-stations:
+  active: [crafting, cooking]
+native-recipes:
+  exclude-results: [iron_ingot][/CODE]
+The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
+
 [SIZE=5][B]Recipe book discovery[/B][/SIZE]
 Fresh installations teach recipes when a player picks up or clicks one of their custom ingredients. A renamed ingredient still works. Existing installations keep their join grants until you add this section to config.yml and run /ba validate followed by /ba reload.
 [CODE]recipe-book:
