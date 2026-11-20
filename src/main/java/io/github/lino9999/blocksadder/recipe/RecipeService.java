@@ -3,6 +3,7 @@ package io.github.lino9999.blocksadder.recipe;
 import io.github.lino9999.blocksadder.content.ContentId;
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.item.ItemService;
+import io.github.lino9999.blocksadder.recipe.protocol.RecipeSlotTransport;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -22,6 +23,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -34,8 +36,10 @@ import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.CampfireRecipe;
 import org.bukkit.inventory.CookingRecipe;
+import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
@@ -48,12 +52,17 @@ import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public final class RecipeService implements Listener, AutoCloseable {
@@ -62,6 +71,9 @@ public final class RecipeService implements Listener, AutoCloseable {
     private final ItemService items;
     private final VanillaRecipeFilter vanillaFilter = new VanillaRecipeFilter();
     private final AnvilPreviews anvilPreviews = new AnvilPreviews();
+    private final RecipeFeedback feedback;
+    private RecipeSlotTransport slotTransport;
+    private Map<RecipeStation, List<RegisteredRecipe>> families = Map.of();
     private Set<Material> excludedResults = Set.of();
     private Map<NamespacedKey, RegisteredRecipe> registered = Map.of();
     private RecipeBookIndex bookIndex = new RecipeBookIndex.Builder().build();
@@ -71,12 +83,20 @@ public final class RecipeService implements Listener, AutoCloseable {
         this.plugin = plugin;
         this.registry = registry;
         this.items = items;
+        feedback = new RecipeFeedback(plugin, (player, view, slot, item) ->
+                slotTransport != null && slotTransport.show(player, view, slot, item));
+    }
+
+    public void startFeedback() {
+        if (slotTransport == null) slotTransport = RecipeSlotTransport.create(plugin);
     }
 
     public void reload() {
         Set<Material> exclusions = VanillaRecipeFilter.read(plugin.getConfig());
+        FeedbackChannels channels = FeedbackChannels.read(plugin.getConfig());
         Map<NamespacedKey, RegisteredRecipe> next = prepare(plugin.getConfig());
         RecipeBookIndex index = index(next);
+        Map<RecipeStation, List<RegisteredRecipe>> byStation = groupByStation(next);
         Map<NamespacedKey, RegisteredRecipe> previous = registered;
         removeNative(previous);
         List<NamespacedKey> added = new ArrayList<>();
@@ -87,6 +107,7 @@ public final class RecipeService implements Listener, AutoCloseable {
                 added.add(entry.getKey());
             }
             registered = Map.copyOf(next);
+            families = byStation;
             bookIndex = index;
             excludedResults = exclusions;
         } catch (RuntimeException exception) {
@@ -94,6 +115,7 @@ public final class RecipeService implements Listener, AutoCloseable {
             previous.values().stream().filter(value -> !virtual(value.recipe())).forEach(value -> Bukkit.addRecipe(value.recipe()));
             throw exception;
         }
+        feedback.configure(channels);
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (bookIndex != index) return;
             anvilPreviews.refresh(this::currentAnvilPreview);
@@ -107,6 +129,7 @@ public final class RecipeService implements Listener, AutoCloseable {
 
     public void validate(ContentRegistry candidate, ConfigurationSection settings) {
         VanillaRecipeFilter.read(settings);
+        FeedbackChannels.read(settings);
         RecipeService validator = new RecipeService(plugin, () -> candidate, new ItemService(plugin, () -> candidate));
         validator.index(validator.prepare(settings));
     }
@@ -133,7 +156,8 @@ public final class RecipeService implements Listener, AutoCloseable {
             if (!section.getBoolean("enabled", true)) return;
             ContentId id = ContentId.parse(entry.getKey());
             String type = section.getString("type", "shaped").toLowerCase(Locale.ROOT);
-            if (!stations.contains(RecipeStation.forType(type))) return;
+            RecipeStation station = RecipeStation.forType(type);
+            if (!stations.contains(station)) return;
             NamespacedKey key = new NamespacedKey(plugin, "recipe/" + id.namespace() + "/" + id.value());
             int amount = section.getInt("amount", 1);
             ItemStack result = result(section.getString("result", ""), amount);
@@ -147,9 +171,17 @@ public final class RecipeService implements Listener, AutoCloseable {
             if (!permission.isBlank() && recipe instanceof CookingRecipe<?>) throw invalid(id, "Cooking recipes cannot have player permissions because furnaces have no player actor.");
             if (virtual(recipe) && section.contains("book")) throw invalid(id, "Anvil operations have no native recipe book entry.");
             RecipeBookRule rule = RecipeBookRule.read(section, fallback);
-            if (next.put(key, new RegisteredRecipe(recipe, permission, returns, attributes, Map.copyOf(identities), rule)) != null) throw invalid(id, "Duplicate recipe key.");
+            if (next.put(key, new RegisteredRecipe(recipe, permission, returns, attributes, Map.copyOf(identities), rule, station)) != null) throw invalid(id, "Duplicate recipe key.");
         });
         return Map.copyOf(next);
+    }
+
+    private Map<RecipeStation, List<RegisteredRecipe>> groupByStation(Map<NamespacedKey, RegisteredRecipe> recipes) {
+        var groups = new EnumMap<RecipeStation, List<RegisteredRecipe>>(RecipeStation.class);
+        recipes.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.comparing(NamespacedKey::toString)))
+                .map(Map.Entry::getValue).forEach(value -> groups.computeIfAbsent(value.station(), ignored -> new ArrayList<>()).add(value));
+        groups.replaceAll((station, values) -> List.copyOf(values));
+        return Map.copyOf(groups);
     }
 
     private Recipe build(ContentId id, NamespacedKey key, String type, ConfigurationSection section, ItemStack result, RecipeReturns returns, Map<String, String> identities) {
@@ -380,10 +412,13 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     private boolean craftingAllowed(Recipe recipe, ItemStack[] matrix, Player player) {
-        if (!authorized(recipe, player)) return false;
-        if (owned(recipe) == null) return java.util.Arrays.stream(matrix).noneMatch(this::protectedItem);
-        Map<String, String> identities = owned(recipe).identities();
-        recipe = owned(recipe).recipe();
+        return authorized(recipe, player) && craftingInputs(owned(recipe), matrix);
+    }
+
+    private boolean craftingInputs(RegisteredRecipe rule, ItemStack[] matrix) {
+        if (rule == null) return Arrays.stream(matrix).noneMatch(this::protectedItem);
+        Map<String, String> identities = rule.identities();
+        Recipe recipe = rule.recipe();
         if (recipe instanceof ShapelessRecipe shapeless) {
             List<ItemStack> ingredients = java.util.Arrays.stream(matrix).filter(stack -> stack != null && !stack.getType().isAir()).toList();
             List<RecipeChoice> choices = shapeless.getChoiceList();
@@ -439,17 +474,28 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     private Recipe selectCraft(Recipe nativeRecipe, ItemStack[] matrix, Player player) {
+        return select(RecipeStation.CRAFTING, nativeRecipe, player, rule -> craftingInputs(rule, matrix));
+    }
+
+    private Recipe select(RecipeStation station, Recipe nativeRecipe, Player player, Predicate<RegisteredRecipe> matches) {
         RegisteredRecipe current = owned(nativeRecipe);
-        if (current != null && craftingAllowed(nativeRecipe, matrix, player)) return current.recipe();
-        for (var entry : registered.entrySet().stream().sorted(Map.Entry.comparingByKey(java.util.Comparator.comparing(NamespacedKey::toString))).toList()) {
-            Recipe candidate = entry.getValue().recipe();
-            if ((candidate instanceof ShapedRecipe || candidate instanceof ShapelessRecipe) && craftingAllowed(candidate, matrix, player)) return candidate;
+        RegisteredRecipe denied = null;
+        if (current != null && current.station() == station && matches.test(current)) {
+            if (authorized(current.recipe(), player)) return current.recipe();
+            denied = current;
         }
-        return nativeRecipe;
+        for (RegisteredRecipe rule : families.getOrDefault(station, List.of())) {
+            if (rule == current || !matches.test(rule)) continue;
+            if (authorized(rule.recipe(), player)) return rule.recipe();
+            if (denied == null) denied = rule;
+        }
+        if (denied == null || nativeRecipe != null && current == null && matches.test(null)) return nativeRecipe;
+        return denied.recipe();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareCraft(PrepareItemCraftEvent event) {
+        feedback.refresh(event.getView());
         Player player = event.getView().getPlayer() instanceof Player found ? found : null;
         Recipe selected = selectCraft(event.getRecipe(), event.getInventory().getMatrix(), player);
         if (!craftingAllowed(selected, event.getInventory().getMatrix(), player)) event.getInventory().setResult(null);
@@ -459,14 +505,70 @@ public final class RecipeService implements Listener, AutoCloseable {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraft(CraftItemEvent event) {
         Player player = event.getWhoClicked() instanceof Player found ? found : null;
-        Recipe selected = selectCraft(event.getRecipe(), event.getInventory().getMatrix(), player);
-        if (!craftingAllowed(selected, event.getInventory().getMatrix(), player)) { event.setCancelled(true); return; }
+        ItemStack[] matrix = event.getInventory().getMatrix();
+        Recipe selected = selectCraft(event.getRecipe(), matrix, player);
+        if (!craftingAllowed(selected, matrix, player)) {
+            RegisteredRecipe locked = lockedCraft(selected, matrix, player);
+            if (locked != null && empty(event.getCurrentItem()) && event.getAction() == InventoryAction.NOTHING) return;
+            event.setCancelled(true);
+            if (locked != null && locked.recipe().getResult().equals(event.getCurrentItem())) {
+                event.getInventory().setResult(null);
+                notifyDenied(player, event.getView(), locked, locked.recipe().getResult(), () -> true);
+            }
+            return;
+        }
         RegisteredRecipe registered = owned(selected);
         if (registered == null) return;
         ItemStack output = event.getCurrentItem();
         ItemStack expected = selected.getResult();
         if (output == null || !output.isSimilar(expected) || output.getAmount() != expected.getAmount()) { event.setCancelled(true); return; }
-        if (registered.returns().active()) CraftingReturns.apply(event, registered.returns(), matrix -> craftingAllowed(selected, matrix, player));
+        if (registered.returns().active()) CraftingReturns.apply(event, registered.returns(), inputs -> craftingAllowed(selected, inputs, player));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onDeniedCraftClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player) || event.getRawSlot() != 0
+                || !(event.getView().getTopInventory() instanceof CraftingInventory grid)
+                || event.getSlotType() != InventoryType.SlotType.RESULT || !empty(event.getCurrentItem())) return;
+        ItemStack[] matrix = grid.getMatrix();
+        RegisteredRecipe locked = lockedCraft(selectCraft(grid.getRecipe(), matrix, player), matrix, player);
+        if (locked != null) notifyDenied(player, event.getView(), locked, locked.recipe().getResult(), () -> !event.isCancelled());
+    }
+
+    private RegisteredRecipe lockedCraft(Recipe selected, ItemStack[] matrix, Player player) {
+        RegisteredRecipe rule = owned(selected);
+        return player != null && rule != null && !permitted(rule, player) && craftingInputs(rule, matrix) ? rule : null;
+    }
+
+    private static boolean empty(ItemStack stack) {
+        return stack == null || stack.getType().isAir();
+    }
+
+    private void notifyDenied(Player player, InventoryView view, RegisteredRecipe rule, ItemStack result, BooleanSupplier attempted) {
+        NamespacedKey key = ((Keyed) rule.recipe()).getKey();
+        RecipeInputs inputs = new RecipeInputs(view, rule.station());
+        Predicate<RegisteredRecipe> matches = switch (rule.station()) {
+            case CRAFTING -> {
+                ItemStack[] matrix = ((CraftingInventory) view.getTopInventory()).getMatrix();
+                yield other -> craftingInputs(other, matrix);
+            }
+            case SMITHING -> {
+                ItemStack[] contents = view.getTopInventory().getContents();
+                yield other -> smithingInputs(other, contents);
+            }
+            case ANVIL -> {
+                ItemStack base = view.getTopInventory().getItem(0);
+                ItemStack addition = view.getTopInventory().getItem(1);
+                yield other -> matchAnvil(other, base, addition) != null;
+            }
+            default -> throw new IllegalArgumentException("This workstation cannot report a denied result.");
+        };
+        List<String> alternatives = families.get(rule.station()).stream().filter(other -> other != rule && matches.test(other))
+                .map(RegisteredRecipe::permission).distinct().toList();
+        feedback.deny(player, view, rule.station(), key, result, () -> registered.get(key) == rule
+                && attempted.getAsBoolean() && inputs.unchanged() && !permitted(rule, player)
+                && alternatives.stream().noneMatch(permission -> permission.isBlank() || player.hasPermission(permission))
+                && registered.get(key) == rule);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -531,27 +633,37 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     private boolean smithingAllowed(Recipe recipe, ItemStack[] contents, Player player) {
-        if (!authorized(recipe, player)) return false;
-        if (owned(recipe) == null) return java.util.Arrays.stream(contents).limit(3).noneMatch(this::protectedItem);
-        Map<String, String> identities = owned(recipe).identities();
-        recipe = owned(recipe).recipe();
-        if (recipe instanceof SmithingTransformRecipe smithing && contents.length >= 3) return matches(smithing.getTemplate(), contents[0], identities.get("template")) && matches(smithing.getBase(), contents[1], identities.get("base")) && matches(smithing.getAddition(), contents[2], identities.get("addition"));
+        return authorized(recipe, player) && smithingInputs(owned(recipe), contents);
+    }
+
+    private boolean smithingInputs(RegisteredRecipe rule, ItemStack[] contents) {
+        if (rule == null) return Arrays.stream(contents).limit(3).noneMatch(this::protectedItem);
+        Map<String, String> identities = rule.identities();
+        if (rule.recipe() instanceof SmithingTransformRecipe smithing && contents.length >= 3) return matches(smithing.getTemplate(), contents[0], identities.get("template")) && matches(smithing.getBase(), contents[1], identities.get("base")) && matches(smithing.getAddition(), contents[2], identities.get("addition"));
         return false;
     }
 
     private Recipe selectSmithing(Recipe nativeRecipe, ItemStack[] contents, Player player) {
-        RegisteredRecipe current = owned(nativeRecipe);
-        if (current != null && smithingAllowed(nativeRecipe, contents, player)) return current.recipe();
-        for (RegisteredRecipe registered : registered.values().stream().sorted(java.util.Comparator.comparing(value -> ((Keyed) value.recipe()).getKey().toString())).toList()) if (registered.recipe() instanceof SmithingTransformRecipe && smithingAllowed(registered.recipe(), contents, player)) return registered.recipe();
-        return nativeRecipe;
+        return select(RecipeStation.SMITHING, nativeRecipe, player, rule -> smithingInputs(rule, contents));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareSmithing(PrepareSmithingEvent event) {
+        feedback.refresh(event.getView());
         Player player = event.getView().getPlayer() instanceof Player found ? found : null;
         Recipe recipe = selectSmithing(event.getInventory().getRecipe(), event.getInventory().getContents(), player);
         if (!smithingAllowed(recipe, event.getInventory().getContents(), player)) event.setResult(null);
         else if (owned(recipe) != null) event.setResult(owned(recipe).attributes().apply(recipe.getResult(), event.getInventory().getItem(1)));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeniedSmithing(PrepareSmithingEvent event) {
+        if (!empty(event.getResult()) || !(event.getView().getPlayer() instanceof Player player)) return;
+        ItemStack[] inputs = event.getInventory().getContents();
+        RegisteredRecipe rule = owned(selectSmithing(event.getInventory().getRecipe(), inputs, player));
+        if (rule == null || permitted(rule, player) || !smithingInputs(rule, inputs)) return;
+        ItemStack result = rule.attributes().apply(rule.recipe().getResult(), inputs[1]);
+        notifyDenied(player, event.getView(), rule, result, () -> empty(event.getResult()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -579,30 +691,39 @@ public final class RecipeService implements Listener, AutoCloseable {
         if (!authorized(recipe, player) || protectedItem(input) && owned(recipe) == null || owned(recipe) != null && !matches(recipe.getInputChoice(), input)) event.setCancelled(true);
     }
 
-    private AnvilPlan findAnvil(ItemStack base, ItemStack addition) {
-        if (base == null || base.getAmount() != 1) return null;
-        for (RegisteredRecipe registered : registered.values().stream().sorted(java.util.Comparator.comparing(value -> ((Keyed) value.recipe()).getKey().toString())).toList()) {
-            if (registered.recipe() instanceof AnvilRecipe recipe && matches(recipe.base(), base) && matches(recipe.addition(), addition)) return new AnvilPlan(recipe, recipe.getResult(), recipe.experience(), 1);
-            if (!(registered.recipe() instanceof AnvilRepairRecipe recipe) || !matches(recipe.base(), base, registered.identities().get("base")) || !matches(recipe.addition(), addition)) continue;
-            if (!(base.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable original) || original.getDamage() < 1) return null;
-            int maximum = RecipeReturns.maximum(base, original);
-            if (maximum < 1) return null;
-            int unit = Math.max(1, maximum / 4);
-            int consumed = Math.min(addition.getAmount(), (int) Math.ceil((double) original.getDamage() / unit));
-            ItemStack result = base.clone();
-            var meta = result.getItemMeta();
-            ((org.bukkit.inventory.meta.Damageable) meta).setDamage((int) Math.max(0, (long) original.getDamage() - (long) consumed * unit));
-            int penalty = meta instanceof org.bukkit.inventory.meta.Repairable repair ? repair.getRepairCost() : 0;
-            int cost = (int) Math.clamp((long) penalty + consumed, 1, 1000000);
-            if (meta instanceof org.bukkit.inventory.meta.Repairable repair) repair.setRepairCost((int) Math.clamp((long) penalty * 2 + 1, 0, 1000000));
-            result.setItemMeta(meta);
-            return new AnvilPlan(recipe, result, cost, consumed);
+    private AnvilPlan matchAnvil(RegisteredRecipe rule, ItemStack base, ItemStack addition) {
+        if (base == null || base.getAmount() != 1 || empty(addition)) return null;
+        if (rule.recipe() instanceof AnvilRecipe recipe && matches(recipe.base(), base) && matches(recipe.addition(), addition)) return new AnvilPlan(recipe, recipe.getResult(), recipe.experience(), 1);
+        if (!(rule.recipe() instanceof AnvilRepairRecipe recipe) || !matches(recipe.base(), base, rule.identities().get("base")) || !matches(recipe.addition(), addition)) return null;
+        if (!(base.getItemMeta() instanceof org.bukkit.inventory.meta.Damageable original) || original.getDamage() < 1) return null;
+        int maximum = RecipeReturns.maximum(base, original);
+        if (maximum < 1) return null;
+        int unit = Math.max(1, maximum / 4);
+        int consumed = Math.min(addition.getAmount(), (int) Math.ceil((double) original.getDamage() / unit));
+        ItemStack result = base.clone();
+        var meta = result.getItemMeta();
+        ((org.bukkit.inventory.meta.Damageable) meta).setDamage((int) Math.max(0, (long) original.getDamage() - (long) consumed * unit));
+        int penalty = meta instanceof org.bukkit.inventory.meta.Repairable repair ? repair.getRepairCost() : 0;
+        int cost = (int) Math.clamp((long) penalty + consumed, 1, 1000000);
+        if (meta instanceof org.bukkit.inventory.meta.Repairable repair) repair.setRepairCost((int) Math.clamp((long) penalty * 2 + 1, 0, 1000000));
+        result.setItemMeta(meta);
+        return new AnvilPlan(recipe, result, cost, consumed);
+    }
+
+    private AnvilPlan findAnvil(ItemStack base, ItemStack addition, Player player) {
+        if (empty(base) || empty(addition)) return null;
+        AnvilPlan denied = null;
+        for (RegisteredRecipe rule : families.getOrDefault(RecipeStation.ANVIL, List.of())) {
+            AnvilPlan plan = matchAnvil(rule, base, addition);
+            if (plan == null) continue;
+            if (authorized(rule.recipe(), player)) return plan;
+            if (denied == null) denied = plan;
         }
-        return null;
+        return denied;
     }
 
     private AnvilPlan anvilPlan(ItemStack base, ItemStack addition, AnvilView view) {
-        AnvilPlan plan = findAnvil(base, addition);
+        AnvilPlan plan = findAnvil(base, addition, view.getPlayer() instanceof Player found ? found : null);
         if (plan == null || view.getRenameText() == null) return plan;
         String rename = view.getRenameText();
         var input = base.getItemMeta();
@@ -644,6 +765,7 @@ public final class RecipeService implements Listener, AutoCloseable {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
+        feedback.refresh(event.getView());
         anvilPreviews.forget(event.getView());
         ItemStack base = event.getInventory().getItem(0);
         ItemStack addition = event.getInventory().getItem(1);
@@ -658,6 +780,15 @@ public final class RecipeService implements Listener, AutoCloseable {
         anvilPreviews.remember(event.getView(), plan.result());
         applyAnvilCost(event.getView(), plan);
         synchronizeAnvil(event.getView(), base, addition);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeniedAnvil(PrepareAnvilEvent event) {
+        if (!empty(event.getResult()) || !(event.getView().getPlayer() instanceof Player player)) return;
+        AnvilPlan plan = anvilPlan(event.getInventory().getItem(0), event.getInventory().getItem(1), event.getView());
+        if (plan == null) return;
+        RegisteredRecipe rule = owned(plan.recipe());
+        if (rule != null && !permitted(rule, player)) notifyDenied(player, event.getView(), rule, plan.result(), () -> empty(event.getResult()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -686,19 +817,25 @@ public final class RecipeService implements Listener, AutoCloseable {
 
     @EventHandler
     public void onCloseAnvil(InventoryCloseEvent event) {
+        feedback.closed(event.getView());
         if (event.getView() instanceof AnvilView view) anvilPreviews.forget(view);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        feedback.disconnected(event.getPlayer());
         anvilPreviews.disconnected(event.getPlayer());
     }
 
     @Override
     public void close() {
+        feedback.clear();
+        if (slotTransport != null) slotTransport.close();
+        slotTransport = null;
         removeNative(registered);
         bookIndex = new RecipeBookIndex.Builder().build();
         registered = Map.of();
+        families = Map.of();
         anvilPreviews.refresh((view, result) -> false);
         anvilPreviews.clear();
     }
@@ -710,7 +847,7 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     private record RegisteredRecipe(Recipe recipe, String permission, RecipeReturns returns, RecipeAttributes attributes,
-                                    Map<String, String> identities, RecipeBookRule book) {}
+                                    Map<String, String> identities, RecipeBookRule book, RecipeStation station) {}
 
     private record AnvilRepairRecipe(NamespacedKey key, ItemStack result, RecipeChoice base, RecipeChoice addition) implements Recipe, Keyed {
         @Override public NamespacedKey getKey() { return key; }

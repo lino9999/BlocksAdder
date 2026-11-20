@@ -12,7 +12,7 @@ BlocksAdder by **Lino** is a Java plugin for building namespaced server content 
 
 **Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
 
-**Preview 19 adds workstation and vanilla recipe controls.** Enable the custom recipe families your server uses, or remove Minecraft recipes for selected outputs at startup. For example, you can disable vanilla iron ingot recipes while keeping a BlocksAdder smelting recipe that produces iron. Players can still discover enabled custom recipes by handling their ingredients. [Recipe controls](docs/recipe-controls.md) · [Recipe book progression](docs/recipe-book.md) · [Development verification](docs/development-verification.md) · [Remaining features](docs/parity-progress.md)
+**Preview 20 explains locked recipes.** Players can see which result they lack permission to craft, repair or forge. Choose a private result-slot preview, a chat message, both or silence. The slot preview uses optional ProtocolLib. Server owners can also choose active workstations and remove vanilla recipes for selected outputs. [Recipe feedback](docs/recipe-feedback.md) · [Workstation controls](docs/recipe-controls.md) · [Recipe book progression](docs/recipe-book.md) · [Remaining features](docs/parity-progress.md)
 
 **Camera compatibility:** preview 13 resolves the Paper 26.3 disconnect observed in preview 12 with the tested ProtocolLib 5.5 snapshot. Native look, movement cancellation and camera lifecycle passed on all nine builds; callback, masking and custom-totem integration also passed on Paper 26.3. [Exact artifacts and limits](docs/camera-input-verification.json). Rendered appearance remains a user check.
 
@@ -51,7 +51,7 @@ Named item-event commands can separately opt in to [incoming PlaceholderAPI argu
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 19 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.19)
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 20 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.20)
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.

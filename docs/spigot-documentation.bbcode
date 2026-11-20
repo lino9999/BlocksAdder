@@ -80,6 +80,12 @@ native-recipes:
   exclude-results: [iron_ingot][/CODE]
 The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
 
+[SIZE=5][B]Locked recipe feedback[/B][/SIZE]
+Players can receive a private result-slot preview after they click a locked crafting result or prepare a restricted anvil or smithing operation. The output keeps its name and model and gains a “Recipe locked” lore line. The real result stays empty.
+[CODE]recipe-feedback:
+  channels: [result-slot, chat][/CODE]
+Keep only [B]chat[/B] in the list for a message alone. Use an empty list for silent denial. The default is [B]result-slot[/B] alone. If the server cannot send a slot preview through ProtocolLib, the player receives one message. Apply changes with /ba validate and /ba reload. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-feedback.md]Feedback examples and timing[/URL]
+
 [SIZE=5][B]Recipe book discovery[/B][/SIZE]
 Fresh installations teach recipes when a player picks up or clicks one of their custom ingredients. A renamed ingredient still works. Existing installations keep their join grants until you add this section to config.yml and run /ba validate followed by /ba reload.
 [CODE]recipe-book:

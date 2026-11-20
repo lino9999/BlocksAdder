@@ -4,6 +4,8 @@ Preview 18 adds custom ingredient discovery for the native recipe book. Its lear
 
 Preview 19 adds family selection for custom recipes and native exclusions by result material. Custom families can change on reload. The server applies native exclusions during startup. [Recipe controls](recipe-controls.md)
 
+Preview 20 adds a private result-slot hint and optional chat on denied crafting, anvil and smithing operations. It also resolves permitted recipes first when multiple custom definitions match the inputs. [Permission feedback](recipe-feedback.md)
+
 The supplied original JAR was inspected statically, never executed. Observations below come from `td`, `vm`, `vb`, `vc`, `wc`, `wd` and the modern `ajd` adapter. Production implementation and tests are independent; no original source or assets are included.
 
 ## Observed contracts
@@ -16,25 +18,31 @@ Original smithing `result.move_attributes` defaults are name/lore false, enchant
 
 ## Return-item definitions
 
+This bundle fragment assumes the `example:chisel` and `example:carved_gem` items are already defined.
+
 ```yaml
-recipes:
-  carve:
-    type: shapeless
-    result: example:carved_gem
-    ingredients: [example:chisel, AMETHYST_SHARD]
-    return_items:
-      replace:
-        AMETHYST_SHARD: GLASS_BOTTLE
-      decrement_durability:
-        chisel:
-          item: example:chisel
-          amount: 1
-      play_sound:
-        name: minecraft:block.note_block.pling
-        category: PLAYERS
-        volume: 0.3
-        pitch: 1.0
-        stop_previous: true
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: carve
+    kind: recipe
+    settings:
+      type: shapeless
+      result: example:carved_gem
+      ingredients: [example:chisel, AMETHYST_SHARD]
+      return_items:
+        replace:
+          AMETHYST_SHARD: GLASS_BOTTLE
+        decrement_durability:
+          chisel:
+            item: example:chisel
+            amount: 1
+        play_sound:
+          name: minecraft:block.note_block.pling
+          category: PLAYERS
+          volume: 0.3
+          pitch: 1.0
+          stop_previous: true
 ```
 
 `increment_durability` has the same entry structure and repairs its returned tool. The configured amount must be positive. Replacement and durability rules cannot overlap for the same ingredient. Unqualified custom return references resolve relative to the recipe namespace. Legacy Bukkit sound names such as `BLOCK_NOTE_BLOCK_PLING` resolve through the public sound registry; namespaced custom sounds are accepted.
@@ -58,11 +66,16 @@ Normalized smithing configuration uses `move-attributes` with the original flag 
 `other_nbt` moves public persistent-data entries while preserving already defined result entries and its BlocksAdder identity. Arbitrary unnamed third-party CUSTOM_DATA tags that public Bukkit does not expose are not certified. The adapter does not silently copy unrelated max-damage, attribute or item-model components under this flag.
 
 ```yaml
-recipes:
-  anvil_repair:
-    chisel:
-      item: example:chisel
-      ingredient: IRON_INGOT
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: mend_chisel
+    kind: recipe
+    settings:
+      type: anvil-repair
+      base: example:chisel
+      addition: IRON_INGOT
+      result: example:chisel
       permission: blocksadder.recipe.repair_chisel
 ```
 

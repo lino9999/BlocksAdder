@@ -46,6 +46,8 @@ Set `recipe-book.learn` in the server configuration to choose how players discov
 
 Use `recipe-stations.active` to enable custom recipe families on reload. Use `native-recipes.exclude-results` to select Minecraft recipe outputs for exclusion on the next full server start. [Workstation families and native recipe controls](recipe-controls.md)
 
+Use `recipe-feedback.channels` to show players a locked crafting, anvil or smithing result, explain it in chat or keep it silent. [Recipe permission feedback](recipe-feedback.md)
+
 Set `active: false` on a record or the whole bundle to disable it. Unknown document, record and presentation fields, repeated definitions, invalid identifiers and unsupported format versions reject the candidate. `/ba validate` checks a candidate; `/ba reload` validates before publishing it.
 
 The `item` presentation fields are `base`, `label`, `details`, `group`, `visual`, `sprite`, `parent`, `variant` and `stack`. `base` is required. Other inventory-item properties belong in `traits`, including durability, enchantments, attributes, equipment, food and actions. Do not duplicate presentation fields inside traits. Typed world behavior belongs in `settings`.

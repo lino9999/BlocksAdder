@@ -31,6 +31,8 @@ Preview 18 followed the recipe book's pickup, inventory click, ingredient index 
 
 For preview 19, static inspection of 19 selected archive members traced two independent operations. Four switches gate custom recipe loading. A startup lookup finds plain material results in the server registry and removes matching keys in the Minecraft namespace. The reload command rereads the custom families. BlocksAdder selects its own workstations and exclusion lists with independently authored YAML. [Recipe controls](recipe-controls.md)
 
+For preview 20, a REA view of 24 selected archive members and a static JVM instruction review tied permission feedback to crafting result clicks, anvil repair preparation and smithing preparation. The original sends a private result-slot item with a custom-font badge and can send chat. BlocksAdder uses its own lore, settings and packet integration. It checks the original player, window, inputs and permissions again before delivery and expires the preview. [Recipe feedback](recipe-feedback.md)
+
 The following are observed entry points, schema switches and resources. Their presence alone does not establish every configuration combination or actual gameplay result.
 
 | Family | Evidence in the supplied artifact |

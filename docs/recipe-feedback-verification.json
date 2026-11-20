@@ -1,0 +1,713 @@
+{
+  "recorded_at": "2026-11-20T23:49:31.989836+00:00",
+  "passed": true,
+  "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+  "jar_bytes": 1313347,
+  "assertions": 5347,
+  "accepted_server_processes": 30,
+  "observed_feedback_trials": 330,
+  "client_marker_packets": 90,
+  "client_denial_chat_messages": 89,
+  "method": "Isolated servers ran a real native-protocol player. The probe independently examined authoritative recipe slots, inputs, cursor and experience. The client independently decoded single-slot and full-container packet data, namespaced item model, material, count, original name/lore, leading Recipe locked line, exact system-chat text, optional fallback and return to the original empty slot. Native packet checks used PrismarineJS or the official 26.2 and 26.3 registry reports.",
+  "coverage": [
+    "Player crafting and a full workbench, virtual anvil transformation and damage repair, smithing preparation, result-slot and chat combinations, silent mode and optional-dependency fallback.",
+    "Ordinary registered recipes yielded genuine denied empty-result clicks. Two separate controlled removal-of-native-registration cases forced the ordinary InventoryClickEvent on both player crafting and workbench while the managed catalog retained its rule.",
+    "Unrelated registered lookalike, real permission grants, late click cancellation, changed inputs/windows/revisions/permissions and foreign nonempty smithing result.",
+    "Actual clicks on transient client-only markers and successful allowed results; denied server cursor, ingredients and experience audited independently."
+  ],
+  "research": {
+    "reference_sha256": "cedc3ff88d57fb303e865b017d8e090da0f9f203d3922ff7887e27342f0c053d",
+    "member_view": "ev_b6ea0b5016a325eb13a380eb93a752f975b0b2257e2a98ec10e8bbd493a09873",
+    "parent": "ev_c2ed8385b7ec577dbf5127afe4b1811b96697da5d15805d06753ae5c65ca6d71",
+    "selected_members": 24,
+    "private_contract_sha256": "e76732a9a3d93d8e4103a5fe588ec4ca3bebd9f808fffd9d0acc0d58a4b15f67"
+  },
+  "targeted_results": [
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "2a65d8041f22213a7cdded6f90e9e8b5c609ae7e9a2b46f0edf5fa6fc7b32692",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=2 prepares=70 markers=10 chat=7",
+      "client_log_sha256": "dd8af0c8eb98fe2ae08b32d748e4cb6c2612189a0982071a9b017ac542741748",
+      "console_log_sha256": "e469592fe28ec98c86a360a4edb298b1c6c6f55721a1ef20a5b658cc813acb8b",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 13,
+        "marker_packet_families": [
+          "window_items"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "input_manifest_sha256": "d9bdf4d03c1684f9fec6e55ab023dc4089793e9e5851f4a1c9c6e064857ace2a",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=3 prepares=207 markers=10 chat=7",
+      "client_log_sha256": "1ead01f1b35fe52c34438ecf1f57162faf99a0acb31d1d7d345b08d46223955c",
+      "console_log_sha256": "3f9256be00cae96ed0dbb4041782bf1a873a191757eb2bb7fc004b6bbf1e1468",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 13,
+        "marker_packet_families": [
+          "window_items"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-26.1.1",
+      "version": "26.1.1",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "input_manifest_sha256": "dbc00510fc75a4683dbb1bb885baa59b8801d7f68c21f1b3fca259b3bdba7a26",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=2 prepares=207 markers=10 chat=7",
+      "client_log_sha256": "1ead01f1b35fe52c34438ecf1f57162faf99a0acb31d1d7d345b08d46223955c",
+      "console_log_sha256": "12d6ac4cf77735c13f19f83d0f3d01190ebfcd7a485e7c2686dcb38163131a40",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 13,
+        "marker_packet_families": [
+          "window_items"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "spigot-26.1.2",
+      "version": "26.1.2",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "input_manifest_sha256": "972940cf27e0bb312f4290101af361cd419ec9b9cf69e0e1c64ed4beb7a3a34c",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=2 prepares=70 markers=10 chat=7",
+      "client_log_sha256": "dd8af0c8eb98fe2ae08b32d748e4cb6c2612189a0982071a9b017ac542741748",
+      "console_log_sha256": "ec47e5bd3012803cae29d208174e7483a24f94a1150769be1a03ae77627612b4",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 13,
+        "marker_packet_families": [
+          "window_items"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-26.1.2",
+      "version": "26.1.2",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "input_manifest_sha256": "d4e3199079d5168ea0b0868cd42d6bcfbecd70039e67018e19823f5533f1da28",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=3 prepares=207 markers=10 chat=7",
+      "client_log_sha256": "1ead01f1b35fe52c34438ecf1f57162faf99a0acb31d1d7d345b08d46223955c",
+      "console_log_sha256": "4d66acf43dec124db95e7f416179360af96390009a47233e8619a6ce0f958944",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 13,
+        "marker_packet_families": [
+          "window_items"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "spigot-26.2",
+      "version": "26.2",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "input_manifest_sha256": "3c1a91d01245a58002d2598138c030b9b14cf070f68265783b4bf27b4ff7ce25",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=2 prepares=70 markers=10 chat=7",
+      "client_log_sha256": "c529c52185e8581991c36e69af9ed069a3ebda845ad947597532052331378f49",
+      "console_log_sha256": "8079a5398487a52f7ceea176360db9c4be5a7bf422dbc4fe361c27f00745db31",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 10,
+        "marker_packet_families": [
+          "container_set_content"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-26.2",
+      "version": "26.2",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "input_manifest_sha256": "296ae5dfcc25372cbb2b9e8a705bb033a67d36ea8a682e9222ccebb9c915cf3a",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=3 prepares=207 markers=10 chat=7",
+      "client_log_sha256": "5137cfe50899425ded6c5844ed6da2bd12f39dd549b6361e2a9f72b3f723e143",
+      "console_log_sha256": "2cd9cbf2b6fe8874227177826e9c9247cbf5256c0947d189a3f197d636c4e459",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 10,
+        "marker_packet_families": [
+          "container_set_content"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "spigot-26.3",
+      "version": "26.3",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "input_manifest_sha256": "51ad202bfa07f60d7219c687a4825c167fee0cba1b10a2d9d14cebd507403354",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=2 prepares=70 markers=10 chat=7",
+      "client_log_sha256": "c529c52185e8581991c36e69af9ed069a3ebda845ad947597532052331378f49",
+      "console_log_sha256": "113a18e40e126dbfdf4826a09d91fb182ba21eebd876e238afde6647776d57dd",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 10,
+        "marker_packet_families": [
+          "container_set_content"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 296,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "317ccd10e609235b8ab34a575100c9e23c2906970194b8d0d49be4b31a0bad4b",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=296 failed=0 trials=30 clicks=92 ordinary=3 prepares=207 markers=10 chat=7",
+      "client_log_sha256": "5137cfe50899425ded6c5844ed6da2bd12f39dd549b6361e2a9f72b3f723e143",
+      "console_log_sha256": "045c406197c6f11a7ce45e7f88914f5dbdbb8dfbf723506dcf86e498de939e83",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 10,
+        "actual_denial_chat_messages": 7,
+        "actual_empty_redraws_after_markers": 10,
+        "marker_packet_families": [
+          "container_set_content"
+        ]
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "protocol_present": false,
+      "protocol_sha256": null,
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 286,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "a1c797c786fd046b272bd41f4cbd69c8608305a7ce889215fefde697bf828125",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=286 failed=0 trials=30 clicks=92 ordinary=2 prepares=70 markers=0 chat=13",
+      "client_log_sha256": "8b16ba573b7ec8b3ecfb4be6a4fa45db39df1e94dd13bab761f030df6de6d674",
+      "console_log_sha256": "0a48d0eb1bac96a1f7f6b9c76d6e0a0026501102e4ad4afb99b755396f49619f",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 0,
+        "actual_denial_chat_messages": 13,
+        "actual_empty_redraws_after_markers": 0,
+        "marker_packet_families": []
+      }
+    },
+    {
+      "suite": "recipe-permission-feedback",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "protocol_present": false,
+      "protocol_sha256": null,
+      "probe_source_sha256": "5af7528768206c6542a9416f7ab06e4d8437a1ba9cb009a6ffad781bbf460804",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 286,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "f41b7f582372529e561ebb131c0bdb56eb9e251bea9b082ec216037124ad3b0e",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "4e311e93336a635a8072e79aa7638d1d79fe41ed17f9f966b5a39401e896b05f",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=286 failed=0 trials=30 clicks=92 ordinary=3 prepares=207 markers=0 chat=13",
+      "client_log_sha256": "745bb8fa9689afe6910bf311ae1971b50fa92c3bab748353b685b170b8ed5791",
+      "console_log_sha256": "01740bbcbbd28bd9d2557b7d2c04d39727e4ca87ec5fd6c6731b7315fc7ab243",
+      "observations": {
+        "trials": 30,
+        "verified_marker_packets": 0,
+        "actual_denial_chat_messages": 13,
+        "actual_empty_redraws_after_markers": 0,
+        "marker_packet_families": []
+      }
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "boot_phase": 0,
+      "start_config_sha256": "f736a3b995550f84ef92a8549deacaa24164b870e3f2123c955ccd9b21cd662e",
+      "final_config_sha256": "681dff72342ba5848c62d2ce075c202f2eb3a05fd70bf7c0145b6e043f79df0d",
+      "original_native_descriptions_sha256": "01645a7cbac1384ab39496008a8cbb7cddaf97421e9c7228505619af4eaf9a7a",
+      "assertions": 77,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "80dbdd396989891d9b6e8c82f1f7c76295aa5b3d91a5f4a9142c71b2264aecdf",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=77 failed=0 vanillaKeys=9 clicks=4 smelts=2",
+      "console_log_sha256": "5634189e7c93bd5543e4350a88efdd698476831481a7c5cadc8d76788584eb3d",
+      "client_log_sha256": "bd81656d91f01e0cb6fdc38da0216750079897c461c9e2235ee859e211150da6"
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "boot_phase": 1,
+      "start_config_sha256": "681dff72342ba5848c62d2ce075c202f2eb3a05fd70bf7c0145b6e043f79df0d",
+      "final_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "original_native_descriptions_sha256": "01645a7cbac1384ab39496008a8cbb7cddaf97421e9c7228505619af4eaf9a7a",
+      "assertions": 577,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "80dbdd396989891d9b6e8c82f1f7c76295aa5b3d91a5f4a9142c71b2264aecdf",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=577 failed=0 vanillaKeys=9 clicks=37 smelts=0",
+      "console_log_sha256": "80c2fc72facf96785579d8b700fa8e7e395538cb57aeb94232fdb33b48b45556",
+      "client_log_sha256": "75a730e92929f14149058db30a15fd3757d862fe7bf2e06e23658c26efa07d5e"
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "boot_phase": 2,
+      "start_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "final_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "original_native_descriptions_sha256": "01645a7cbac1384ab39496008a8cbb7cddaf97421e9c7228505619af4eaf9a7a",
+      "assertions": 41,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "80dbdd396989891d9b6e8c82f1f7c76295aa5b3d91a5f4a9142c71b2264aecdf",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=41 failed=0 vanillaKeys=9 clicks=2 smelts=1",
+      "console_log_sha256": "80d0cdc9c8bc6a23118782d9a3b94ec12b45ce9f1337aec5107c7eaef2713455",
+      "client_log_sha256": "a15d685dea0418c62e9ea76581bce9a51032cbf23b4d87da976ba0b2a6b4685c"
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "boot_phase": 0,
+      "start_config_sha256": "f736a3b995550f84ef92a8549deacaa24164b870e3f2123c955ccd9b21cd662e",
+      "final_config_sha256": "681dff72342ba5848c62d2ce075c202f2eb3a05fd70bf7c0145b6e043f79df0d",
+      "original_native_descriptions_sha256": "3405d74198735b3f6561e8b645c9341bc5bf1fcc5011bb54d18179f080bbbaf3",
+      "assertions": 77,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "6fc304c19000bea14b9856ef6124d673f4941b3589687b19b839e98b9fb7446e",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=77 failed=0 vanillaKeys=9 clicks=4 smelts=2",
+      "console_log_sha256": "a7549942ee2f6136edd1848f9dfcf67d6f8cd43cd4b2f081789c64c49caad028",
+      "client_log_sha256": "6a7f251d470d393d70831f6ca7fb43d75cab256f60426aa968883a69cfb6538a"
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "boot_phase": 1,
+      "start_config_sha256": "681dff72342ba5848c62d2ce075c202f2eb3a05fd70bf7c0145b6e043f79df0d",
+      "final_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "original_native_descriptions_sha256": "3405d74198735b3f6561e8b645c9341bc5bf1fcc5011bb54d18179f080bbbaf3",
+      "assertions": 577,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "6fc304c19000bea14b9856ef6124d673f4941b3589687b19b839e98b9fb7446e",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=577 failed=0 vanillaKeys=9 clicks=37 smelts=0",
+      "console_log_sha256": "293642fc3f125c5cdf7dc51c2a088004dbd6475c254b6506e9bae525965ef449",
+      "client_log_sha256": "4f19a0f4ea0b1ba6b53c02765cd36a52cdbb21430f60c518967befe73918aad0"
+    },
+    {
+      "suite": "vanilla-exclusions-and-stations",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "boot_phase": 2,
+      "start_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "final_config_sha256": "628f14c7a4fae5e2ad178b22d100fccd69063a3710b8a71c9bd59bbdaf99baff",
+      "original_native_descriptions_sha256": "3405d74198735b3f6561e8b645c9341bc5bf1fcc5011bb54d18179f080bbbaf3",
+      "assertions": 41,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "3a6406c3917e490f7777f962bbc97726ede54a32178a4050a619ca877c3f083e",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "6fc304c19000bea14b9856ef6124d673f4941b3589687b19b839e98b9fb7446e",
+      "frozen_inputs_unchanged": true,
+      "summary": "RULES19_VERIFICATION: PASS passed=41 failed=0 vanillaKeys=9 clicks=2 smelts=1",
+      "console_log_sha256": "2b56fd229eab50e2cfa883f94098814e17d04ce39fb505d4bc8c998404d9df41",
+      "client_log_sha256": "727b59008835e5e47b5b86e803869b07c00a5dcf1cb69293491bb333b92e8892"
+    },
+    {
+      "suite": "overlapping-custom-recipe-permissions",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "103b2d674e02ecd9d17dc0ea2fda8ce5f161d7b4e414abacf3fd0254e05e0414",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 68,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "ccb9ab0f4f5a009ce0acbdec252adffb1a40ce13b73997efb39b93ef10ce1a46",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "a639d94fcbfe8e9e854ddcdddcc4f4edb185552d1d55ec346d7dbd033a876c5c",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=68 failed=0 trials=8 clicks=24 ordinary=0 prepares=48 markers=0 chat=0",
+      "console_log_sha256": "50baf00309aae686f642f943ea68466d9348aeab093c10284e000d8c341d1f98",
+      "client_log_sha256": "e7e79249c182758d088b37d95529498ae8db193799f471a2c146e996f740efcd"
+    },
+    {
+      "suite": "overlapping-custom-recipe-permissions",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "protocol_present": true,
+      "protocol_sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+      "probe_source_sha256": "103b2d674e02ecd9d17dc0ea2fda8ce5f161d7b4e414abacf3fd0254e05e0414",
+      "client_sha256": "e0f040eed194f57fc2c0e22b291e8cbcfdec8d8fb2aee3cde604607de9cd3114",
+      "wire_sha256": "ab11819e652d6f59b9c70874a5bb47568ec9528ade21ba91d69f40e3cff90e6d",
+      "assertions": 68,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "ccb9ab0f4f5a009ce0acbdec252adffb1a40ce13b73997efb39b93ef10ce1a46",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "89f0225028b2dd864d9159974fbd61ad4c5b49fe48d29f3c36ebb47f24843d48",
+      "frozen_inputs_unchanged": true,
+      "summary": "FEED20_VERIFICATION: PASS passed=68 failed=0 trials=8 clicks=24 ordinary=0 prepares=18 markers=0 chat=0",
+      "console_log_sha256": "e276938191fd8db5f5cdf1c273442d045b55b7476a18d99c3661e8808a624055",
+      "client_log_sha256": "700abb1a178d208381f3bd23d28ec2baaed3fcfc8a82ce208a6aec682e4fc567"
+    },
+    {
+      "suite": "preview-18-recipe-book",
+      "server": "paper-26.3",
+      "version": "26.3",
+      "java": 25,
+      "legacy_global": false,
+      "assertions": 90,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "0b9eb0916a9f42445ed10e0bc0a78c410f8246c75b66a0cd561eed835179e0e1",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "input_manifest_sha256": "1f361e9ac7542a070b2567e607f5d289dded1533f2dc7d1ca60e5f3680d36fda",
+      "frozen_inputs_unchanged": true,
+      "summary": "BOOK18_VERIFICATION: PASS passed=90 failed=0 pickups=19 nativeClicks=3 discoveries=2",
+      "console_log_sha256": "f84f58eb9ab509414a578b1aeebed31bfb48951a7efe571201cc8ec0e4e5f172",
+      "client_log_sha256": "aa1b4cda0df80f6bf8aaee567da7f99c5328a121abed9a179f557cfc63b0ab33"
+    },
+    {
+      "suite": "preview-18-recipe-book",
+      "server": "spigot-1.21.11",
+      "version": "1.21.11",
+      "java": 21,
+      "legacy_global": false,
+      "assertions": 90,
+      "passed": true,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "probe_jar_sha256": "0b9eb0916a9f42445ed10e0bc0a78c410f8246c75b66a0cd561eed835179e0e1",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "input_manifest_sha256": "2ae689f905ecf10ab5252056062eb22a13b013a33d042a28be76440dfa3ee694",
+      "frozen_inputs_unchanged": true,
+      "summary": "BOOK18_VERIFICATION: PASS passed=90 failed=0 pickups=19 nativeClicks=3 discoveries=2",
+      "console_log_sha256": "42fa0c6082c2295a217ad0f60488bc5cd17b12b134412b99c60a0c143b692bd2",
+      "client_log_sha256": "f0e083dc25ee08dc42a1443ae76dbb8650177cc2b8cfb4fcca3a5433ff6e7910"
+    }
+  ],
+  "bundle_matrix": [
+    {
+      "server": "paper-1.21.11",
+      "java": 21,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "paper-26.1.1",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "paper-26.1.2",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "paper-26.2",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "paper-26.3",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "spigot-1.21.11",
+      "java": 21,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "spigot-26.1.2",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "spigot-26.2",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    },
+    {
+      "server": "spigot-26.3",
+      "java": 25,
+      "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "probe_jar_sha256": "a072559a79b3f881ba21830abfb7fb729fb9682c67290f467ab7bbe6eba0d48e",
+      "example_sha256": "8cf79df9954dd2d70df0fa23de4570a8c4eac804aedbf07b29bcc8e820a01ff2",
+      "assertions": 45,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=45 failed=0"
+    }
+  ],
+  "validated_channels": {
+    "passed": true,
+    "cases": 16,
+    "java": [
+      21,
+      25
+    ],
+    "jar_sha256": "6856990ac1e52df4d31ee2652d45ce20c42538b6abd506f9235eb2f139265f4c",
+    "source_sha256": "ccc4528266f65ab0d5326b4259560eaa6352283ec0cd9413e3ae0cb4b9434f67",
+    "spigot_api_sha256": "5d0f35511f69d82e3da6e5a24bc55846490f3f7708b49d835e88ba55ff167d15"
+  },
+  "offline_transport": [
+    {
+      "scope": "Packaged transport logic against simulated Bukkit and ProtocolLib boundaries",
+      "assertions": 38,
+      "result": "pass",
+      "coverage": [
+        "One targeted full-content rewrite, exact player and view, outgoing window ID, copied native state and cursor, original list and unrelated slots, cancelled or delayed dispatch, foreign player or menu, empty authoritative and outgoing result checks, nested calls, menu close, disconnect/online state, non-primary caller, disabled transport and window zero for the player inventory.",
+        "A typed smithing view reproduces Spigot 1.21.11 reporting raw 2 as RESULT and raw 3 as CRAFTING. All three ingredient slots are rejected, raw 3 is accepted, and the outgoing marker lands in raw 3."
+      ],
+      "jvms": [
+        "21.0.7",
+        "25.0.1"
+      ]
+    },
+    {
+      "scope": "Optional factory, packaged transport, ProtocolLib absent from the test classpath",
+      "result": "pass",
+      "coverage": [
+        "Confirmed ClassNotFoundException for ProtocolLibrary, created the fallback, attempted a show, and closed it. Test supplied Bukkit API boundaries."
+      ],
+      "jvms": [
+        "21.0.7",
+        "25.0.1"
+      ]
+    },
+    {
+      "scope": "Actual ProtocolLib public accessor writing a stand-in Java record's list field",
+      "result": "pass",
+      "providers": [
+        {
+          "sha256": "d11a6cef959b052c5f11ca7820d55e4fd1204ce0d604a2c70a55a277075c5f29",
+          "java": "21.0.7"
+        },
+        {
+          "sha256": "100d26b7ca97384dec365e8076e6034d7366cac51d3544e0537586655fec22ac",
+          "java": "25.0.1"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "The observer decodes client packets and sends real clicks in survival mode. Rendering and other game modes were not evaluated.",
+    "The optional bridge needs a compatible build of ProtocolLib on each runtime. Other plugins can replace outgoing packets or implement custom menus.",
+    "The initial Spigot smithing pilot used a different candidate and is excluded from the release results."
+  ],
+  "future_viewer_research": {
+    "scope": "Static observations for multi-recipe navigation. This feature is tracked separately from the release functionality.",
+    "selected_members": 21,
+    "member_view": "ev_e76ae77ab779dc9f85ebf47d2df0baff062b83a428959f71f430316940f3bf69",
+    "content_view": "ev_0723af73c7de85daaf5d77cf4421afa36f0daa5e679798becdad548f75330eba",
+    "private_contract_sha256": "d654e2aa83631b65b962c644e1237661e4dba40e8e29e1228f6f191927a44b60"
+  }
+}

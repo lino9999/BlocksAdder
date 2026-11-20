@@ -9,3 +9,5 @@ target/
 *.zip
 __pycache__/
 *.pyc
+docs/*-verification.json
+docs/*-audit.json

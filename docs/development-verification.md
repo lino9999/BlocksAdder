@@ -1,5 +1,9 @@
 # Development verification
 
+## Preview 20 recipe permission feedback
+
+The preview 20 JAR passed 5,347 server assertions in 30 accepted processes. A survival-mode protocol client exercised locked and permitted crafting, anvil and smithing operations on nine Spigot and Paper builds. It decoded the item's model, name and lore, the exact window and slot, chat and the expiry update. Two additional runs exercised chat fallback with ProtocolLib absent. Each build repeated the core bundle checks. Spigot 1.21.11 and Paper 26.3 also repeated startup recipe exclusions and restoration across three boots. The offline parser and transport checks are counted separately. Both endpoints also repeated recipe-book discovery and tested competing recipes with different permissions, including a permission grant before a pending hint was delivered. [Builds and results](recipe-feedback-verification.json) · [Configuration](recipe-feedback.md) · [Distribution audit](recipe-feedback-audit.json)
+
 ## Preview 19 recipe controls
 
 The 1,288,284-byte preview 19 JAR passed 6,840 server assertions in 38 accepted processes. Each of nine Spigot and Paper builds ran three cold starts on the same isolated world, with configurations staged by live reload. Native crafting, smelting, anvil collection, ingredient and experience retention, namespace isolation and restored registry definitions were exercised. Nine builds repeated core bundle regressions. Spigot 1.21.11 and Paper 26.3 also repeated preview 18 recipe discovery. The release's station parser passed 364 separate checks. [Exact builds and results](recipe-controls-verification.json) · [Recipe controls](recipe-controls.md) · [Distribution audit](recipe-controls-audit.json)

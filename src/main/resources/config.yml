@@ -2,6 +2,8 @@ integrations:
   placeholders: true
 recipe-book:
   learn: [encounter]
+recipe-feedback:
+  channels: [result-slot]
 recipe-stations:
   active: [crafting, cooking, anvil, smithing, stonecutting]
 native-recipes:
