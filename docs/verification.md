@@ -1,6 +1,10 @@
 # Verification
 
-Current development preview 17 adds six-face area mining, upward columns, preservation filters and protected additional reward policies. Its exact candidate passed 2,049 scoped assertions in 20 accepted server processes on nine builds, including native player input, public event/API cases, the earlier area regression fixture and core/bundle checks. See [the guide](area-mining.md), [exact report](area-surface-verification.json) and separately counted packaged geometry/proxy evidence. Historical evidence below retains its original scope; user visual acceptance remains separate.
+## Preview 18 recipe book discovery
+
+The 1,275,574-byte JAR passed 1,575 assertions across 21 isolated server processes. Nine Spigot/Paper builds ran the native player discovery suite and the core bundle regression with the published YAML example. One additional Paper 1.21.11 process verified the preview 17 configuration fallback. Spigot 1.21.11 and Paper 26.3 also exercised the individual cooking, cutting and smithing inputs. The packaged policy parser passed 274 separate Java 21 assertions. The player tests inspect server knowledge after actual pickup, inventory clicks, reload and reconnect. Rendered menus and toasts await user review. [Exact results](recipe-book-verification.json) · [Recipe book guide](recipe-book.md) · [Distribution audit](recipe-book-audit.json)
+
+Preview 17 added six-face area mining, upward columns, preservation filters and protected additional reward policies. Its exact candidate passed 2,049 scoped assertions in 20 accepted server processes on nine builds, including native player input, public event/API cases, the earlier area regression fixture and core/bundle checks. See [the guide](area-mining.md), [exact report](area-surface-verification.json) and separately counted packaged geometry/proxy evidence. Historical evidence below retains its original scope; user visual acceptance remains separate.
 
 This page preserves the historical **1.0.0** matrix. Current **1.1.0-SNAPSHOT** evidence is in [development verification](development-verification.md), including the unchanged preview-6 JAR's [native 26.x player matrix](native-26x-verification.md). The historical limitations below describe the 1.0.0 artifact and must not be read as the current implementation status.
 

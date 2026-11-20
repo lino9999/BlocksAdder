@@ -159,12 +159,12 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
 
     public ContentRegistry validateContent() throws Exception {
         if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Content validation must run on the server thread.");
-        PluginSettings.read(new java.io.File(getDataFolder(), "config.yml"));
+        var candidateSettings = PluginSettings.read(new java.io.File(getDataFolder(), "config.yml"));
         ContentRegistry candidate = new ContentLoader(this).load();
         io.github.lino9999.blocksadder.pack.EquipmentAssetCompiler.validate(candidate);
         ItemService validator = new ItemService(this, () -> candidate);
         for (ItemDefinition item : candidate.items()) validator.create(item.id().toString(), 1);
-        if (recipes != null) recipes.validate(candidate);
+        if (recipes != null) recipes.validate(candidate, candidateSettings);
         if (gameplay != null) gameplay.validate(candidate);
         if (placeholders != null) placeholders.validate(candidate);
         if (world != null) world.validate(candidate);

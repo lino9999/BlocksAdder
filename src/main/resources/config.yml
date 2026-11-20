@@ -1,5 +1,7 @@
 integrations:
   placeholders: true
+recipe-book:
+  learn: [encounter]
 resource-pack:
   build-on-startup: true
   auto-apply: false

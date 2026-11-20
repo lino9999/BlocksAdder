@@ -4,11 +4,11 @@ The GitHub repository is `lino9999/BlocksAdder`. Project branding and runtime au
 
 ## Repository metadata
 
-Suggested About description:
+GitHub About
 
-> Custom items, blocks, furniture, crops, recipes, HUDs and resource packs for Minecraft Spigot/Paper 1.21.11–26.3. Java plugin by Lino.
+> Custom items, blocks, furniture, crops, custom recipes with recipe book discovery, glyph HUDs, player meters, particle effects, PlaceholderAPI and resource packs for Minecraft Spigot and Paper 1.21.11 through 26.3. Java plugin by Lino.
 
-Topics: `minecraft`, `minecraft-plugin`, `spigot`, `spigot-plugin`, `paper`, `paper-plugin`, `custom-items`, `custom-blocks`, `furniture`, `resource-pack`, `custom-recipes`, `crops`, `hud`, `java`, `blocksadder`.
+The repository uses the topics `minecraft`, `minecraft-plugin`, `spigot`, `spigot-plugin`, `paper`, `paper-plugin`, `custom-items`, `custom-blocks`, `furniture`, `resource-pack`, `custom-recipes`, `crops`, `hud`, `blocksadder`, `placeholderapi`, `area-mining`, `custom-mining`, `custom-projectiles`, `particle-effects` and `totem-animation`.
 
 ## SpigotMC
 

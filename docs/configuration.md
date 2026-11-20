@@ -42,6 +42,8 @@ entries:
 
 The stable ID is `<bundle>:<key>`. Different definition families may share a key; two item-bearing records cannot. Bundle names accept lowercase letters, digits, underscores, dots and hyphens. Keys accept lowercase letters, digits, underscores, dots, slashes and hyphens. Keep saved content IDs stable.
 
+Set `recipe-book.learn` in the server configuration to choose how players discover recipes. A recipe record can override it with `settings.book.learn`. Fresh installs use custom ingredient encounters. [Discovery rules and upgrade behavior](recipe-book.md)
+
 Set `active: false` on a record or the whole bundle to disable it. Unknown document, record and presentation fields, repeated definitions, invalid identifiers and unsupported format versions reject the candidate. `/ba validate` checks a candidate; `/ba reload` validates before publishing it.
 
 The `item` presentation fields are `base`, `label`, `details`, `group`, `visual`, `sprite`, `parent`, `variant` and `stack`. `base` is required. Other inventory-item properties belong in `traits`, including durability, enchantments, attributes, equipment, food and actions. Do not duplicate presentation fields inside traits. Typed world behavior belongs in `settings`.

@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+Preview 18 builds a fresh recipe-discovery index from BlocksAdder definitions and Bukkit recipe choices. The distribution audit examined 430 classes and 436 files. It found zero identical nonempty files, shared declared commands or permissions, foreign class paths, reference branding traces or shared readable messages under the audit rules. [Exact audit](recipe-book-audit.json)
+
 The [command-placeholder audit](command-placeholders-audit.json) covers 404 own classes with empty collision/leak lists. A new immutable template compiler, isolated public provider resolver and invocation authority checks implement explicit one-pass scalar bindings in the existing independent event-plan format. No original command expansion class, schema or string implementation is translated. [Exact evidence](command-placeholders-verification.json) separates native input, public event/API adversaries, packaged-helper checks and remaining provider/semantic limits.
 
 The [placeholder audit](placeholder-audit.json) covers 401 own classes with empty collision and leak lists. The optional adapter uses a newly named expansion, identity-owned concurrent snapshots, bounded deferred resolution and the existing independent meter backend. Font export support compiles owned signed advances and preserves participating authored providers. The supplied implementation, original selectors, spacing tables, messages and configuration are not distribution inputs. [Exact runtime evidence](placeholder-verification.json) and [the guide](placeholders.md) distinguish provider behavior, scalar/font limits and separately documented incoming-command work.

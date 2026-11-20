@@ -1,5 +1,7 @@
 # Recipe reconstruction
 
+Preview 18 adds custom ingredient discovery for the native recipe book. Its learning policy is separate from crafting inputs, outputs and consumption. [Configuration and migration](recipe-book.md)
+
 The supplied original JAR was inspected statically, never executed. Observations below come from `td`, `vm`, `vb`, `vc`, `wc`, `wd` and the modern `ajd` adapter. Production implementation and tests are independent; no original source or assets are included.
 
 ## Observed contracts

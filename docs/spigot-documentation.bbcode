@@ -72,6 +72,15 @@ Add another record to entries:
         S: garden:sapphire[/CODE]
 The result must be defined separately. Custom recipe ingredients use persistent identity; vanilla lookalikes do not satisfy custom ingredients. Supported recipe-specific settings and limitations are in the recipe guide.
 
+[SIZE=5][B]Recipe book discovery[/B][/SIZE]
+Fresh installations teach recipes when a player picks up or clicks one of their custom ingredients. A renamed ingredient still works. Existing installations keep their join grants until you add this section to config.yml and run /ba validate followed by /ba reload.
+[CODE]recipe-book:
+  learn: [encounter][/CODE]
+To override the global setting for one recipe, put this block inside its settings.
+[CODE]book:
+  learn: [pickup-input, click-output][/CODE]
+Available values are encounter, join, pickup-input, click-input, pickup-output and click-output. Use an empty list for manual discovery. The recipe permission applies to both discovery and crafting. Anvil operations have no native book entry. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-book.md]Full guide[/URL] Â· [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/recipe-book.yml]Example bundle[/URL]
+
 [SIZE=5][B]Resource-pack assets and hosting[/B][/SIZE]
 Place the example texture at contents/garden/resourcepack/assets/garden/textures/item/sapphire.png. Supply models, textures, audio and fonts you own or may redistribute. Top-level resourcepack/assets/ overrides matching pack assets. YAML and private analysis files are excluded from the generated pack.
 [CODE]resource-pack:
@@ -135,11 +144,11 @@ play_particle:
     spread: [0.2, 0.2, 0.2]
     speed: 0
 [/CODE]
-A line accepts integer distance 1–32 and samples every half block. Optional emit settings are count, spread, speed, offset and force, with a 4,096-particle action budget. Count zero enables the native directional mode. Unloaded samples/destinations are skipped without loading their chunks. Trails and vibrations can target emitter, player or victim; an unshifted player/victim vibration can follow its native entity. Newer geyser particles require a server that provides them.
+A line accepts integer distance 1â€“32 and samples every half block. Optional emit settings are count, spread, speed, offset and force, with a 4,096-particle action budget. Count zero enables the native directional mode. Unloaded samples/destinations are skipped without loading their chunks. Trails and vibrations can target emitter, player or victim; an unshifted player/victim vibration can follow its native entity. Newer geyser particles require a server that provides them.
 [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/particle-actions.md]Full payload table, destination rules and verification scope[/URL]
 
 [SIZE=5][B]Native effects and custom totems[/B][/SIZE]
-play_effect accepts a strict payload selected by the server's public effect API. Use block for block materials, face for one of six native directions, shade for quoted hexadecimal RGB, amount for bone meal, axis for X/Y/Z, and the documented native value/boolean fields for other families. Optional emit.radius is 1–256 (default 64); emit.offset is a finite three-number world-axis vector within ±64. Unloaded chunks are skipped.
+play_effect accepts a strict payload selected by the server's public effect API. Use block for block materials, face for one of six native directions, shade for quoted hexadecimal RGB, amount for bone meal, axis for X/Y/Z, and the documented native value/boolean fields for other families. Optional emit.radius is 1â€“256 (default 64); emit.offset is a finite three-number world-axis vector within Â±64. Unloaded chunks are skipped.
 [CODE]
 play_effect:
   name: SMOKE

@@ -1,5 +1,9 @@
 # Development verification
 
+## Preview 18 recipe book discovery
+
+The 1,275,574-byte JAR passed 1,575 assertions across 21 isolated server processes. Nine Spigot/Paper builds ran the native player discovery suite and the core bundle regression with the published YAML example. One additional Paper 1.21.11 process verified the preview 17 configuration fallback. Spigot 1.21.11 and Paper 26.3 also exercised the individual cooking, cutting and smithing inputs. The packaged policy parser passed 274 separate Java 21 assertions. The player tests inspect server knowledge after actual pickup, inventory clicks, reload and reconnect. Rendered menus and toasts await user review. [Exact results](recipe-book-verification.json) · [Recipe book guide](recipe-book.md) · [Distribution audit](recipe-book-audit.json)
+
 ## Development preview 17: clicked surfaces and area rewards
 
 The exact 1,256,584-byte JAR (`79e1c0fba95625952fe0d1102ee19ebcb628c6dd6ab667645572db41b8ea6092`) passed 2,049 scoped assertions in 20 accepted server processes. Nine builds exercised the extended area suite; Spigot 1.21.11 and Paper 26.3 repeated the earlier 75 area assertions with a public channel readiness gate, and nine builds passed core/bundle checks. Native protocol faces, timed mining and transitions are distinct from bulk API/event cases. The packaged geometry helper separately passed 1,196,821 checks; reward/storage proxy assertions are separately recorded. Java 21 serves 1.21.11 and Java 25 serves 26.x. [Guide](area-mining.md), [exact report](area-surface-verification.json), [distribution audit](area-surface-audit.json). Failed development preflights are excluded. Container escrow has explicit storage/experience and rollback limits. No graphical client or original JAR was executed.

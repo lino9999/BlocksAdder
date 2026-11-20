@@ -12,6 +12,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockCookEvent;
 import org.bukkit.event.block.CrafterCraftEvent;
@@ -25,6 +27,7 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.inventory.SmithItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.CampfireRecipe;
 import org.bukkit.inventory.CookingRecipe;
@@ -54,6 +57,7 @@ public final class RecipeService implements Listener, AutoCloseable {
     private final Supplier<ContentRegistry> registry;
     private final ItemService items;
     private Map<NamespacedKey, RegisteredRecipe> registered = Map.of();
+    private RecipeBookIndex bookIndex = new RecipeBookIndex.Builder().build();
     private boolean crafterWarning;
 
     public RecipeService(JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items) {
@@ -63,29 +67,40 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     public void reload() {
-        Map<NamespacedKey, RegisteredRecipe> next = prepare();
+        Map<NamespacedKey, RegisteredRecipe> next = prepare(plugin.getConfig());
+        RecipeBookIndex index = index(next);
         Map<NamespacedKey, RegisteredRecipe> previous = registered;
-        previous.keySet().forEach(Bukkit::removeRecipe);
+        removeNative(previous);
         List<NamespacedKey> added = new ArrayList<>();
         try {
             for (var entry : next.entrySet()) {
-                if (!virtual(entry.getValue().recipe()) && !Bukkit.addRecipe(entry.getValue().recipe())) throw new IllegalStateException("Recipe key is already registered: " + entry.getKey());
+                if (virtual(entry.getValue().recipe())) continue;
+                if (!Bukkit.addRecipe(entry.getValue().recipe())) throw new IllegalStateException("Recipe key is already registered: " + entry.getKey());
                 added.add(entry.getKey());
             }
             registered = Map.copyOf(next);
+            bookIndex = index;
         } catch (RuntimeException exception) {
             added.forEach(Bukkit::removeRecipe);
             previous.values().stream().filter(value -> !virtual(value.recipe())).forEach(value -> Bukkit.addRecipe(value.recipe()));
             throw exception;
         }
-        Bukkit.getOnlinePlayers().forEach(this::discover);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (bookIndex == index) Bukkit.getOnlinePlayers().forEach(this::discover);
+        });
     }
 
     public void validate(ContentRegistry candidate) {
-        new RecipeService(plugin, () -> candidate, new ItemService(plugin, () -> candidate)).prepare();
+        validate(candidate, plugin.getConfig());
     }
 
-    private Map<NamespacedKey, RegisteredRecipe> prepare() {
+    public void validate(ContentRegistry candidate, ConfigurationSection settings) {
+        RecipeService validator = new RecipeService(plugin, () -> candidate, new ItemService(plugin, () -> candidate));
+        validator.index(validator.prepare(settings));
+    }
+
+    private Map<NamespacedKey, RegisteredRecipe> prepare(ConfigurationSection settings) {
+        RecipeBookRule fallback = RecipeBookRule.defaults(settings);
         Map<NamespacedKey, RegisteredRecipe> next = new LinkedHashMap<>();
         registry.get().sections("recipes").entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(entry -> {
             ConfigurationSection section = entry.getValue();
@@ -103,7 +118,9 @@ public final class RecipeService implements Listener, AutoCloseable {
             Map<String, String> identities = new LinkedHashMap<>();
             Recipe recipe = build(id, key, type, section, result, returns, identities);
             if (!permission.isBlank() && recipe instanceof CookingRecipe<?>) throw invalid(id, "Cooking recipes cannot have player permissions because furnaces have no player actor.");
-            if (next.put(key, new RegisteredRecipe(recipe, permission, returns, attributes, Map.copyOf(identities))) != null) throw invalid(id, "Duplicate recipe key.");
+            if (virtual(recipe) && section.contains("book")) throw invalid(id, "Anvil operations have no native recipe book entry.");
+            RecipeBookRule rule = RecipeBookRule.read(section, fallback);
+            if (next.put(key, new RegisteredRecipe(recipe, permission, returns, attributes, Map.copyOf(identities), rule)) != null) throw invalid(id, "Duplicate recipe key.");
         });
         return Map.copyOf(next);
     }
@@ -232,11 +249,77 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     private void discover(Player player) {
-        registered.forEach((key, value) -> {
+        var current = registered;
+        current.forEach((key, value) -> {
+            if (registered != current || !player.isOnline()) return;
             if (virtual(value.recipe())) return;
-            if (value.permission().isBlank() || player.hasPermission(value.permission())) player.discoverRecipe(key);
-            else player.undiscoverRecipe(key);
+            if (!permitted(value, player)) {
+                if (player.hasDiscoveredRecipe(key)) player.undiscoverRecipe(key);
+            } else if (value.book().learnsOnJoin()) learn(player, key, value);
         });
+    }
+
+    private RecipeBookIndex index(Map<NamespacedKey, RegisteredRecipe> recipes) {
+        var builder = new RecipeBookIndex.Builder();
+        recipes.forEach((key, value) -> {
+            if (!virtual(value.recipe())) builder.add(key, value.recipe(), value.identities(), value.book(), this::registeredId);
+        });
+        return builder.build();
+    }
+
+    private String registeredId(ItemStack stack) {
+        return items.identify(stack).filter(id -> id.indexOf(':') > 0 && registry.get().find(id).isPresent()).orElse(null);
+    }
+
+    private boolean matchesBookResult(ItemStack expected, ItemStack actual) {
+        String id = registeredId(expected);
+        return id == null ? expected.isSimilar(actual) : id.equals(registeredId(actual));
+    }
+
+    private boolean permitted(RegisteredRecipe recipe, Player player) {
+        return recipe.permission().isBlank() || player.hasPermission(recipe.permission());
+    }
+
+    private void learn(Player player, NamespacedKey key, RegisteredRecipe value) {
+        if (value == null || !permitted(value, player) || player.hasDiscoveredRecipe(key)) return;
+        if (player.discoverRecipe(key) && (registered.get(key) != value || !permitted(value, player))) {
+            player.undiscoverRecipe(key);
+        }
+    }
+
+    private void encounter(Player player, ItemStack stack, RecipeBookIndex.Source source, Cancellable event) {
+        if (stack == null || stack.getType().isAir()) return;
+        var index = bookIndex;
+        var keys = index.matching(source, stack, this::matches, this::matchesBookResult, this::registeredId).stream()
+                .filter(key -> permitted(registered.get(key), player) && !player.hasDiscoveredRecipe(key)).toList();
+        if (keys.isEmpty()) return;
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            for (NamespacedKey key : keys) {
+                if (index != bookIndex || event.isCancelled() || Bukkit.getPlayer(player.getUniqueId()) != player || !player.isOnline()) return;
+                learn(player, key, registered.get(key));
+            }
+        });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBookPickup(EntityPickupItemEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            encounter(player, event.getItem().getItemStack(), RecipeBookIndex.Source.PICKUP, event);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBookClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player) || event.getClickedInventory() == null) return;
+        ItemStack clicked = event.getCurrentItem();
+        ItemStack stack = clicked == null || clicked.getType().isAir() ? event.getCursor() : clicked;
+        encounter(player, stack, RecipeBookIndex.Source.CLICK, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBookGrant(PlayerRecipeDiscoverEvent event) {
+        RegisteredRecipe value = registered.get(event.getRecipe());
+        if (value != null && !virtual(value.recipe()) && !permitted(value, event.getPlayer())) event.setCancelled(true);
     }
 
     @EventHandler
@@ -559,11 +642,19 @@ public final class RecipeService implements Listener, AutoCloseable {
 
     @Override
     public void close() {
-        registered.keySet().forEach(Bukkit::removeRecipe);
+        removeNative(registered);
+        bookIndex = new RecipeBookIndex.Builder().build();
         registered = Map.of();
     }
 
-    private record RegisteredRecipe(Recipe recipe, String permission, RecipeReturns returns, RecipeAttributes attributes, Map<String, String> identities) {}
+    private static void removeNative(Map<NamespacedKey, RegisteredRecipe> recipes) {
+        recipes.forEach((key, value) -> {
+            if (!virtual(value.recipe())) Bukkit.removeRecipe(key);
+        });
+    }
+
+    private record RegisteredRecipe(Recipe recipe, String permission, RecipeReturns returns, RecipeAttributes attributes,
+                                    Map<String, String> identities, RecipeBookRule book) {}
 
     private record AnvilRepairRecipe(NamespacedKey key, ItemStack result, RecipeChoice base, RecipeChoice addition) implements Recipe, Keyed {
         @Override public NamespacedKey getKey() { return key; }

@@ -1,0 +1,24 @@
+format: blocksadder/bundle-1
+bundle: lapidary
+entries:
+  - key: prism
+    kind: recipe
+    settings:
+      type: shapeless
+      ingredients: [blocksadder:crystal, glass, copper_ingot]
+      result: spyglass
+      book:
+        learn: [encounter]
+  - key: silvered_glass
+    kind: recipe
+    settings:
+      type: shaped
+      shape: [' QQ', ' CG']
+      ingredients:
+        Q: quartz
+        C: copper_ingot
+        G: glass
+      result: tinted_glass
+      amount: 2
+      book:
+        learn: [pickup-input, click-output]

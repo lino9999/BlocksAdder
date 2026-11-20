@@ -27,6 +27,8 @@ The archive manifest declares `Main-Class: yo`, but no corresponding root `yo.cl
 
 ## Observed feature families
 
+Preview 18 followed the recipe book's pickup, inventory click, ingredient index and native grant paths. The selected REA inventory view verified 18 class members and two resources. Static inspection found separate join and encounter policies, slot precedence over the cursor, permission filtering on encounters and a separate result lookup. BlocksAdder implements discovery through its own recipe choice index and permission checks. [Independent schema and behavior](recipe-book.md) · [Evidence identifiers](recipe-book-verification.json)
+
 The following are observed entry points, schema switches and resources. Their presence alone does not establish every configuration combination or actual gameplay result.
 
 | Family | Evidence in the supplied artifact |
