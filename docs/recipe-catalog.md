@@ -14,6 +14,8 @@ Open `/ba recipe` while holding a custom item, or use `/ba recipe <item>` to loo
 
 The catalog covers shaped and shapeless crafting, the four cooking stations, stonecutting, smithing, fixed-result anvils and anvil repairs. Repair previews show a single item of the repairable base type. The player's actual anvil determines the repaired stack's damage, name and costs.
 
+A row beneath the recipe controls lists the configured sources of the displayed result. Hover over an icon to read the conditions. Longer source notes have their own page controls. [Recipe sources](recipe-sources.md)
+
 ## Choose who can find or inspect an item
 
 Put these optional fields under an item-bearing record's `traits` in your content bundle.

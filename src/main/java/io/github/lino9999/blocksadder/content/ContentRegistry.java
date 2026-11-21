@@ -12,6 +12,7 @@ import java.util.Set;
 
 public final class ContentRegistry {
     private final Map<String, ItemDefinition> items;
+    private final Map<String, Optional<ItemDefinition>> shortNames;
     private final Map<String, ConfigurationSection> sections;
     private final Map<ContentId, CatalogPolicy> catalogPolicies;
     private final Set<ContentId> hiddenItems;
@@ -26,13 +27,16 @@ public final class ContentRegistry {
         this.sections = Map.copyOf(sections);
         Map<ContentId, CatalogPolicy> policies = new HashMap<>();
         Set<ContentId> hidden = new HashSet<>();
+        Map<String, Optional<ItemDefinition>> names = new HashMap<>();
         for (ItemDefinition item : this.items.values()) {
+            names.merge(item.id().value(), Optional.of(item), (first, second) -> Optional.empty());
             if (item.options() == null) continue;
             if (item.options().getBoolean("hidden", false)) hidden.add(item.id());
             Object raw = item.options().get("catalog", null);
             if (raw != null) policies.put(item.id(), CatalogPolicy.parse(raw, item.id().toString()));
         }
         this.catalogPolicies = Map.copyOf(policies);
+        this.shortNames = Map.copyOf(names);
         this.hiddenItems = Set.copyOf(hidden);
         Map<String, ConfigurationSection> categories = new LinkedHashMap<>();
         sections.forEach((key, value) -> {
@@ -56,8 +60,7 @@ public final class ContentRegistry {
         ItemDefinition exact = items.get(id);
         if (exact != null) return Optional.of(exact);
         if (id.contains(":")) return Optional.empty();
-        var matches = items.values().stream().filter(item -> item.id().value().equals(id)).limit(2).toList();
-        return matches.size() == 1 ? Optional.of(matches.getFirst()) : Optional.empty();
+        return shortNames.getOrDefault(id, Optional.empty());
     }
 
     public Collection<ItemDefinition> items() {

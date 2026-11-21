@@ -6,9 +6,9 @@
 
 BlocksAdder by **Lino** is a Java plugin for Spigot and Paper 1.21.11 through 26.3. Define items, workstations, crops and player stats in YAML. Players can search custom items, browse recipes and follow ingredient uses in game. BlocksAdder builds a resource pack for the models, textures, sounds and glyphs you supply.
 
-[Download preview 23](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.23) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
+[Download preview 24](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.24) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
 
-**Preview 23 adds catalog groups.** Open `/ba browse` and choose an icon, or go directly to a group with `/ba browse <group>`. Arrange items across multiple shelves, set who can open each one, and return to the same page after inspecting a recipe. [Catalog groups](docs/catalog-groups.md) · [Showroom example](docs/examples/catalog-groups.yml) · [Item search](docs/catalog-search.md) · [Recipe browser](docs/recipe-catalog.md) · [Remaining features](docs/parity-progress.md)
+**Preview 24 shows where an item comes from.** Open a recipe to see block and creature drops, fishing rewards, seed produce and natural generation rules for the displayed item. Vehicles list their accepted fuels. The notes include configured chances, quantities and conditions. [Recipe sources](docs/recipe-sources.md) · [River example](docs/examples/river-finds.yml) · [Catalog groups](docs/catalog-groups.md) · [Item search](docs/catalog-search.md) · [Remaining features](docs/parity-progress.md)
 
 Current development uses the independently designed `blocksadder/bundle-1` content format. The historical 1.0.0 release has a smaller feature set and an earlier format. [Configuration](docs/configuration.md) · [Independent implementation](docs/independent-implementation.md) · [Historical comparison](docs/feature-parity.md)
 
@@ -49,7 +49,7 @@ Named item-event commands can separately opt in to [incoming PlaceholderAPI argu
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 23 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.23)
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 24 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.24)
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.

@@ -141,16 +141,20 @@ public final class CatalogMenu implements Listener {
         int offset = information ? 1 : 0;
         int total = pages.size() + offset;
         int page = Math.clamp(requested.page(), 0, total - 1);
-        var view = new CatalogView(player.getUniqueId(), current, listing, new Reading(id, page), parent, 36,
+        CatalogRecipe recipe = page < offset ? null : pages.get(page - offset);
+        ItemStack result = recipe == null ? items.create(id, 1) : recipe.result();
+        String outputId = items.definition(result).map(definition -> definition.id().toString()).orElse(null);
+        var badges = recipes.sourcesFor(outputId);
+        int detailPages = badges.stream().mapToInt(badge -> badge.pages().size()).max().orElse(1);
+        int detailPage = Math.clamp(requested.detailPage(), 0, detailPages - 1);
+        var view = new CatalogView(player.getUniqueId(), current, listing, new Reading(id, page, detailPage), parent, badges.isEmpty() ? 36 : 45,
                 Text.color("&3BlocksAdder recipes &8| &7" + (page + 1) + "/" + total));
+        view.result = result;
         ItemStack informationBook;
-        if (page < offset) {
-            view.result = items.create(id, 1);
+        if (recipe == null) {
             informationBook = button(Material.BOOK, "&bItem information", List.of(id, "No active recipe produces this item."));
         } else {
-            CatalogRecipe recipe = pages.get(page - offset);
             recipe.ingredients().forEach((slot, stack) -> operand(view, slot, stack));
-            view.result = recipe.result();
             var detail = new ArrayList<String>();
             detail.add((recipe.produces(id) ? "Produces " : "Uses ") + id);
             detail.add("Click a custom ingredient to inspect it.");
@@ -166,6 +170,7 @@ public final class CatalogMenu implements Listener {
         view.control(29, Action.BACK, Material.OAK_DOOR, "&bBack");
         view.control(33, Action.CLOSE, Material.BARRIER, "&cClose");
         if (page + 1 < total) view.control(35, Action.NEXT, Material.ARROW, "&bNext recipe");
+        RecipeSourceRow.display(view, items, badges, detailPage, detailPages);
         var opened = player.openInventory(view.getInventory());
         if (opened != null && player.getOpenInventory().getTopInventory().getHolder() == view)
             remember(player.getUniqueId(), id, page);
@@ -251,6 +256,10 @@ public final class CatalogMenu implements Listener {
                 int change = button.action() == Action.PREVIOUS ? -1 : 1;
                 if (view.reading == null) listing(player, view.listing.at(view.listing.page() + change));
                 else show(player, new Reading(view.reading.subject(), view.reading.page() + change), view.listing, view.parent);
+            }
+            case EARLIER_DETAILS, LATER_DETAILS -> {
+                int step = button.action() == Action.EARLIER_DETAILS ? -1 : 1;
+                show(player, new Reading(view.reading.subject(), view.reading.page(), view.reading.detailPage() + step), view.listing, view.parent);
             }
             case BACK -> {
                 if (view.parent != null) show(player, view.parent, view.listing, null);

@@ -80,6 +80,16 @@ native-recipes:
   exclude-results: [iron_ingot][/CODE]
 The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
 
+[SIZE=5][B]Finding item sources[/B][/SIZE]
+Open /ba recipe <item> and hover over the icons beneath the controls. Source notes follow the displayed output, including when a recipe uses the item you first inspected. Block and creature drops, fishing, crops, ore, surface and cave features, wild trees and accepted vehicle fuel use separate indicators. More source details and Previous source details page through long notes.
+
+Customize a label or icon in the server config.yml, then use /ba validate and /ba reload.
+[CODE]recipe-sources:
+  fishing:
+    label: River finds
+    icon: minecraft:fishing_rod[/CODE]
+[URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-sources.md]Source settings[/URL] · [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/river-finds.yml]Complete river bundle[/URL]
+
 [SIZE=5][B]Organizing the catalog[/B][/SIZE]
 Use /ba browse to open the group overview or /ba browse <group> to go straight to its items. Each catalog record can set label, title, icon, rank and a full permission. The include and exclude lists accept exact item IDs and star wildcards. Use group to contribute to an existing group, or if-defined: skip for a fallback definition. In config.yml, catalog-layout.front pins named groups and catalog-layout.remainder chooses alphabetic or declared order. Item group assignments still populate it automatically.
 [CODE]format: blocksadder/bundle-1
@@ -143,6 +153,7 @@ These server settings belong in config.yml. Run /ba pack build and upload the ex
 /ba validate
 /ba reload
 /ba pack <build|send|hash> [player|all][/CODE]
+Each shortcut accepts the arguments of its matching /ba subcommand. Use /baget or /bget, /bagive or /bgive, /bapack or /bpack, /babrowse or /bbrowse, /basearch or /bsearch, /bareload or /breload, /barecipe or /brecipe, and /bainspect or /binspect.
 Main aliases: /blocksadder, /ba and /badd. The [URL=https://github.com/lino9999/BlocksAdder#commands-and-permissions]complete README table[/URL] covers administration, model/skin, emote, liquid/fire, vehicle, generation, HUD/stat, sound, glyph, durability/color and configuration commands with their individual permissions. blocksadder.admin grants administration; ordinary building uses blocksadder.place, blocksadder.break and blocksadder.use. Controlling another player's supported features requires blocksadder.others.
 Configuration commands preview the selected edits, require repeating the same command, reject stale previews and restore previous bytes on activation failure where recovery succeeds.
 

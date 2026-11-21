@@ -2,6 +2,8 @@ package io.github.lino9999.blocksadder.gameplay;
 
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.item.ItemService;
+import io.github.lino9999.blocksadder.loot.RewardDetails;
+import io.github.lino9999.blocksadder.recipe.RecipeSources;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,6 +11,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -46,40 +49,78 @@ final class LootService implements Listener {
     }
 
     void reload() {
-        load(true);
+        tables = load(registry.get());
     }
 
     void validate() {
-        load(false);
+        load(registry.get());
     }
 
-    private void load(boolean activate) {
+    private static List<LootTable> load(ContentRegistry content) {
         List<LootTable> next = new ArrayList<>();
-        registry.get().sections("loot").forEach((id, section) -> {
+        content.sections("loot").forEach((id, section) -> {
             String source = section.getString("source", "block").toLowerCase(Locale.ROOT);
             if (!Set.of("block", "entity", "fishing").contains(source)) throw new IllegalArgumentException("Loot table " + id + ": unknown source.");
             List<Drop> drops = new ArrayList<>();
             for (Map<?, ?> configured : section.getMapList("drops")) {
                 String item = String.valueOf(configured.get("item"));
-                if (registry.get().find(item).isEmpty()) throw new IllegalArgumentException("Loot table " + id + ": unknown item " + item);
+                String output = content.find(item).orElseThrow(() -> new IllegalArgumentException("Loot table " + id + ": unknown item " + item)).id().toString();
                 double chance = number(configured.get("chance"), 1.0).doubleValue();
                 int min = number(configured.get("min"), 1).intValue();
                 int max = number(configured.get("max"), min).intValue();
                 if (!Double.isFinite(chance) || chance < 0 || chance > 1 || min < 1 || max < min || max > 4096) throw new IllegalArgumentException("Loot table " + id + ": invalid drop chance or amount.");
-                drops.add(new Drop(item, chance, min, max));
+                drops.add(new Drop(output, chance, min, max));
             }
             if (drops.isEmpty()) throw new IllegalArgumentException("Loot table " + id + ": no drops configured.");
             Set<String> matches = section.getStringList("match").stream().map(value -> value.contains(":") ? value : value.toUpperCase(Locale.ROOT)).collect(Collectors.toUnmodifiableSet());
             Set<String> worlds = Set.copyOf(section.getStringList("worlds"));
-            next.add(new LootTable(source, matches, worlds, drops, section.getBoolean("require-player", true), section.getBoolean("replace", false), section.getString("permission", "")));
+            next.add(new LootTable(id, source, matches, worlds, drops, section.getBoolean("require-player", true), section.getBoolean("replace", false), section.getString("permission", "")));
         });
-        if (activate) tables = List.copyOf(next);
+        return List.copyOf(next);
     }
 
-    private Number number(Object value, Number fallback) {
+    private static Number number(Object value, Number fallback) {
         if (value == null) return fallback;
         if (value instanceof Number number) return number;
         throw new IllegalArgumentException("Loot chance and amounts must be numbers.");
+    }
+
+    static void describe(ContentRegistry content, RecipeSources.Builder sources) {
+        for (LootTable table : load(content).stream().sorted(java.util.Comparator.comparing(LootTable::id)).toList()) {
+            var kind = switch (table.source) {
+                case "entity" -> RecipeSources.Kind.ENTITY;
+                case "fishing" -> RecipeSources.Kind.FISHING;
+                default -> RecipeSources.Kind.BLOCK_DROP;
+            };
+            List<String> matches = table.matches.stream().filter(value -> possibleMatch(kind, value)).sorted().toList();
+            if (!table.matches.isEmpty() && matches.isEmpty()) continue;
+            String target = switch (kind) {
+                case ENTITY -> "Entity";
+                case FISHING -> "Caught item";
+                default -> "Broken block";
+            };
+            for (Drop drop : table.drops) {
+                if (drop.chance == 0) continue;
+                List<String> details = RewardDetails.roll(drop.chance, true, drop.min, drop.max);
+                details.add(target + ": " + (matches.isEmpty() ? "any" : String.join(", ", matches)));
+                if (!table.worlds.isEmpty()) details.add("Worlds (exact): " + String.join(", ", table.worlds.stream().sorted().toList()));
+                if (kind == RecipeSources.Kind.ENTITY && (table.requirePlayer || !table.permission.isBlank())) details.add("Player killer required");
+                if (!table.permission.isBlank()) details.add("Permission: " + table.permission);
+                if (table.replace) details.add("Replaces existing drops");
+                sources.add(drop.item, kind, table.id, details);
+            }
+        }
+    }
+
+    private static boolean possibleMatch(RecipeSources.Kind kind, String match) {
+        if (kind == RecipeSources.Kind.ENTITY) {
+            if (match.contains(":")) return true;
+            try { return EntityType.valueOf(match).isAlive(); }
+            catch (IllegalArgumentException ignored) { return false; }
+        }
+        Material material = Material.getMaterial(match);
+        return material != null && !material.isLegacy() && !material.isAir()
+                && (kind == RecipeSources.Kind.FISHING ? material.isItem() : material.isBlock());
     }
 
     private List<LootTable> eligible(String source, String match, Location location, Player player) {
@@ -155,7 +196,7 @@ final class LootService implements Listener {
     }
 
     private record Drop(String item, double chance, int min, int max) {}
-    private record LootTable(String source, Set<String> matches, Set<String> worlds, List<Drop> drops, boolean requirePlayer, boolean replace, String permission) {
+    private record LootTable(String id, String source, Set<String> matches, Set<String> worlds, List<Drop> drops, boolean requirePlayer, boolean replace, String permission) {
         private LootTable {
             drops = List.copyOf(drops);
         }

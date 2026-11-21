@@ -3,6 +3,7 @@ package io.github.lino9999.blocksadder.vehicle;
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.item.ItemService;
 import io.github.lino9999.blocksadder.model.ModelService;
+import io.github.lino9999.blocksadder.recipe.RecipeSources;
 import io.github.lino9999.blocksadder.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -42,6 +43,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +81,24 @@ public final class VehicleService implements Listener, AutoCloseable {
     }
 
     public void validate(ContentRegistry candidate) { VehicleDefinition.load(candidate); }
+
+    public static void describeSources(ContentRegistry content, RecipeSources.Builder sources) {
+        Map<String, VehicleDefinition> vehicles = VehicleDefinition.load(content);
+        for (var item : content.items()) {
+            String binding = VehicleDefinition.binding(item);
+            if (binding == null) continue;
+            VehicleDefinition vehicle = vehicles.get(VehicleDefinition.resolve(vehicles, binding, "item vehicle"));
+            for (var entry : vehicle.fuels().entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+                VehicleDefinition.Fuel fuel = entry.getValue();
+                if (!vehicle.fitsFuel(0, fuel)) continue;
+                List<String> details = new ArrayList<>();
+                details.add("Refuel amount: " + BigDecimal.valueOf(fuel.amount()).stripTrailingZeros().toPlainString());
+                details.add("Tank capacity: " + BigDecimal.valueOf(vehicle.capacity()).stripTrailingZeros().toPlainString());
+                if (fuel.returnItem() != null) details.add("Returns: " + fuel.returnItem());
+                sources.add(item.id().toString(), RecipeSources.Kind.FUEL, entry.getKey(), details);
+            }
+        }
+    }
 
     public void reload() {
         requireThread();
@@ -411,7 +431,7 @@ public final class VehicleService implements Listener, AutoCloseable {
         String key = items.identify(held).orElse("minecraft:" + held.getType().name().toLowerCase(Locale.ROOT));
         VehicleDefinition.Fuel fuel = vehicle.definition.fuels().get(key);
         if (fuel == null || vehicle.definition.capacity() == -1) return false;
-        if (vehicle.fuel + fuel.amount() > vehicle.definition.capacity() + 1e-6) { Text.send(player, "The fuel tank cannot fit this fuel item."); return true; }
+        if (!vehicle.definition.fitsFuel(vehicle.fuel, fuel)) { Text.send(player, "The fuel tank cannot fit this fuel item."); return true; }
         VehicleActionEvent event = new VehicleActionEvent(VehicleActionEvent.Action.REFUEL, vehicle.carrier, vehicle.definition.id(), player, vehicle.carrier.getLocation(), vehicle.carrier.getLocation(), fuel.amount());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;

@@ -1,5 +1,9 @@
 # Development verification
 
+## Preview 24 recipe sources
+
+The preview 24 JAR passed 11,698 server assertions across 29 accepted processes on nine Spigot and Paper builds. Two protocol players per build inspected every source family, followed recipe outputs and paged longer tooltips. Spigot 1.21.11 and Paper 26.3 repeated those checks with ProtocolLib installed. On each build a separate example server loaded the published river bundle and checked both configured reward paths on a real creature death. A third server ran the core bundle regression suite. [Build matrix](recipe-sources-verification.json) · [Source guide](recipe-sources.md) · [Distribution audit](recipe-sources-audit.json)
+
 ## Preview 23 catalog groups
 
 The preview 23 JAR passed 40,792 server assertions in 22 accepted processes. Two protocol players navigated authored groups on nine Spigot and Paper builds. Each build loaded the published showroom and pottery bundles. Spigot 1.21.11 and Paper 26.3 repeated the search suite with ProtocolLib installed and absent. The registry and layout checks are recorded separately. [Builds and results](catalog-groups-verification.json) · [Group guide](catalog-groups.md) · [Distribution audit](catalog-groups-audit.json)

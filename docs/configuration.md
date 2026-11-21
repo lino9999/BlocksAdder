@@ -1,5 +1,7 @@
 # BlocksAdder bundle configuration
 
+The server setting `recipe-sources` changes the labels and icons below a recipe result. The underlying information comes from ordinary content bundle records. [Source settings and working example](recipe-sources.md)
+
 Server settings live in `plugins/BlocksAdder/config.yml`. Content uses the independently designed `blocksadder/bundle-1` format: a bundle identifier and a list of typed definition records. Flat namespace/item documents and configuration files from other plugins are rejected before a registry is published.
 
 ```yaml

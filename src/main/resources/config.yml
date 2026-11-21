@@ -3,6 +3,7 @@ integrations:
 catalog-layout:
   front: []
   remainder: alphabetic
+recipe-sources: {}
 recipe-book:
   learn: [encounter]
 recipe-feedback:

@@ -1,0 +1,42 @@
+format: blocksadder/bundle-1
+bundle: river
+entries:
+  - key: pearl
+    kind: artifact
+    item:
+      base: PRISMARINE_CRYSTALS
+      label: River Pearl
+      group: river_finds
+  - key: clasp
+    kind: artifact
+    item:
+      base: TRIPWIRE_HOOK
+      label: Pearl Clasp
+      group: river_finds
+  - key: clay_bank
+    kind: drop-rule
+    settings:
+      source: block
+      match: [CLAY]
+      drops:
+        - {item: 'river:pearl', chance: 0.15}
+  - key: netted_pearl
+    kind: drop-rule
+    settings:
+      source: fishing
+      match: [COD, SALMON]
+      drops:
+        - {item: 'river:pearl', chance: 0.25, min: 1, max: 2}
+  - key: lost_clasp
+    kind: drop-rule
+    settings:
+      source: entity
+      match: [DROWNED]
+      drops:
+        - {item: 'river:clasp', chance: 0.05}
+  - key: set_pearl
+    kind: recipe
+    settings:
+      type: shapeless
+      ingredients: ['river:pearl', iron_nugget]
+      result: river:clasp

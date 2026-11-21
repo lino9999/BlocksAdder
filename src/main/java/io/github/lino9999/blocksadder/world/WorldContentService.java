@@ -1782,11 +1782,8 @@ public final class WorldContentService implements Listener, AutoCloseable, io.gi
     }
 
     private ItemStack parseDrop(String input) {
-        String[] parts = input.trim().split("\\s+", -1);
-        if (parts.length < 1 || parts.length > 2) throw new IllegalArgumentException("Drops use '<item> [amount]'.");
-        int amount = parts.length == 2 ? Integer.parseInt(parts[1]) : 1;
-        if (amount < 1 || amount > 64) throw new IllegalArgumentException("Drop amounts must be between 1 and 64.");
-        return resolveItem(parts[0], amount);
+        WorldDrop drop = WorldDrop.parse(input);
+        return resolveItem(drop.reference(), drop.amount());
     }
 
     private ItemStack resolveItem(String id, int amount) {

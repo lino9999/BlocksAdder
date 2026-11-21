@@ -120,17 +120,10 @@ public final class WorldContentValidator {
     private static void validateDrops(ConfigurationSection config, ContentRegistry registry, String context) {
         if (config.contains("drops") && !config.isList("drops")) fail(context, "drops must be a list");
         for (String drop : config.getStringList("drops")) {
-            String[] parts = drop.trim().split("\\s+", -1);
-            if (parts.length < 1 || parts.length > 2 || parts[0].isEmpty()) fail(context, "drops use '<item> [amount]'");
-            item(parts[0], registry, context);
-            if (parts.length == 2) {
-                try {
-                    int amount = Integer.parseInt(parts[1]);
-                    if (amount < 1 || amount > 64) fail(context, "drop amounts must be between 1 and 64");
-                } catch (NumberFormatException exception) {
-                    fail(context, "invalid drop amount " + parts[1]);
-                }
-            }
+            WorldDrop parsed;
+            try { parsed = WorldDrop.parse(drop); }
+            catch (IllegalArgumentException exception) { throw new IllegalArgumentException("Invalid " + context + ": " + exception.getMessage(), exception); }
+            item(parsed.reference(), registry, context);
         }
     }
 

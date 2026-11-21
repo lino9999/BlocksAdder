@@ -28,10 +28,10 @@ public final class ContentLootService {
         public Plan { drops = drops.stream().map(ItemStack::clone).toList(); commands = List.copyOf(commands); }
         public boolean successful() { return !drops.isEmpty() || experience > 0 || !commands.isEmpty(); }
     }
-    private record Drop(String item, int minimum, int maximum, double chance, boolean fortune) {}
+    record Drop(String item, int minimum, int maximum, double chance, boolean fortune) {}
     private record Experience(int minimum, int maximum, double chance) {}
     private record CommandGroup(List<Command> commands, double chance) {}
-    private record Rule(List<Trigger> triggers, int minimumAge, int maximumAge, Integer decrease, List<String> worlds, List<String> biomes, List<String> tools, boolean first, List<Drop> drops, List<Experience> experience, List<CommandGroup> commands, List<io.github.lino9999.blocksadder.integration.BlockNbtConditions.Condition> conditions) {}
+    record Rule(String name, List<Trigger> triggers, int minimumAge, int maximumAge, Integer decrease, List<String> worlds, List<String> biomes, List<String> tools, boolean first, List<Drop> drops, List<Experience> experience, List<CommandGroup> commands, List<io.github.lino9999.blocksadder.integration.BlockNbtConditions.Condition> conditions) {}
     private record Source(String key, ContentId id, ConfigurationSection config) {}
     private final Supplier<ContentRegistry> registry;
     private final ItemService items;
@@ -43,7 +43,7 @@ public final class ContentLootService {
     public void validate(ContentRegistry candidate) { load(candidate); }
     public void reload() { rules = load(registry.get()); }
 
-    private Map<String, List<Rule>> load(ContentRegistry content) {
+    static Map<String, List<Rule>> load(ContentRegistry content) {
         Map<String, List<Rule>> result = new TreeMap<>();
         for (Source item : sources(content)) {
             ConfigurationSection config = item.config();
@@ -88,7 +88,8 @@ public final class ContentLootService {
                     }
                     commands.add(new CommandGroup(List.copyOf(values), chance(commandGroup)));
                 }
-                parsed.add(new Rule(triggers, min, max, decrease, patterns(group, "worlds"), patterns(group, "biomes"), patterns(group, "tools"), group.getBoolean("stop_on_first_success", group.getBoolean("drop_only_first", false)), List.copyOf(drops), List.copyOf(experience), List.copyOf(commands), io.github.lino9999.blocksadder.integration.BlockNbtConditions.parse(group.getConfigurationSection("nbt"))));
+                String label = item.key().startsWith("block/") ? item.id().toString() : name;
+                parsed.add(new Rule(label, triggers, min, max, decrease, patterns(group, "worlds"), patterns(group, "biomes"), patterns(group, "tools"), group.getBoolean("stop_on_first_success", group.getBoolean("drop_only_first", false)), List.copyOf(drops), List.copyOf(experience), List.copyOf(commands), io.github.lino9999.blocksadder.integration.BlockNbtConditions.parse(group.getConfigurationSection("nbt"))));
             }
             if (parsed.size() > 256) throw new IllegalArgumentException("Too many crop loot groups: " + item.id());
             result.computeIfAbsent(item.key(), ignored -> new ArrayList<>()).addAll(parsed);
@@ -255,7 +256,7 @@ public final class ContentLootService {
         return values.stream().map(value -> value.toLowerCase(Locale.ROOT)).toList();
     }
 
-    private static boolean matches(List<String> patterns, String value) {
+    static boolean matches(List<String> patterns, String value) {
         if (patterns.isEmpty()) return true;
         String actual = value.toLowerCase(Locale.ROOT);
         for (String pattern : patterns) {

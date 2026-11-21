@@ -139,6 +139,10 @@ record GenerationRule(String id, GenerationKind kind, String target, List<String
     }
 
     boolean matches(World world) {
+        return matchesWorldName(world.getName());
+    }
+
+    boolean matchesWorldName(String name) {
         boolean included = false;
         for (String pattern : worlds) {
             boolean excluded = pattern.startsWith("!");
@@ -148,7 +152,7 @@ record GenerationRule(String id, GenerationKind kind, String target, List<String
                 char character = value.charAt(index);
                 regex.append(character == '*' ? ".*" : character == '?' ? "." : Pattern.quote(String.valueOf(character)));
             }
-            if (!world.getName().matches(regex.append('$').toString())) continue;
+            if (!name.matches(regex.append('$').toString())) continue;
             if (excluded) return false;
             included = true;
         }

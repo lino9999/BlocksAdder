@@ -77,6 +77,7 @@ public final class RecipeService implements Listener, AutoCloseable {
     private Set<Material> excludedResults = Set.of();
     private Map<NamespacedKey, RegisteredRecipe> registered = Map.of();
     private Map<String, List<CatalogRecipe>> catalog = Map.of();
+    private RecipeSources sources = RecipeSources.EMPTY;
     private RecipeBookIndex bookIndex = new RecipeBookIndex.Builder().build();
     private boolean crafterWarning;
 
@@ -98,6 +99,7 @@ public final class RecipeService implements Listener, AutoCloseable {
         Map<NamespacedKey, RegisteredRecipe> next = prepare(plugin.getConfig());
         RecipeBookIndex index = index(next);
         var nextCatalog = catalog(next);
+        RecipeSources nextSources = RecipeSources.load(registry.get(), plugin.getConfig());
         Map<RecipeStation, List<RegisteredRecipe>> byStation = groupByStation(next);
         Map<NamespacedKey, RegisteredRecipe> previous = registered;
         removeNative(previous);
@@ -112,6 +114,7 @@ public final class RecipeService implements Listener, AutoCloseable {
             families = byStation;
             bookIndex = index;
             catalog = nextCatalog;
+            sources = nextSources;
             excludedResults = exclusions;
         } catch (RuntimeException exception) {
             added.forEach(Bukkit::removeRecipe);
@@ -131,6 +134,7 @@ public final class RecipeService implements Listener, AutoCloseable {
     }
 
     public void validate(ContentRegistry candidate, ConfigurationSection settings) {
+        RecipeSources.styles(candidate, settings);
         VanillaRecipeFilter.read(settings);
         FeedbackChannels.read(settings);
         RecipeService validator = new RecipeService(plugin, () -> candidate, new ItemService(plugin, () -> candidate));
@@ -304,6 +308,10 @@ public final class RecipeService implements Listener, AutoCloseable {
 
     public List<CatalogRecipe> catalogPages(String subject) {
         return subject == null ? List.of() : catalog.getOrDefault(subject, List.of());
+    }
+
+    public List<RecipeSources.Badge> sourcesFor(String output) {
+        return sources.forItem(output);
     }
 
     private Map<String, List<CatalogRecipe>> catalog(Map<NamespacedKey, RegisteredRecipe> recipes) {
@@ -851,6 +859,7 @@ public final class RecipeService implements Listener, AutoCloseable {
         bookIndex = new RecipeBookIndex.Builder().build();
         registered = Map.of();
         catalog = Map.of();
+        sources = RecipeSources.EMPTY;
         families = Map.of();
         anvilPreviews.refresh((view, result) -> false);
         anvilPreviews.clear();

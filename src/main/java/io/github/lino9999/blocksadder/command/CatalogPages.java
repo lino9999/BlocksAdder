@@ -13,9 +13,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 
 final class CatalogPages {
     private static final int PAGE_SIZE = 45;
@@ -46,16 +44,9 @@ final class CatalogPages {
     }
 
     private void groupTile(Player viewer, CatalogView view, int slot, Group group) {
-        String icon = group.icon();
-        ItemStack stack = icon.contains(":") ? items.create(icon, 1) : new ItemStack(Material.valueOf(icon));
-        var meta = stack.getItemMeta();
-        meta.setDisplayName(Text.color(group.label()));
-        if (meta.isHideTooltip()) meta.setHideTooltip(false);
         int count = group.visibleCount(viewer);
-        meta.setLore(List.of(Text.color("&7" + count + (count == 1 ? " visible item" : " visible items"))));
-        if (meta instanceof Damageable damage && damage.hasDamage()) damage.setDamage(0);
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ARMOR_TRIM, ItemFlag.HIDE_DESTROYS);
-        stack.setItemMeta(meta);
+        var lore = List.of(Text.color("&7" + count + (count == 1 ? " visible item" : " visible items")));
+        ItemStack stack = CatalogIcon.display(items, group.icon(), group.label(), lore);
         view.put(slot, stack, Action.GROUP, group.key());
     }
 

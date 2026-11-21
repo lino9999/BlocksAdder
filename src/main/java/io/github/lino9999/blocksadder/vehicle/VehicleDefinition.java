@@ -23,6 +23,10 @@ public record VehicleDefinition(String id, Mode mode, String model, String item,
 
     public VehicleDefinition { fuels = Map.copyOf(fuels); }
 
+    boolean fitsFuel(double stored, Fuel fuel) {
+        return capacity != -1 && stored + fuel.amount() <= capacity + 1e-6;
+    }
+
     public static Map<String, VehicleDefinition> load(ContentRegistry registry) {
         Map<String, VehicleDefinition> result = new TreeMap<>();
         Map<String, ConfigurationSection> configurations = new TreeMap<>(registry.sections("vehicles"));

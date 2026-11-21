@@ -29,8 +29,10 @@ final class CatalogView implements InventoryHolder {
                     || registry.groups().find(key).filter(group -> group.allowed(viewer)).isPresent());
         }
     }
-    record Reading(String subject, int page) {}
-    enum Action { GROUP, ITEM, OUTPUT, GIVE_RESULT, PREVIOUS, NEXT, BACK, SEARCH, CLOSE }
+    record Reading(String subject, int page, int detailPage) {
+        Reading(String subject, int page) { this(subject, page, 0); }
+    }
+    enum Action { GROUP, ITEM, OUTPUT, GIVE_RESULT, PREVIOUS, NEXT, EARLIER_DETAILS, LATER_DETAILS, BACK, SEARCH, CLOSE }
     record Button(Action action, String target, ItemStack display) {}
 
     final UUID viewer;

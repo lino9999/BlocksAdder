@@ -2,6 +2,10 @@
 
 This report describes the supplied artifact, not a claim of complete behavioral equivalence. BlocksAdder is independently authored. Original classes, shaders, textures, models, configuration files, libraries and license checks are not incorporated into its implementation.
 
+## Recipe result sources
+
+Static inspection of the supplied JAR found eight informational roles attached to the selected custom output. These include block drops, ore and surface placement, tree components, seed products, creature and fishing rewards, and fuels accepted by the selected vehicle. The source icons have no grant action. The evidence distinguishes the result on an ingredient-use page from the item that opened the browser. BlocksAdder derives its own rows from current gameplay rules and adds a separate cave family, paged details and independently named presentation settings. [Source guide](recipe-sources.md)
+
 ## Identity and evidence
 
 | Fact | Observation |

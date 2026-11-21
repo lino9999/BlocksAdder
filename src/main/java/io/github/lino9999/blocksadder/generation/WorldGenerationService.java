@@ -2,6 +2,7 @@ package io.github.lino9999.blocksadder.generation;
 
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.content.ItemDefinition;
+import io.github.lino9999.blocksadder.recipe.RecipeSources;
 import io.github.lino9999.blocksadder.world.WorldContentService;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -69,8 +70,17 @@ public final class WorldGenerationService implements Listener, AutoCloseable {
 
     public void validate(ContentRegistry candidate) {
         requireThread();
-        GenerationRule.load(candidate);
+        validatedRules(candidate);
+    }
+
+    private static List<GenerationRule> validatedRules(ContentRegistry candidate) {
+        List<GenerationRule> rules = GenerationRule.load(candidate);
         candidate.sections("trees").forEach((id, config) -> NativeTreeDefinition.read(candidate, id, config));
+        return rules;
+    }
+
+    public static void describeSources(ContentRegistry content, RecipeSources.Builder sources) {
+        for (GenerationRule rule : GenerationRule.load(content)) GenerationSources.describe(content, rule, sources);
     }
 
     public void setVirtualAirPredicate(Predicate<Block> predicate) {
@@ -125,9 +135,7 @@ public final class WorldGenerationService implements Listener, AutoCloseable {
 
     public void reload() {
         requireThread();
-        validate(registry.get());
-        List<GenerationRule> next = GenerationRule.load(registry.get());
-        rules = next;
+        rules = validatedRules(registry.get());
         closed = false;
         for (World world : Bukkit.getWorlds()) for (Chunk chunk : world.getLoadedChunks()) {
             if (state(chunk).equals("pending") && !pending.containsKey(ChunkKey.of(chunk))) resume(chunk);
