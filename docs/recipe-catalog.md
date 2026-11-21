@@ -9,7 +9,7 @@ Open `/ba recipe` while holding a custom item, or use `/ba recipe <item>` to loo
 - The book identifies the workstation and whether the recipe produces or uses the selected item. The inventory title shows the current page and total. Previous and Next appear when a page exists in that direction.
 - Recipes producing the item appear first, followed by recipes that use it as a registered custom ingredient. Within each group, pages are sorted by recipe key. An ingredient repeated in a shape still produces one page for that recipe.
 - An item with no producing recipe starts on an information page. Its uses follow, including recipes with vanilla outputs. Disabling a workstation removes its pages on reload.
-- Click a registered custom ingredient or another custom result to inspect it. Ordinary clicks on vanilla ingredients leave the page open. **Back** returns to the immediately preceding item and page, then to the originating catalog category and page. At a direct command entry, Back closes the menu. **Close** exits from any page.
+- Click a registered custom ingredient or another custom result to inspect it. Ordinary clicks on vanilla ingredients leave the page open. **Back** returns to the immediately preceding item and page, then to the originating category or search results page. At a direct command entry, Back closes the menu. **Close** exits from any page.
 - During an online session, BlocksAdder remembers up to 128 item page positions per player. Logging out or reloading content clears the saved positions.
 
 The catalog covers shaped and shapeless crafting, the four cooking stations, stonecutting, smithing, fixed-result anvils and anvil repairs. Repair previews show a single item of the repairable base type. The player's actual anvil determines the repaired stack's damage, name and costs.
@@ -27,7 +27,7 @@ traits:
 
 | Setting | Effect |
 | --- | --- |
-| `catalog.permission` | The viewer needs this literal permission node to see the item in the catalog and recipe-command suggestions. Category access and the existing `hidden` setting also apply. Omit the node for public listing within its category. |
+| `catalog.permission` | The viewer needs this literal permission node to see the item in the catalog and recipe-command suggestions. Hidden items are omitted. Category browsing and command suggestions also check category access. Global search checks the item permission across categories. [Search permissions](catalog-search.md) |
 | `catalog.inspect` | Set to `false` to disable opening this item's recipe pages from the catalog, a command or another recipe. The default is `true`. |
 | Recipe record's `settings.permission` | Controls who can craft the recipe. Players can inspect the recipe before earning that permission. |
 

@@ -3,6 +3,7 @@ package io.github.lino9999.blocksadder.command;
 import io.github.lino9999.blocksadder.command.CatalogView.Action;
 import io.github.lino9999.blocksadder.command.CatalogView.Listing;
 import io.github.lino9999.blocksadder.command.CatalogView.Reading;
+import io.github.lino9999.blocksadder.command.search.CatalogPrompt;
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.content.ItemDefinition;
 import io.github.lino9999.blocksadder.item.ItemService;
@@ -10,7 +11,6 @@ import io.github.lino9999.blocksadder.recipe.CatalogRecipe;
 import io.github.lino9999.blocksadder.recipe.RecipeService;
 import io.github.lino9999.blocksadder.util.Text;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permissible;
@@ -39,38 +40,79 @@ public final class CatalogMenu implements Listener {
     private final Supplier<ContentRegistry> registry;
     private final ItemService items;
     private final RecipeService recipes;
+    private final CatalogPrompt prompt;
     private final Map<UUID, LinkedHashMap<String, Integer>> bookmarks = new HashMap<>();
     private ContentRegistry listedRegistry;
-    private List<ItemDefinition> sortedItems = List.of();
+    private CatalogSearchIndex index;
 
     public CatalogMenu(JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items, RecipeService recipes) {
         this.plugin = plugin;
         this.registry = registry;
         this.items = items;
         this.recipes = recipes;
+        prompt = CatalogPrompt.create(plugin);
     }
 
     boolean listed(Permissible viewer, ItemDefinition item) {
         String categoryNode = "blocksadder.category." + item.category();
         boolean category = viewer.isPermissionSet(categoryNode) ? viewer.hasPermission(categoryNode)
                 : viewer.hasPermission("blocksadder.category.*") || viewer.hasPermission(categoryNode);
-        return category && !item.options().getBoolean("hidden", false) && registry.get().catalog(item).visibleTo(viewer);
+        return category && searchable(viewer, item);
+    }
+
+    private boolean searchable(Permissible viewer, ItemDefinition item) {
+        return !item.options().getBoolean("hidden", false) && registry.get().catalog(item).visibleTo(viewer);
     }
 
     public void open(Player player, String category, int page) {
+        prompt.cancel(player);
+        listing(player, Listing.catalog(category, page));
+    }
+
+    public void search(Player player, String query) {
+        prompt.cancel(player);
+        if (!player.hasPermission("blocksadder.search")) return;
+        if (query != null) {
+            listing(player, Listing.search(CatalogSearchIndex.checked(query)));
+            return;
+        }
+        if (!prompt.available()) {
+            Text.send(player, "Type /ba search <text> to search the catalog.");
+            return;
+        }
+        ContentRegistry started = registry.get();
+        if (!defaultInventory(player)) player.closeInventory();
+        if (!defaultInventory(player) || started != registry.get() || !player.hasPermission("blocksadder.search")) return;
+        if (!prompt.open(player, submitted -> {
+            if (started == registry.get() && player.isOnline() && player.hasPermission("blocksadder.search"))
+                listing(player, Listing.search(submitted));
+        })) Text.send(player, "Type /ba search <text> to search the catalog.");
+    }
+
+    private static boolean defaultInventory(Player player) {
+        InventoryType type = player.getOpenInventory().getType();
+        return type == InventoryType.CRAFTING || type == InventoryType.CREATIVE;
+    }
+
+    private void listing(Player player, Listing requested) {
+        boolean search = requested.searching();
+        if (search && !player.hasPermission("blocksadder.search")) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof CatalogView) player.closeInventory();
+            return;
+        }
         ContentRegistry current = registry.get();
         if (listedRegistry != current) {
-            sortedItems = current.items().stream().sorted(Comparator.comparing(ItemDefinition::id)).toList();
+            index = new CatalogSearchIndex(current, items);
             listedRegistry = current;
         }
-        List<ItemDefinition> content = sortedItems.stream()
-                .filter(item -> category.isBlank() || item.category().equalsIgnoreCase(category))
-                .filter(item -> listed(player, item)).toList();
+        List<ItemDefinition> content = index.matching(search ? requested.query() : "")
+                .filter(item -> requested.category().isBlank() || item.category().equalsIgnoreCase(requested.category()))
+                .filter(item -> search ? searchable(player, item) : listed(player, item)).toList();
         int last = Math.max(0, (content.size() - 1) / PAGE_SIZE);
-        int index = Math.clamp(page, 0, last);
-        CatalogView view = new CatalogView(player.getUniqueId(), current, new Listing(category, index), null, null, 54,
-                Text.color("&3BlocksAdder &8| &7" + (index + 1) + "/" + (last + 1)));
-        for (int slot = 0, pos = index * PAGE_SIZE; slot < PAGE_SIZE && pos < content.size(); slot++, pos++) {
+        int page = Math.clamp(requested.page(), 0, last);
+        CatalogView view = new CatalogView(player.getUniqueId(), current, requested.at(page), null, null, 54,
+                Text.color((search ? "&3BlocksAdder search" : "&3BlocksAdder") + " &8| &7" + (page + 1) + "/" + (last + 1)));
+        for (int slot = 0, pos = page * PAGE_SIZE; slot < PAGE_SIZE && pos < content.size(); slot++, pos++) {
             ItemDefinition item = content.get(pos);
             String id = item.id().toString();
             ItemStack stack = items.create(id, 1);
@@ -83,13 +125,33 @@ public final class CatalogMenu implements Listener {
             stack.setItemMeta(meta);
             view.put(slot, stack, Action.ITEM, id);
         }
-        if (index > 0) control(view, 45, Action.PREVIOUS, Material.ARROW, "&bPrevious page");
+        if (page > 0) control(view, 45, Action.PREVIOUS, Material.ARROW, "&bPrevious page");
+        if (search) control(view, 46, Action.BACK, Material.OAK_DOOR, "&bBack to catalog");
+        if (player.hasPermission("blocksadder.search")) searchButton(view, requested.query(), content.size());
         control(view, 49, Action.CLOSE, Material.BARRIER, "&cClose");
-        if (index < last) control(view, 53, Action.NEXT, Material.ARROW, "&bNext page");
-        player.openInventory(view.getInventory());
+        if (page < last) control(view, 53, Action.NEXT, Material.ARROW, "&bNext page");
+        if (registry.get() == current && (!search || player.hasPermission("blocksadder.search"))) player.openInventory(view.getInventory());
+    }
+
+    private static void searchButton(CatalogView view, String query, int matches) {
+        ItemStack compass = button(Material.COMPASS, "&bSearch items", List.of());
+        if (query != null) {
+            var meta = compass.getItemMeta();
+            String count = matches == 0 ? "No matching items" : matches == 1 ? "1 matching item" : matches + " matching items";
+            if (query.isEmpty()) meta.setLore(List.of(count));
+            else {
+                String literal = org.bukkit.ChatColor.stripColor(query).replaceAll("\\p{Cntrl}", " ");
+                int length = literal.codePointCount(0, literal.length());
+                if (length > 72) literal = literal.substring(0, literal.offsetByCodePoints(0, 72)) + "…";
+                meta.setLore(List.of(count, "Query “" + literal + "”"));
+            }
+            compass.setItemMeta(meta);
+        }
+        view.put(47, compass, Action.SEARCH, null);
     }
 
     public void recipe(Player player, String id) {
+        prompt.cancel(player);
         inspect(player, id, null, null);
     }
 
@@ -188,6 +250,10 @@ public final class CatalogMenu implements Listener {
     }
 
     private void activate(Player player, CatalogView view, CatalogView.Button button, ClickType click) {
+        if (view.reading == null && view.listing.searching() && !player.hasPermission("blocksadder.search")) {
+            player.closeInventory();
+            return;
+        }
         switch (button.action()) {
             case ITEM, OUTPUT -> {
                 if (button.action() == Action.ITEM && view.reading != null && click.isShiftClick() && player.hasPermission("blocksadder.get")) {
@@ -197,7 +263,8 @@ public final class CatalogMenu implements Listener {
                 }
                 if (button.itemId() == null) return;
                 ItemDefinition item = view.registry.find(button.itemId()).orElse(null);
-                if (item == null || view.reading == null && !listed(player, item)) return;
+                if (item == null) return;
+                if (view.reading == null && !(view.listing.searching() ? searchable(player, item) : listed(player, item))) return;
                 if (view.reading == null && click.isRightClick()) {
                     if (player.hasPermission("blocksadder.get")) {
                         int amount = click.isShiftClick() ? button.display().getMaxStackSize() : 1;
@@ -213,14 +280,16 @@ public final class CatalogMenu implements Listener {
             }
             case PREVIOUS, NEXT -> {
                 int change = button.action() == Action.PREVIOUS ? -1 : 1;
-                if (view.reading == null) open(player, view.listing.category(), view.listing.page() + change);
+                if (view.reading == null) listing(player, view.listing.at(view.listing.page() + change));
                 else show(player, new Reading(view.reading.subject(), view.reading.page() + change), view.listing, view.parent);
             }
             case BACK -> {
                 if (view.parent != null) show(player, view.parent, view.listing, null);
-                else if (view.listing != null) open(player, view.listing.category(), view.listing.page());
+                else if (view.reading != null && view.listing != null) listing(player, view.listing);
+                else if (view.reading == null && player.hasPermission("blocksadder.browse")) open(player, "", 0);
                 else player.closeInventory();
             }
+            case SEARCH -> search(player, null);
             case CLOSE -> player.closeInventory();
         }
     }
@@ -241,13 +310,19 @@ public final class CatalogMenu implements Listener {
         bookmarks.remove(event.getPlayer().getUniqueId());
     }
 
-    public void close() {
+    public void reset() {
+        prompt.clear();
         bookmarks.clear();
-        sortedItems = List.of();
+        index = null;
         listedRegistry = null;
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof CatalogView) player.closeInventory();
         }
+    }
+
+    public void close() {
+        reset();
+        prompt.close();
     }
 
     private static void control(CatalogView view, int slot, Action action, Material material, String name) {

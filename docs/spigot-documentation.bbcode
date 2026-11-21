@@ -80,6 +80,10 @@ native-recipes:
   exclude-results: [iron_ingot][/CODE]
 The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
 
+[SIZE=5][B]Finding custom items[/B][/SIZE]
+Use /ba search <text>, /basearch <text> or /bsearch <text> to match part of a full ID or display name. With ProtocolLib, click the catalog compass or omit the argument to open a private sign editor. The editor joins the four lines exactly as entered. A blank submission lists all eligible items. Search results have 45 items per page. Back from a recipe restores the search page.
+The blocksadder.search permission defaults to true. Hidden items and items protected by traits.catalog.permission are filtered for each player. Category permissions govern browsing by group. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/catalog-search.md]Catalog search guide[/URL]
+
 [SIZE=5][B]Browsing recipes[/B][/SIZE]
 Run /ba recipe while holding a custom item, or /ba recipe followed by its ID. Production recipes appear before ingredient uses. Click a custom ingredient to inspect it. Back returns to the preceding item or catalog page. An item with no producing recipe opens on its information page.
 In an item record, set traits.catalog.permission to require a permission for listing the item, or set traits.catalog.inspect to false to disable its recipe pages. A known ID can still open an unlisted item when inspection is enabled. The separate blocksadder.get permission grants access to a button for receiving the exact recipe result. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-catalog.md]Full catalog guide[/URL] · [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/recipe-catalog.yml]Pottery example[/URL]
@@ -115,6 +119,7 @@ These server settings belong in config.yml. Run /ba pack build and upload the ex
 [SIZE=5][B]Commands and permissions[/B][/SIZE]
 [CODE]/ba help
 /ba browse [category] [player]
+/ba search [text]
 /ba get <item> [amount]
 /ba give <player> <item> [amount] [silent]
 /ba recipe [item] [player]

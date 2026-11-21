@@ -122,7 +122,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             recipes.startFeedback();
             menus = new CatalogMenu(this, () -> content, items, recipes);
             var commands = new ContentCommand(this, menus);
-            for (String name : List.of("blocksadder", "baget", "bagive", "bapack", "babrowse", "bareload", "barecipe", "bainspect")) {
+            for (String name : List.of("blocksadder", "baget", "bagive", "bapack", "babrowse", "basearch", "bareload", "barecipe", "bainspect")) {
                 var command = java.util.Objects.requireNonNull(getCommand(name), "Missing plugin command: " + name);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
@@ -224,7 +224,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             vehicles.reload();
             sounds.reload();
             packs.reload();
-            if (menus != null) menus.close();
+            if (menus != null) menus.reset();
         } catch (Exception exception) {
             content = previous;
             settings = previousSettings;

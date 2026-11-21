@@ -10,9 +10,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 final class CatalogView implements InventoryHolder {
-    record Listing(String category, int page) {}
+    record Listing(String category, String query, int page) {
+        static Listing catalog(String category, int page) { return new Listing(category, null, page); }
+        static Listing search(String query) { return new Listing("", query, 0); }
+        boolean searching() { return query != null; }
+        Listing at(int index) { return new Listing(category, query, index); }
+    }
     record Reading(String subject, int page) {}
-    enum Action { ITEM, OUTPUT, GIVE_RESULT, PREVIOUS, NEXT, BACK, CLOSE }
+    enum Action { ITEM, OUTPUT, GIVE_RESULT, PREVIOUS, NEXT, BACK, SEARCH, CLOSE }
     record Button(Action action, String itemId, ItemStack display) {}
 
     final UUID viewer;

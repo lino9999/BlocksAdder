@@ -18,8 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public final class ContentCommand implements TabExecutor {
-    private static final Map<String, String> SHORTCUTS = Map.of("baget", "get", "bagive", "give", "bapack", "pack", "babrowse", "browse", "bareload", "reload", "barecipe", "recipe", "bainspect", "inspect");
-    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem", "model", "disguise", "undisguise", "liquid", "fire", "vehicle", "config", "plants");
+    private static final Map<String, String> SHORTCUTS = Map.of("baget", "get", "bagive", "give", "bapack", "pack", "babrowse", "browse", "basearch", "search", "bareload", "reload", "barecipe", "recipe", "bainspect", "inspect");
+    private static final List<String> SUBCOMMANDS = List.of("help", "info", "browse", "search", "get", "give", "drop", "remove", "inspect", "modeldata", "repair", "rename", "durability", "color", "reload", "validate", "pack", "block", "recipe", "glyph", "stat", "hud", "tree", "entity", "emote", "sound", "totem", "model", "disguise", "undisguise", "liquid", "fire", "vehicle", "config", "plants");
     private final BlocksAdderPlugin plugin;
     private final CatalogMenu menus;
     private final AdvancedContentCommands advanced;
@@ -43,6 +43,7 @@ public final class ContentCommand implements TabExecutor {
                 case "help" -> help(sender);
                 case "info" -> Text.send(sender, "BlocksAdder " + plugin.getDescription().getVersion() + " by Lino | " + plugin.content().items().size() + " items | " + plugin.worldContent().count() + " loaded placements | " + Bukkit.getBukkitVersion());
                 case "browse" -> menus.open(args.length > 2 ? online(args[2], sender) : player(sender), args.length > 1 ? args[1] : "", 0);
+                case "search" -> menus.search(player(sender), args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : null);
                 case "get" -> {
                     usage(args, 2, "get <item> [amount]");
                     plugin.items().give(player(sender), args[1], args.length > 2 ? amount(args[2]) : 1);
@@ -358,6 +359,7 @@ public final class ContentCommand implements TabExecutor {
     private void help(CommandSender sender) {
         Text.send(sender, "&bBlocksAdder &7by Lino");
         Text.send(sender, "/ba browse [category] [player] | recipe [item] [player] | glyph [id]");
+        if (sender.hasPermission("blocksadder.search")) Text.send(sender, "/ba search [text]");
         if (sender.hasPermission("blocksadder.plants")) Text.send(sender, "/ba plants <auto|full|hide|status> [player]");
         if (!sender.hasPermission("blocksadder.get")) return;
         Text.send(sender, "/ba get <item> [amount] | give <player> <item> [amount] [silent]");

@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+Preview 22 uses a registry-scoped index of BlocksAdder IDs and visible labels, a permission-aware results inventory and an optional sign transport. Search shares the recipe browser's return path. The command, aliases, English messages and item policies belong to BlocksAdder. [Search guide](catalog-search.md) · [Distribution audit](catalog-search-audit.json)
+
 Preview 21 adds a reload-time index of producing and consuming recipes, a server-owned catalog inventory, session-scoped page positions and the `traits.catalog` policy. Its interface uses standard inventory items and BlocksAdder text. The reference provided evidence about player interactions and permission boundaries. [Recipe catalog](recipe-catalog.md) · [Distribution audit](recipe-catalog-audit.json)
 
 Preview 20 implements locked recipe feedback with its own YAML channel list, English lore and optional packet integration. The comparison of the release JAR against the reference found zero identical nonempty files, shared readable message literals, shared declared commands or permissions, and zero reference branding traces under the audit rules. Common Bukkit identifiers and short vocabulary fall outside the message comparison. [Preview 20 distribution audit](recipe-feedback-audit.json)

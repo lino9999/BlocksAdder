@@ -4,11 +4,11 @@
 
 **Custom items, blocks, furniture, crops and resource packs for Minecraft Spigot and Paper.**
 
-BlocksAdder by **Lino** is a Java plugin for Spigot and Paper 1.21.11 through 26.3. Define items, workstations, crops and player stats in YAML. Players can browse recipes and ingredient uses in game. BlocksAdder builds a resource pack for the models, textures, sounds and glyphs you supply.
+BlocksAdder by **Lino** is a Java plugin for Spigot and Paper 1.21.11 through 26.3. Define items, workstations, crops and player stats in YAML. Players can search custom items, browse recipes and follow ingredient uses in game. BlocksAdder builds a resource pack for the models, textures, sounds and glyphs you supply.
 
-[Download preview 21](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.21) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
+[Download preview 22](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.22) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
 
-**Preview 21 adds a recipe and ingredient browser.** Hold a custom item and run `/ba recipe` to see how to make it and where to use it. Follow a custom ingredient to its recipes, then return to the same page. Server owners can control which items players can find in the catalog and which recipe pages they can open. [Recipe catalog](docs/recipe-catalog.md) · [Example bundle](docs/examples/recipe-catalog.yml) · [Locked recipe feedback](docs/recipe-feedback.md) · [Remaining features](docs/parity-progress.md)
+**Preview 22 adds catalog search.** Use `/ba search crystal` to find custom items by ID or display name. With ProtocolLib you can enter a query on a private sign from the catalog. Open a result to browse its recipes and return to the same search page. [Search guide](docs/catalog-search.md) · [Recipe catalog](docs/recipe-catalog.md) · [Example bundle](docs/examples/recipe-catalog.yml) · [Locked recipe feedback](docs/recipe-feedback.md) · [Remaining features](docs/parity-progress.md)
 
 Current development uses the independently designed `blocksadder/bundle-1` content format. The historical 1.0.0 release has a smaller feature set and an earlier format. [Configuration](docs/configuration.md) · [Independent implementation](docs/independent-implementation.md) · [Historical comparison](docs/feature-parity.md)
 
@@ -49,7 +49,7 @@ Named item-event commands can separately opt in to [incoming PlaceholderAPI argu
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 21 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.21)
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 22 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.22)
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.
@@ -67,6 +67,7 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | `/ba help` | `blocksadder.help` | Show command usage. |
 | `/ba info` | `blocksadder.info` | Show version, author, loaded item/placement counts and server version. |
 | `/ba browse [category] [player]` | `blocksadder.browse` | Open the paginated item catalog. |
+| `/ba search [text]` | `blocksadder.search` | Find visible items across categories by namespaced ID or display name. Omit the text to open the optional sign editor. |
 | `/ba recipe [item] [player]` | `blocksadder.recipe` | Browse recipes and ingredient uses for the held or named item. Opening a menu for another player also requires `blocksadder.others`. |
 | `/ba glyph [id]` | `blocksadder.glyph` | List font image IDs or print a glyph. |
 | `/ba get <item> [amount]` | `blocksadder.get` | Receive a custom item. |
@@ -130,7 +131,7 @@ Configuration edits require a repeated identical command within thirty seconds. 
 
 Vehicle, disguise and undisguise commands require `blocksadder.others` when targeting another player. Ordinary vehicle riding uses `blocksadder.vehicle.ride`; placement uses `blocksadder.vehicle.place`; sneak-attack removal uses `blocksadder.vehicle.break`. Crop fertilizing uses `blocksadder.crop.fertilize`.
 
-Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/babrowse` (`/bbrowse`), `/bareload` (`/breload`), `/barecipe` (`/brecipe`) and `/bainspect` (`/binspect`). They accept the same arguments as their matching subcommands. Reference-plugin commands, aliases and permission nodes are not registered.
+Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/babrowse` (`/bbrowse`), `/basearch` (`/bsearch`), `/bareload` (`/breload`), `/barecipe` (`/brecipe`) and `/bainspect` (`/binspect`). They accept the same arguments as their matching subcommands. Reference-plugin commands, aliases and permission nodes are not registered.
 
 `blocksadder.admin` grants the command/gameplay permissions listed in its manifest children and defaults to operators. Meter bypass permissions are separate, default to false and are not included. Public browsing/help/info/recipe/glyph/pack/HUD/emote/plant-view commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs, choose plant detail or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
 
@@ -185,6 +186,6 @@ The current development output is `target/BlocksAdder-1.1.0-SNAPSHOT.jar`. Serve
 
 - [Plugin description in BBCode](docs/spigot-description.bbcode)
 - [Documentation in BBCode](docs/spigot-documentation.bbcode)
-- [Pixel art icon](assets/blocksadder-icon.png)
+- [SpigotMC upload icon, 96 × 96 PNG](assets/spigotmc-icon-96.png) · [Full-size artwork](assets/blocksadder-icon.png)
 
 Copyright © 2026 Lino. Independently written project sources are available under the [MIT license](LICENSE). Minecraft is a trademark of Mojang and Microsoft; this project is unaffiliated.

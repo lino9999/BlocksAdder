@@ -28,6 +28,10 @@ commands:
     description: Browse custom items
     usage: /<command>
     aliases: [bbrowse]
+  basearch:
+    description: Find items by name or namespaced ID
+    usage: /<command> [text]
+    aliases: [bsearch]
   bareload:
     description: Reload content
     usage: /<command>
@@ -55,6 +59,7 @@ permissions:
       blocksadder.help: true
       blocksadder.info: true
       blocksadder.browse: true
+      blocksadder.search: true
       blocksadder.recipe: true
       blocksadder.glyph: true
       blocksadder.pack: true
@@ -92,6 +97,9 @@ permissions:
   blocksadder.info:
     default: true
   blocksadder.browse:
+    default: true
+  blocksadder.search:
+    description: Find visible items across catalog categories.
     default: true
   blocksadder.recipe:
     default: true

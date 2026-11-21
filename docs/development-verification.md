@@ -1,5 +1,9 @@
 # Development verification
 
+## Preview 22 catalog search
+
+The preview 22 JAR passed 18,301 server assertions in 22 accepted processes. Two protocol players exercised catalog search on nine Spigot and Paper builds with ProtocolLib. Spigot 1.21.11 and Paper 26.3 also ran the command-only path with ProtocolLib absent and repeated the recipe browser suite. All nine builds repeated the core checks with the published pottery bundle. The offline matcher checks are recorded separately. [Builds and results](catalog-search-verification.json) · [Search guide](catalog-search.md) · [Distribution audit](catalog-search-audit.json)
+
 ## Preview 21 recipe catalog
 
 The preview 21 JAR passed 7,576 server assertions in 20 accepted processes. Two protocol players exercised recipe navigation, separate page positions, item permissions and grants on each of nine Spigot and Paper builds. Each build also loaded the published pottery bundle and repeated the core checks. Spigot 1.21.11 and Paper 26.3 repeated the preview 20 recipe permission suite. Offline index and parser checks are counted separately. [Builds and results](recipe-catalog-verification.json) · [Catalog guide](recipe-catalog.md) · [Distribution audit](recipe-catalog-audit.json)
