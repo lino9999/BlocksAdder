@@ -19,24 +19,32 @@ These observations identify the required public surface and data boundaries. The
 ## Definition schema
 
 ```yaml
-namespace: example
-liquids:
-  blue_water:
-    color: '#55AAFF'
-    material: WATER
-    bucket-item: example:blue_bucket
-    flow-ticks: 5
-    max-distance: 7
-    infinite-sources: false
-items:
-  blue_bucket:
-    material: WATER_BUCKET
-    display-name: '&bBlue Water Bucket'
-    liquid-bucket: example:blue_water
-  liquid_meter:
-    material: STICK
-    display-name: '&eLiquid Analyzer'
-    liquid-analyzer: true
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: blue_water
+    kind: fluid
+    settings:
+      color: '#55AAFF'
+      material: WATER
+      bucket-item: example:blue_bucket
+      flow-ticks: 5
+      max-distance: 7
+      infinite-sources: false
+  - key: blue_bucket
+    kind: artifact
+    item:
+      base: WATER_BUCKET
+      label: '&bBlue Water Bucket'
+    traits:
+      liquid-bucket: example:blue_water
+  - key: liquid_meter
+    kind: artifact
+    item:
+      base: STICK
+      label: '&eLiquid Analyzer'
+    traits:
+      liquid-analyzer: true
 ```
 
 `bucket-item` references an existing custom item. A matching `liquid-bucket` binding can also infer the bucket when it uses the full ID and there is one matching item. Legacy `behaviours.liquid_bucket.name` and `behaviours.liquid_analyzer` are recognized. Modern `liquid-bucket` may be a string or a section containing `name`. The renderer and integrations can query `liquidColor(id)` and `liquidLocations(chunk)`. Native WATER tinting uses the registered biome palette described below.
@@ -46,27 +54,32 @@ Physical liquid materials are WATER or LAVA. Flow delays range from 1–1,200 se
 Sources can be collected only into their registered bucket. Flowing cells never produce a source bucket, preventing duplication by filling from a thin stream. Custom buckets cannot be drunk as milk or other vanilla consumables, and ordinary glass bottles/potions cannot extract ordinary water from indexed custom liquid. Survival placement consumes one custom bucket and returns an empty bucket; inventory overflow drops at the player. Creative placement retains the bucket. Empty-bucket pickup replaces one held bucket with the configured custom item.
 
 ```yaml
-namespace: example
-fires:
-  blue_flame:
-    material: FIRE
-    variant: 11
-    age: 0
-    max-age: 120
-    age-ticks: 20
-    permanent: false
-    rain-extinguishes: true
-    spread-chance: 0.05
-    burn-blocks: false
-    damage: 1.0
-items:
-  blue_flame_item:
-    material: PAPER
-    display-name: '&bBlue Flame'
-    fire-igniter: example:blue_flame
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: blue_flame
+    kind: flame
+    settings:
+      material: FIRE
+      variant: 11
+      age: 0
+      max-age: 120
+      age-ticks: 20
+      permanent: false
+      rain-extinguishes: true
+      spread-chance: 0.05
+      burn-blocks: false
+      damage: 1.0
+  - key: blue_flame_item
+    kind: artifact
+    item:
+      base: PAPER
+      label: '&bBlue Flame'
+    traits:
+      fire-igniter: example:blue_flame
 ```
 
-An item may instead contain an embedded `fire` section, using its own item ID as the fire ID. A `fire.name` reference selects a separately declared fire definition; `fire.enabled: false` disables the embedded binding. The physical material can be FIRE or SOUL_FIRE. Normal fire requires a solid supporting block; soul fire requires soul sand or soul soil.
+An item may instead contain an embedded `traits.fire` section, using its own item ID as the fire ID. A `fire.name` reference selects a separately declared fire definition; `fire.enabled: false` disables the embedded binding. The physical material can be FIRE or SOUL_FIRE. Normal fire requires a solid supporting block; soul fire requires soul sand or soul soil.
 
 `variant` reserves the native FIRE age (0–15) for resource-pack rendering. Logical `age` is stored separately, so `setFireAge` does not change the selected rendering variant. `max-age` ranges from 1–1,000,000; nonpermanent fire advances at `age-ticks` intervals and expires at its maximum. Permanent fire retains its logical age. Rain can extinguish eligible exposed fire when enabled. Spreading probability ranges from 0–1; burning actual neighboring blocks requires explicit `burn-blocks: true`. Native uncontrolled spread and aging are suppressed for indexed fire. Per-definition damage adjusts damage originating directly from that fire block.
 
@@ -77,16 +90,20 @@ The engine honors `minecraft:fire_spread_radius_around_player`: zero pauses upda
 The original item paths `specific_properties.block.placed_model.type: FIRE` and `behaviours.block.placed_model.type: FIRE` correspond to embedded `fire` definitions. The loader integration maps these to `auto: true`, `material: FIRE`, `lifecycle: native` and removes ordinary block placement. The environment item listener places these fires through `placeFire`, preserving their item ID and consuming one held item in survival mode. The separate public API routes through `isFireDefinition(id)`.
 
 ```yaml
-namespace: example
-items:
-  blue_fire:
-    material: PAPER
-    display-name: Blue Fire
-    texture: example:block/blue_fire
-    fire:
-      auto: true
-      material: FIRE
-      lifecycle: native
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: blue_fire
+    kind: artifact
+    item:
+      base: PAPER
+      label: Blue Fire
+      sprite: example:block/blue_fire
+    traits:
+      fire:
+        auto: true
+        material: FIRE
+        lifecycle: native
 ```
 
 `fire-variant-ids.yml` permanently associates IDs with physical FIRE ages. Automatic assignments use 1-15; age zero stays vanilla. Candidate validation plans allocations without writing files. Successful reload saves the allocation history atomically. Removing a definition reserves its old age permanently; capacity exhaustion, conflicting explicit assignments and attempts to change an existing assignment are rejected. Back up this allocation file with the world. An explicit modern `variant: 0` deliberately overrides the otherwise vanilla age and receives a complete renderer family; it is never selected automatically. SOUL_FIRE has no compatible age palette and rejects automatic allocation.

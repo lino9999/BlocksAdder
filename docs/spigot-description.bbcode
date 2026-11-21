@@ -10,6 +10,7 @@ BlocksAdder lets you define namespaced Minecraft items, decorative blocks, inter
 
 [B]Recipe controls[/B] let you choose which custom workstations are active. You can remove vanilla recipes for selected results at server startup and provide your own crafting or smelting route for those items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Workstation and output settings[/URL]
 [B]Locked recipe hints[/B] show players which item they lack permission to craft, repair or forge. Choose a private result preview, an English chat message or both. The slot preview uses optional ProtocolLib. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-feedback.md]Recipe feedback settings[/URL]
+[B]Recipe and ingredient browser[/B] lets players hold any custom item and run /ba recipe to discover how to make it and where to use it. Follow an ingredient to its recipes, page through other workstations and return to the same catalog page. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-catalog.md]Catalog guide[/URL]
 Development 1.1.0-SNAPSHOT uses the independent [B]blocksadder/bundle-1[/B] typed-record format. Historical 1.0.0 downloads have an older format and a smaller feature set; match the documentation to the installed version.
 
 [SIZE=5][B]What you can create[/B][/SIZE]
@@ -48,7 +49,7 @@ Development 1.1.0-SNAPSHOT uses the independent [B]blocksadder/bundle-1[/B] type
 /ba browse [category] [player]
 /ba get <item> [amount]
 /ba give <player> <item> [amount] [silent]
-/ba recipe <item> [player]
+/ba recipe [item] [player]
 /ba inspect
 /ba plants <auto|full|hide|status> [player]
 /ba validate

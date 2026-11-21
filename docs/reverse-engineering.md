@@ -33,6 +33,8 @@ For preview 19, static inspection of 19 selected archive members traced two inde
 
 For preview 20, a REA view of 24 selected archive members and a static JVM instruction review tied permission feedback to crafting result clicks, anvil repair preparation and smithing preparation. The original sends a private result-slot item with a custom-font badge and can send chat. BlocksAdder uses its own lore, settings and packet integration. It checks the original player, window, inputs and permissions again before delivery and expires the preview. [Recipe feedback](recipe-feedback.md)
 
+The recipe viewer review followed 21 selected archive members through item lookup, recipe aggregation, paging, ingredient clicks and return navigation. A focused review of 12 members established how listing permissions, inspection and the privileged grant controls interact. BlocksAdder rebuilds this behavior from its own active recipe index. It sorts producers and uses by key, stores bounded per-player page positions and rechecks grants against the open window. [Recipe catalog](recipe-catalog.md)
+
 The following are observed entry points, schema switches and resources. Their presence alone does not establish every configuration combination or actual gameplay result.
 
 | Family | Evidence in the supplied artifact |

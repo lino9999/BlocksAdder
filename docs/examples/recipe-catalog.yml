@@ -1,0 +1,47 @@
+format: blocksadder/bundle-1
+bundle: kiln
+entries:
+  - key: blank
+    kind: artifact
+    item:
+      base: CLAY_BALL
+      label: '&fClay Blank'
+      group: pottery
+  - key: tile
+    kind: artifact
+    item:
+      base: BRICK
+      label: '&6Kiln Tile'
+      group: pottery
+  - key: glaze
+    kind: artifact
+    item:
+      base: BLUE_DYE
+      label: '&9Potter''s Glaze'
+      group: pottery
+    traits:
+      catalog:
+        permission: kiln.catalog.glaze
+  - key: fire_tile
+    kind: recipe
+    settings:
+      type: furnace
+      ingredient: kiln:blank
+      result: kiln:tile
+      cooking-time: 120
+  - key: press_tile
+    kind: recipe
+    settings:
+      type: shapeless
+      ingredients: [kiln:blank, gravel]
+      result: kiln:tile
+      permission: kiln.craft.pressed_tile
+  - key: blue_wall
+    kind: recipe
+    settings:
+      type: shaped
+      shape: ['TT', 'TG']
+      ingredients:
+        T: kiln:tile
+        G: kiln:glaze
+      result: blue_terracotta

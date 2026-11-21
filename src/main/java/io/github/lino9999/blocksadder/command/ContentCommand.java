@@ -107,8 +107,10 @@ public final class ContentCommand implements TabExecutor {
                     Text.send(sender, plugin.worldContent().inspect(block.getLocation()));
                 }
                 case "recipe" -> {
-                    usage(args, 2, "recipe <item> [player]");
-                    menus.recipe(args.length > 2 ? online(args[2], sender) : player(sender), args[1]);
+                    if (args.length > 3) throw new IllegalArgumentException("Usage: /ba recipe [item] [player]");
+                    String subject = args.length > 1 ? args[1] : plugin.items().definition(held(sender))
+                            .orElseThrow(() -> new IllegalArgumentException("Hold a registered custom item to inspect its recipes.")).id().toString();
+                    menus.recipe(args.length > 2 ? online(args[2], sender) : player(sender), subject);
                 }
                 case "glyph" -> {
                     if (args.length > 1) Text.send(sender, plugin.gameplay().glyph(args[1]).orElseThrow(() -> new IllegalArgumentException("Unknown glyph: " + args[1])));
@@ -355,7 +357,7 @@ public final class ContentCommand implements TabExecutor {
 
     private void help(CommandSender sender) {
         Text.send(sender, "&bBlocksAdder &7by Lino");
-        Text.send(sender, "/ba browse [category] [player] | recipe <item> [player] | glyph [id]");
+        Text.send(sender, "/ba browse [category] [player] | recipe [item] [player] | glyph [id]");
         if (sender.hasPermission("blocksadder.plants")) Text.send(sender, "/ba plants <auto|full|hide|status> [player]");
         if (!sender.hasPermission("blocksadder.get")) return;
         Text.send(sender, "/ba get <item> [amount] | give <player> <item> [amount] [silent]");
@@ -380,12 +382,19 @@ public final class ContentCommand implements TabExecutor {
             String action = args[0].toLowerCase(Locale.ROOT);
             if (!sender.hasPermission("blocksadder." + action)) return List.of();
             switch (action) {
-                case "get", "recipe", "drop" -> { if (args.length == 2) choices.addAll(plugin.content().items().stream().map(item -> item.id().toString()).toList()); }
+                case "get", "drop" -> { if (args.length == 2) choices.addAll(plugin.content().items().stream().map(item -> item.id().toString()).toList()); }
+                case "recipe" -> {
+                    if (args.length == 2) choices.addAll(plugin.content().items().stream()
+                            .filter(item -> menus.listed(sender, item) && plugin.content().catalog(item).inspect())
+                            .map(item -> item.id().toString()).toList());
+                    else if (args.length == 3 && sender.hasPermission("blocksadder.others"))
+                        choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
+                }
                 case "give", "remove" -> {
                     if (args.length == 2) choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                     if (args.length == 3) choices.addAll(plugin.content().items().stream().map(item -> item.id().toString()).toList());
                 }
-                case "browse" -> { if (args.length == 2) choices.addAll(plugin.content().items().stream().map(item -> item.category()).distinct().toList()); }
+                case "browse" -> { if (args.length == 2) choices.addAll(plugin.content().items().stream().filter(item -> menus.listed(sender, item)).map(item -> item.category()).distinct().toList()); }
                 case "pack" -> { if (args.length == 2) choices.addAll(List.of("build", "send", "hash")); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }
                 case "stat" -> {
                     if (args.length == 2) choices.addAll(List.of("read", "write", "add", "subtract"));

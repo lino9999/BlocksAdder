@@ -6,6 +6,8 @@ Preview 19 adds family selection for custom recipes and native exclusions by res
 
 Preview 20 adds a private result-slot hint and optional chat on denied crafting, anvil and smithing operations. It also resolves permitted recipes first when multiple custom definitions match the inputs. [Permission feedback](recipe-feedback.md)
 
+Preview 21 makes all active recipes producing or using a registered item available in the catalog. This includes multiple recipes, item information, custom ingredient links, per-player page positions and an explicit administrative result grant. [Recipe catalog](recipe-catalog.md)
+
 The supplied original JAR was inspected statically, never executed. Observations below come from `td`, `vm`, `vb`, `vc`, `wc`, `wd` and the modern `ajd` adapter. Production implementation and tests are independent; no original source or assets are included.
 
 ## Observed contracts

@@ -80,6 +80,10 @@ native-recipes:
   exclude-results: [iron_ingot][/CODE]
 The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
 
+[SIZE=5][B]Browsing recipes[/B][/SIZE]
+Run /ba recipe while holding a custom item, or /ba recipe followed by its ID. Production recipes appear before ingredient uses. Click a custom ingredient to inspect it. Back returns to the preceding item or catalog page. An item with no producing recipe opens on its information page.
+In an item record, set traits.catalog.permission to require a permission for listing the item, or set traits.catalog.inspect to false to disable its recipe pages. A known ID can still open an unlisted item when inspection is enabled. The separate blocksadder.get permission grants access to a button for receiving the exact recipe result. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-catalog.md]Full catalog guide[/URL] · [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/recipe-catalog.yml]Pottery example[/URL]
+
 [SIZE=5][B]Locked recipe feedback[/B][/SIZE]
 Players can receive a private result-slot preview after they click a locked crafting result or prepare a restricted anvil or smithing operation. The output keeps its name and model and gains a “Recipe locked” lore line. The real result stays empty.
 [CODE]recipe-feedback:
@@ -113,7 +117,7 @@ These server settings belong in config.yml. Run /ba pack build and upload the ex
 /ba browse [category] [player]
 /ba get <item> [amount]
 /ba give <player> <item> [amount] [silent]
-/ba recipe <item> [player]
+/ba recipe [item] [player]
 /ba inspect
 /ba plants <auto|full|hide|status> [player]
 /ba validate

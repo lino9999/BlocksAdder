@@ -76,6 +76,7 @@ public final class RecipeService implements Listener, AutoCloseable {
     private Map<RecipeStation, List<RegisteredRecipe>> families = Map.of();
     private Set<Material> excludedResults = Set.of();
     private Map<NamespacedKey, RegisteredRecipe> registered = Map.of();
+    private Map<String, List<CatalogRecipe>> catalog = Map.of();
     private RecipeBookIndex bookIndex = new RecipeBookIndex.Builder().build();
     private boolean crafterWarning;
 
@@ -96,6 +97,7 @@ public final class RecipeService implements Listener, AutoCloseable {
         FeedbackChannels channels = FeedbackChannels.read(plugin.getConfig());
         Map<NamespacedKey, RegisteredRecipe> next = prepare(plugin.getConfig());
         RecipeBookIndex index = index(next);
+        var nextCatalog = catalog(next);
         Map<RecipeStation, List<RegisteredRecipe>> byStation = groupByStation(next);
         Map<NamespacedKey, RegisteredRecipe> previous = registered;
         removeNative(previous);
@@ -109,6 +111,7 @@ public final class RecipeService implements Listener, AutoCloseable {
             registered = Map.copyOf(next);
             families = byStation;
             bookIndex = index;
+            catalog = nextCatalog;
             excludedResults = exclusions;
         } catch (RuntimeException exception) {
             added.forEach(Bukkit::removeRecipe);
@@ -131,7 +134,9 @@ public final class RecipeService implements Listener, AutoCloseable {
         VanillaRecipeFilter.read(settings);
         FeedbackChannels.read(settings);
         RecipeService validator = new RecipeService(plugin, () -> candidate, new ItemService(plugin, () -> candidate));
-        validator.index(validator.prepare(settings));
+        var recipes = validator.prepare(settings);
+        validator.index(recipes);
+        validator.catalog(recipes);
     }
 
     public boolean nativeRecipeRestartPending() {
@@ -295,6 +300,16 @@ public final class RecipeService implements Listener, AutoCloseable {
     public List<Recipe> recipesFor(String id) {
         String resolved = registry.get().find(id).map(value -> value.id().toString()).orElse(id);
         return registered.entrySet().stream().sorted(Map.Entry.comparingByKey(java.util.Comparator.comparing(NamespacedKey::toString))).map(entry -> entry.getValue().recipe()).filter(recipe -> items.identify(recipe.getResult()).filter(resolved::equals).isPresent()).toList();
+    }
+
+    public List<CatalogRecipe> catalogPages(String subject) {
+        return subject == null ? List.of() : catalog.getOrDefault(subject, List.of());
+    }
+
+    private Map<String, List<CatalogRecipe>> catalog(Map<NamespacedKey, RegisteredRecipe> recipes) {
+        var builder = new CatalogRecipeIndex(this::registeredId, id -> items.create(id, 1));
+        recipes.forEach((key, rule) -> builder.add(key, rule.recipe(), rule.identities(), anvilInputs(rule.recipe()), rule.recipe() instanceof AnvilRepairRecipe));
+        return builder.build();
     }
 
     public List<RecipeChoice> anvilInputs(Recipe recipe) {
@@ -835,6 +850,7 @@ public final class RecipeService implements Listener, AutoCloseable {
         removeNative(registered);
         bookIndex = new RecipeBookIndex.Builder().build();
         registered = Map.of();
+        catalog = Map.of();
         families = Map.of();
         anvilPreviews.refresh((view, result) -> false);
         anvilPreviews.clear();

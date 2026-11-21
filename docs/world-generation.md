@@ -18,22 +18,25 @@ These are static observations. The original plugin was not executed. The indepen
 ## Block and ore population
 
 ```yaml
-namespace: example
-populators:
-  ruby_ore:
-    block: example:ruby_ore
-    worlds: ['world', 'mining_*', '!mining_disabled']
-    biomes: [minecraft:plains, minecraft:forest]
-    min-height: -48
-    max-height: 32
-    vein-blocks: 8
-    chunk-veins: 4
-    chance: 35
-    replaceable-blocks: [STONE, DEEPSLATE]
-    seed-offset: 0
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: ruby_ore
+    kind: ore-field
+    settings:
+      block: example:ruby_ore
+      worlds: ['world', 'mining_*', '!mining_disabled']
+      biomes: [minecraft:plains, minecraft:forest]
+      min-height: -48
+      max-height: 32
+      vein-blocks: 8
+      chunk-veins: 4
+      chance: 35
+      replaceable-blocks: [STONE, DEEPSLATE]
+      seed-offset: 0
 ```
 
-`populators`, `blocks_populators` and `worlds_populators` are aliases for this family. Hyphenated and original underscored field names are accepted. `amount` aliases `vein-blocks`; `iterations` aliases `chunk-veins`. A full custom item ID must reference an enabled custom block. A vanilla block material is also accepted. Targets must be non-air blocks without gravity.
+Use `kind: ore-field` for this family in a bundle. Hyphenated and original underscored field names are accepted. `amount` aliases `vein-blocks`; `iterations` aliases `chunk-veins`. A full custom item ID must reference an enabled custom block. A vanilla block material is also accepted. Targets must be non-air blocks without gravity.
 
 `chance`/`chunk-chance`/`chunk_chance` are percentages from 0–100; `-1` means always. An explicit `probability: 0.35` provides the same chance in a 0–1 form. Zero never runs the rule. Height bounds are inclusive and clamped to the current world's build limits; minimum must be lower than maximum. Empty `replaceable-blocks` is unrestricted, matching the reference, so configure an explicit replacement list for normal ore rules. Existing indexed custom content is not replaced.
 
@@ -42,25 +45,30 @@ Each rule has a deterministic random stream derived from world seed, chunk coord
 ## Surface and cave decorators
 
 ```yaml
-namespace: example
-decorators:
-  flowers:
-    type: surface
-    block: example:flower
-    worlds: ['world']
-    min-height: 60
-    max-height: 160
-    amount: 6
-    chance: 50
-    bottom-blocks: [GRASS_BLOCK, MOSS_BLOCK]
-  cave_growth:
-    type: cave-floor
-    block: example:crystal
-    worlds: ['world']
-    min-height: -48
-    max-height: 20
-    amount: 4
-    bottom-blocks: [STONE, DEEPSLATE]
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: flowers
+    kind: surface-cover
+    settings:
+      type: surface
+      block: example:flower
+      worlds: ['world']
+      min-height: 60
+      max-height: 160
+      amount: 6
+      chance: 50
+      bottom-blocks: [GRASS_BLOCK, MOSS_BLOCK]
+  - key: cave_growth
+    kind: surface-cover
+    settings:
+      type: cave-floor
+      block: example:crystal
+      worlds: ['world']
+      min-height: -48
+      max-height: 20
+      amount: 4
+      bottom-blocks: [STONE, DEEPSLATE]
 ```
 
 The original `surface_decorators` and `cave_decorators` sections are also accepted. For `cave_decorators`, use `position: SURFACE` or `position: CEILING`. Canonical `decorators.type` accepts `surface`, `cave-floor` and `cave-ceiling`.
@@ -70,23 +78,26 @@ Surface attempts inspect the height map and the immediately lower support. Cave 
 ## Native custom tree population
 
 ```yaml
-namespace: example
-tree_populators:
-  ruby_trees:
-    worlds: ['world']
-    biomes: [minecraft:forest]
-    min-height: 60
-    max-height: 160
-    amount: 1
-    iterations: 2
-    chance: 40
-    log: example:ruby_log
-    leaves: example:ruby_leaves
-    tree_type: BIRCH
-    bottom_blocks: [GRASS_BLOCK]
+format: blocksadder/bundle-1
+bundle: example
+entries:
+  - key: ruby_trees
+    kind: tree-field
+    settings:
+      worlds: ['world']
+      biomes: [minecraft:forest]
+      min-height: 60
+      max-height: 160
+      amount: 1
+      iterations: 2
+      chance: 40
+      log: example:ruby_log
+      leaves: example:ruby_leaves
+      tree_type: BIRCH
+      bottom_blocks: [GRASS_BLOCK]
 ```
 
-`tree_populators` and `trees_populators` are aliases. Inline `log`/`leaves` can reference custom blocks or vanilla blocks. Alternatively use `tree: example:configured_tree` to reference an existing `trees` definition with `trunk`, `leaves` and `tree-type`/`tree_type`. Native type names are validated against the running server's Bukkit `TreeType`, so newer tree types require a server that supplies them.
+Use `kind: tree-field` for a tree population rule. Inline `log`/`leaves` can reference custom blocks or vanilla blocks. Alternatively use `tree: example:configured_tree` to reference an existing `tree` record with `trunk`, `leaves` and `tree-type`/`tree_type`. Native type names are validated against the running server's Bukkit `TreeType`, so newer tree types require a server that supplies them.
 
 Native shapes come from the public `RegionAccessor.generateTree(Location, Random, TreeType, Predicate<BlockState>)` API with a seeded `Random`. The predicate records proposed states and always returns false, keeping capture separate from mutation. Proposed logs and leaves are replaced with the configured content; other native tree states retain their vanilla material. Vanilla leaves are made persistent so custom log backing blocks do not cause unintended leaf decay. A cancellable `StructureGrowEvent` exposes the proposed mapped shape before it is committed.
 

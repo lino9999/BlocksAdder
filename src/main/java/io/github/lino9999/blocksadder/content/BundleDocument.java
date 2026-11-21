@@ -76,6 +76,10 @@ public final class BundleDocument {
                 if (record.containsKey("traits")) {
                     Map<String, Object> traits = map(record.get("traits"), "traits of " + key);
                     if (traits.keySet().stream().anyMatch(name -> ITEM_FIELDS.containsValue(name) || name.equals("enabled"))) throw invalid("Item presentation belongs in the item section: " + key);
+                    if (traits.containsKey("catalog")) {
+                        try { CatalogPolicy.parse(traits.get("catalog"), key); }
+                        catch (IllegalArgumentException exception) { throw invalid(exception.getMessage()); }
+                    }
                     put(config, traits);
                 }
                 if (!kind.equals("artifact")) {

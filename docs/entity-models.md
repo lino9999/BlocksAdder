@@ -1,21 +1,24 @@
 # Skeletal entity and player models
 
-Model definitions live in a namespaced content file under `models`. The runtime uses public Bukkit `ItemDisplay` entities for drawable bones and an `Interaction` hitbox. It keeps a parent-ordered transform graph, evaluates animation tracks and follows a target entity. Core rendering has no packet-library dependency; orbit cameras use the optional public ProtocolLib API.
+Define models with `kind: rig` in a BlocksAdder content bundle. The runtime uses public Bukkit `ItemDisplay` entities for drawable bones and an `Interaction` hitbox. It keeps a parent-ordered transform graph, evaluates animation tracks and follows a target entity. Core rendering has no packet-library dependency; orbit cameras use the optional public ProtocolLib API.
 
 ## Blockbench source
 
 ```yaml
-namespace: my_pack
-models:
-  robot:
-    file: contents/my_pack/models/robot.bbmodel
-    scale: 1.0
-    view-range: 48
-    hide-base: true
-    self-visible: false
-    hitbox:
-      width: 0.8
-      height: 1.8
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: robot
+    kind: rig
+    settings:
+      file: contents/my_pack/models/robot.bbmodel
+      scale: 1.0
+      view-range: 48
+      hide-base: true
+      self-visible: false
+      hitbox:
+        width: 0.8
+        height: 1.8
 ```
 
 Paths are relative to `plugins/BlocksAdder/`, must remain inside that directory and must name a regular `.bbmodel`, `.iaentitymodel` or `.player_animations` file no larger than 16 MiB. Symbolic links and traversal outside the data directory are rejected.
@@ -37,34 +40,37 @@ Each rig owns its variables and previous pose for `this`. Integrations can use `
 An alternative rig can reuse existing items or item-model assets:
 
 ```yaml
-namespace: my_pack
-models:
-  robot:
-    bones:
-      body:
-        item: my_pack:robot_body
-        origin: [0, 8, 0]
-      arm:
-        parent: body
-        model: minecraft:stick
-        origin: [8, 12, 0]
-        rotation: [0, 0, 0]
-        scale: [1, 1, 1]
-      mount_driver:
-        parent: body
-        origin: [0, 16, 0]
-        mount: true
-    animations:
-      wave:
-        length: 1.0
-        loop: once
-        bones:
-          arm:
-            rotation:
-              - time: 0
-                value: [0, 0, 0]
-              - time: 1
-                value: [0, 0, 90]
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: robot
+    kind: rig
+    settings:
+      bones:
+        body:
+          item: my_pack:robot_body
+          origin: [0, 8, 0]
+        arm:
+          parent: body
+          model: minecraft:stick
+          origin: [8, 12, 0]
+          rotation: [0, 0, 0]
+          scale: [1, 1, 1]
+        mount_driver:
+          parent: body
+          origin: [0, 16, 0]
+          mount: true
+      animations:
+        wave:
+          length: 1.0
+          loop: once
+          bones:
+            arm:
+              rotation:
+                - time: 0
+                  value: [0, 0, 0]
+                - time: 1
+                  value: [0, 0, 90]
 ```
 
 Origins are absolute rest-pose pivots in pixels; the loader calculates the local parent offset. A bone may reference `item` for a registered custom item or `model` for an existing modern item-model ID. For vanilla item models, use IDs such as `minecraft:stone`, rather than the model-geometry path `minecraft:item/stone`. A bone without either visual reference remains a transform/mount pivot.
@@ -74,13 +80,16 @@ Animation channels `position`, `rotation` and `scale` accept ordered records wit
 ## Legacy exported model import
 
 ```yaml
-namespace: my_pack
-models:
-  imported:
-    file: contents/my_pack/models/robot.iaentitymodel
-    legacy-model-root: my_pack:entity/robot
-    bone-models:
-      body: my_pack:entity/robot/body
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: imported
+    kind: rig
+    settings:
+      file: contents/my_pack/models/robot.iaentitymodel
+      legacy-model-root: my_pack:entity/robot
+      bone-models:
+        body: my_pack:entity/robot/body
 ```
 
 The supplied reference artifact's `itemsadder/m/ec` parser and `dx`, `ea`, `dt`, `ej`, `adq` runtime classes were inspected statically. They establish the exported fields `bones` (`name`, `boneType`, `parents`, `pos`, `rot`, `scales`) and `animations` (`name`, `loopMode`, `length`, optional loop start/end, per-bone `keyframes`, `pos`, `rot`, `scale_str`). The reference indexes exported pose arrays at 20 samples/second, divides rest bone positions by 16 and uses YXZ rotation order. Frame positions are added directly to world positions by the observed runtime.
@@ -102,17 +111,20 @@ The compiler preserves existing item-atlas sources. Base atlas palette paths sup
 ## Live player skins
 
 ```yaml
-namespace: my_pack
-models:
-  player_rig:
-    view-range: 48
-    bones:
-      head: {skin-part: head, origin: [0, 24, 0]}
-      body: {skin-part: body, origin: [0, 24, 0]}
-      left_arm: {skin-part: left_arm, origin: [5, 22, 0]}
-      right_arm: {skin-part: right_arm, origin: [-5, 22, 0]}
-      left_leg: {skin-part: left_leg, origin: [1.9, 12, 0]}
-      right_leg: {skin-part: right_leg, origin: [-1.9, 12, 0]}
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: player_rig
+    kind: rig
+    settings:
+      view-range: 48
+      bones:
+        head: {skin-part: head, origin: [0, 24, 0]}
+        body: {skin-part: body, origin: [0, 24, 0]}
+        left_arm: {skin-part: left_arm, origin: [5, 22, 0]}
+        right_arm: {skin-part: right_arm, origin: [-5, 22, 0]}
+        left_leg: {skin-part: left_leg, origin: [1.9, 12, 0]}
+        right_leg: {skin-part: right_leg, origin: [-1.9, 12, 0]}
 ```
 
 Skin parts use the target player's public `PlayerProfile` by default. A nonplayer target without a configured skin uses the game's built-in wide Steve texture. The optional model-level `skin` field accepts an HTTPS `textures.minecraft.net/texture/<hash>` URL or a bounded Base64 Minecraft texture property. A Base64 property retains `metadata.model: slim`. Ports, credentials, query strings, fragments, other hosts/protocols and oversized properties are rejected. The server does not fetch/upload skin images or invoke profile updates. URL-bearing profiles use public `SkullMeta`; texture-less profiles use generated special models pointing to the matching built-in slim/wide default texture. This avoids the name-completion lookup documented by the public [SkullMeta contract](https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/inventory/meta/SkullMeta.html#setOwnerProfile(org.bukkit.profile.PlayerProfile)). No Minecraft textures are included in this plugin.
@@ -128,36 +140,39 @@ Rendered appearance remains a user check. Exact legacy player pose retargeting, 
 ## Skeletal player emotes
 
 ```yaml
-namespace: my_pack
-emotes:
-  dance:
-    model: my_pack:player_rig
-    animation: dance
-    end-animation: dance_end
-    can-player-move: false
-    third-person-view: true
-    hide-equipment:
-      helmet: true
-      mainhand: true
-      offhand: true
-    track-player-rotation:
-      head: true
-      body: false
-    cancel-conditions:
-      sneak: true
-      take-damage: true
-      deal-damage: true
-      in-air: true
-    on-stop:
-      stop-sounds: true
-      skip-emote-end: false
-    background-music:
-      sound:
-        name: my_pack:dance_music
-        category: MUSIC
-        volume: 1
-        pitch: 1
-      repeat-interval-seconds: 10
+format: blocksadder/bundle-1
+bundle: my_pack
+entries:
+  - key: dance
+    kind: motion
+    settings:
+      model: my_pack:player_rig
+      animation: dance
+      end-animation: dance_end
+      can-player-move: false
+      third-person-view: true
+      hide-equipment:
+        helmet: true
+        mainhand: true
+        offhand: true
+      track-player-rotation:
+        head: true
+        body: false
+      cancel-conditions:
+        sneak: true
+        take-damage: true
+        deal-damage: true
+        in-air: true
+      on-stop:
+        stop-sounds: true
+        skip-emote-end: false
+      background-music:
+        sound:
+          name: my_pack:dance_music
+          category: MUSIC
+          volume: 1
+          pitch: 1
+        repeat-interval-seconds: 10
 ```
 
 The observed underscore aliases are accepted. Legacy `id: namespace:animation` resolves an animation in one unambiguous imported model. Explicit `model`/`animation` bindings resolve before registry activation. A configured end clip is optional; otherwise `<animation>_end` is inferred when present. `duration-seconds` can bound a looping emote. Optional `speed.movement`/`speed.flying` use Bukkit's range of -1 through 1, and `allow-flight` temporarily grants flight. The default permission is `blocksadder.emote`. A definition cannot mix a skeletal binding with `frames`; frame emotes remain handled by the gameplay timeline.

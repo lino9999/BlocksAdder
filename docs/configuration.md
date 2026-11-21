@@ -48,6 +48,8 @@ Use `recipe-stations.active` to enable custom recipe families on reload. Use `na
 
 Use `recipe-feedback.channels` to show players a locked crafting, anvil or smithing result, explain it in chat or keep it silent. [Recipe permission feedback](recipe-feedback.md)
 
+Set `traits.catalog.permission` on an item to limit who finds it in catalog listings. Set `traits.catalog.inspect: false` to disable opening that item's recipe pages. Active recipes automatically supply production and ingredient-use pages. [Recipe catalog and pottery example](recipe-catalog.md)
+
 Set `active: false` on a record or the whole bundle to disable it. Unknown document, record and presentation fields, repeated definitions, invalid identifiers and unsupported format versions reject the candidate. `/ba validate` checks a candidate; `/ba reload` validates before publishing it.
 
 The `item` presentation fields are `base`, `label`, `details`, `group`, `visual`, `sprite`, `parent`, `variant` and `stack`. `base` is required. Other inventory-item properties belong in `traits`, including durability, enchantments, attributes, equipment, food and actions. Do not duplicate presentation fields inside traits. Typed world behavior belongs in `settings`.

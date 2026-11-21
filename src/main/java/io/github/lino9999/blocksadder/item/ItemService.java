@@ -111,7 +111,16 @@ public final class ItemService {
     }
 
     public void give(Player player, String id, int amount) {
-        ItemStack template = create(id, 1);
+        deliver(player, create(id, 1), amount, false);
+    }
+
+    public void giveOwned(Player player, ItemStack template, int amount) {
+        deliver(player, template, amount, true);
+    }
+
+    private void deliver(Player player, ItemStack template, int amount, boolean ownOverflow) {
+        if (template == null || template.getType().isAir() || template.getMaxStackSize() < 1)
+            throw new IllegalArgumentException("A grant requires a usable item.");
         int remaining = amount;
         if (remaining < 1 || remaining > 6400)
             throw new IllegalArgumentException("Amount must be between 1 and 6400.");
@@ -119,13 +128,10 @@ public final class ItemService {
             int count = Math.min(remaining, template.getMaxStackSize());
             ItemStack stack = template.clone();
             stack.setAmount(count);
-            player.getInventory()
-                    .addItem(stack)
-                    .values()
-                    .forEach(
-                            leftover ->
-                                    player.getWorld()
-                                            .dropItemNaturally(player.getLocation(), leftover));
+            for (ItemStack leftover : player.getInventory().addItem(stack).values()) {
+                if (ownOverflow) player.getWorld().dropItemNaturally(player.getLocation(), leftover, dropped -> dropped.setOwner(player.getUniqueId()));
+                else player.getWorld().dropItemNaturally(player.getLocation(), leftover);
+            }
             remaining -= count;
         }
     }

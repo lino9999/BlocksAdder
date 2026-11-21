@@ -2,17 +2,15 @@
 
 # BlocksAdder
 
-Development uses the independent `blocksadder/bundle-1` typed-record content format. See [configuration](docs/configuration.md) and the [implementation/distribution audit](docs/independent-implementation.md). External plugin YAML is not accepted by the development loader.
-
 **Custom items, blocks, furniture, crops and resource packs for Minecraft Spigot and Paper.**
 
-BlocksAdder by **Lino** is a Java plugin for building namespaced server content with YAML. Create items, decorate worlds, register recipes, grow crops and display player stats using the Minecraft client and a server resource pack.
+BlocksAdder by **Lino** is a Java plugin for Spigot and Paper 1.21.11 through 26.3. Define items, workstations, crops and player stats in YAML. Players can browse recipes and ingredient uses in game. BlocksAdder builds a resource pack for the models, textures, sounds and glyphs you supply.
 
-[Download the JAR](https://github.com/lino9999/BlocksAdder/releases) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
+[Download preview 21](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.21) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
 
-**Preview 1.0.0 scope:** the downloadable preview is an initial independent implementation. The [feature comparison](docs/feature-parity.md) records its surface and differences from the supplied reference plugin. That preview does not include skeletal animations, disguises, vehicles, custom fluid/fire simulation or dedicated third-party adapters. Headless server checks do not certify client visuals or every player interaction.
+**Preview 21 adds a recipe and ingredient browser.** Hold a custom item and run `/ba recipe` to see how to make it and where to use it. Follow a custom ingredient to its recipes, then return to the same page. Server owners can control which items players can find in the catalog and which recipe pages they can open. [Recipe catalog](docs/recipe-catalog.md) · [Example bundle](docs/examples/recipe-catalog.yml) · [Locked recipe feedback](docs/recipe-feedback.md) · [Remaining features](docs/parity-progress.md)
 
-**Preview 20 explains locked recipes.** Players can see which result they lack permission to craft, repair or forge. Choose a private result-slot preview, a chat message, both or silence. The slot preview uses optional ProtocolLib. Server owners can also choose active workstations and remove vanilla recipes for selected outputs. [Recipe feedback](docs/recipe-feedback.md) · [Workstation controls](docs/recipe-controls.md) · [Recipe book progression](docs/recipe-book.md) · [Remaining features](docs/parity-progress.md)
+Current development uses the independently designed `blocksadder/bundle-1` content format. The historical 1.0.0 release has a smaller feature set and an earlier format. [Configuration](docs/configuration.md) · [Independent implementation](docs/independent-implementation.md) · [Historical comparison](docs/feature-parity.md)
 
 **Camera compatibility:** preview 13 resolves the Paper 26.3 disconnect observed in preview 12 with the tested ProtocolLib 5.5 snapshot. Native look, movement cancellation and camera lifecycle passed on all nine builds; callback, masking and custom-totem integration also passed on Paper 26.3. [Exact artifacts and limits](docs/camera-input-verification.json). Rendered appearance remains a user check.
 
@@ -51,7 +49,7 @@ Named item-event commands can separately opt in to [incoming PlaceholderAPI argu
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 20 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.20)
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 21 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.21)
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.
@@ -69,7 +67,7 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | `/ba help` | `blocksadder.help` | Show command usage. |
 | `/ba info` | `blocksadder.info` | Show version, author, loaded item/placement counts and server version. |
 | `/ba browse [category] [player]` | `blocksadder.browse` | Open the paginated item catalog. |
-| `/ba recipe <item> [player]` | `blocksadder.recipe` | Preview the first configured recipe for an item. |
+| `/ba recipe [item] [player]` | `blocksadder.recipe` | Browse recipes and ingredient uses for the held or named item. Opening a menu for another player also requires `blocksadder.others`. |
 | `/ba glyph [id]` | `blocksadder.glyph` | List font image IDs or print a glyph. |
 | `/ba get <item> [amount]` | `blocksadder.get` | Receive a custom item. |
 | `/ba give <player> <item> [amount] [silent]` | `blocksadder.give` | Give items to an online player. |

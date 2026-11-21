@@ -120,7 +120,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             }));
             reloadContent();
             recipes.startFeedback();
-            menus = new CatalogMenu(() -> content, items, recipes);
+            menus = new CatalogMenu(this, () -> content, items, recipes);
             var commands = new ContentCommand(this, menus);
             for (String name : List.of("blocksadder", "baget", "bagive", "bapack", "babrowse", "bareload", "barecipe", "bainspect")) {
                 var command = java.util.Objects.requireNonNull(getCommand(name), "Missing plugin command: " + name);

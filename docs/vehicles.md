@@ -1,53 +1,58 @@
 # Vehicles
 
-Vehicles use public Bukkit entities, a shared bounded update task and native `PlayerInputEvent` controls. Configure a namespaced `vehicles` entry and select an item visual or a skeletal model. A custom item can place that vehicle with `vehicle: namespace:id`.
+Vehicles use public Bukkit entities, a shared bounded update task and native `PlayerInputEvent` controls. Configure a `vehicle` bundle record and select an item visual or a skeletal model. A custom item can place that vehicle with `traits.vehicle` set to its full ID.
 
 ```yaml
-namespace: workshop
-items:
-  car:
-    material: MINECART
-    display-name: Workshop Car
-    max-stack-size: 1
-    vehicle: workshop:car
-vehicles:
-  car:
-    mode: LAND
-    item: workshop:car
-    max-speed: 8
-    reverse-speed: 4
-    acceleration: 8
-    braking: 20
-    coast-friction: 0.92
-    turn-rate: 120
-    jump-speed: 8.4
-    step-height: 0.6
-    seat-height: 0.8
-    small: true
-    look-steering: true
-    fixed-rotation: false
-    sprint-multiplier: 1.5
-    permission: blocksadder.vehicle.ride
-    hitbox:
-      width: 0.8
-      length: 1.2
-      height: 1.2
-    fuel:
-      capacity: 100
-      start: 50
-      per-second: 1
-      items:
-        minecraft:coal:
-          amount: 10
-        workshop:fuel_can:
-          amount: 25
-          return-item: minecraft:bucket
-    smoke:
-      amount: 2
-      offset:
-        x: 0
-        y: 0.2
-        z: -0.8
+format: blocksadder/bundle-1
+bundle: workshop
+entries:
+  - key: car
+    kind: artifact
+    item:
+      base: MINECART
+      label: Workshop Car
+      stack: 1
+    traits:
+      vehicle: workshop:car
+  - key: car
+    kind: vehicle
+    settings:
+      mode: LAND
+      item: workshop:car
+      max-speed: 8
+      reverse-speed: 4
+      acceleration: 8
+      braking: 20
+      coast-friction: 0.92
+      turn-rate: 120
+      jump-speed: 8.4
+      step-height: 0.6
+      seat-height: 0.8
+      small: true
+      look-steering: true
+      fixed-rotation: false
+      sprint-multiplier: 1.5
+      permission: blocksadder.vehicle.ride
+      hitbox:
+        width: 0.8
+        length: 1.2
+        height: 1.2
+      fuel:
+        capacity: 100
+        start: 50
+        per-second: 1
+        items:
+          minecraft:coal:
+            amount: 10
+          workshop:fuel_can:
+            amount: 25
+            return-item: minecraft:bucket
+      smoke:
+        amount: 2
+        offset:
+          x: 0
+          y: 0.2
+          z: -0.8
 ```
 
 Remove the fuel-can entry unless that custom item exists. An omitted fuel capacity means unlimited fuel and exposes `-1` through the API. Capacity and start are fuel units; consumption is fuel units per second of powered movement intent. Fuel items cannot overflow the tank. Dropping and placing a vehicle retains its fuel.

@@ -2,16 +2,29 @@ package io.github.lino9999.blocksadder.content;
 
 import org.bukkit.configuration.ConfigurationSection;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public final class ContentRegistry {
     private final Map<String, ItemDefinition> items;
     private final Map<String, ConfigurationSection> sections;
+    private final Map<ContentId, CatalogPolicy> catalogPolicies;
 
     public ContentRegistry(Map<String, ItemDefinition> items, Map<String, ConfigurationSection> sections) {
         this.items = Map.copyOf(items);
         this.sections = Map.copyOf(sections);
+        Map<ContentId, CatalogPolicy> policies = new HashMap<>();
+        for (ItemDefinition item : this.items.values()) {
+            if (item.options() == null) continue;
+            Object raw = item.options().get("catalog", null);
+            if (raw != null) policies.put(item.id(), CatalogPolicy.parse(raw, item.id().toString()));
+        }
+        this.catalogPolicies = Map.copyOf(policies);
+    }
+
+    public CatalogPolicy catalog(ItemDefinition item) {
+        return catalogPolicies.getOrDefault(item.id(), CatalogPolicy.DEFAULT);
     }
 
     public Optional<ItemDefinition> find(String id) {
