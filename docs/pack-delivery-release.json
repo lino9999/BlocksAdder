@@ -1,0 +1,38 @@
+{
+  "release": "https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.25",
+  "prerelease": true,
+  "commit": "0be9ce3b1bbc0eba3dca39a30f3aaf9b6eea74d3",
+  "download_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+  "download_matches": true,
+  "assets": [
+    "BlocksAdder-1.1.0-SNAPSHOT.jar",
+    "BlocksAdder-1.1.0-SNAPSHOT.jar.sha256",
+    "blocksadder-icon.png",
+    "LICENSE",
+    "pack-delivery-audit.json",
+    "pack-delivery-verification.json",
+    "pack-delivery.yml",
+    "spigot-description.bbcode",
+    "spigot-documentation.bbcode",
+    "spigotmc-icon-96.png"
+  ],
+  "downloaded_asset_sha256": {
+    "BlocksAdder-1.1.0-SNAPSHOT.jar": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+    "BlocksAdder-1.1.0-SNAPSHOT.jar.sha256": "a28a181c4d2d253bfe55ad539cce3fc6f1109ae19660a9b26340985b3d346ac8",
+    "blocksadder-icon.png": "59e876117db58f7a5a244759bbecf7408f81f8536d22f331496b8d87c5776698",
+    "LICENSE": "832a2ace97536f1550984804ab67a3306f4488f80b0d1ad6f7777b867cb6c5d5",
+    "pack-delivery-audit.json": "85e8f815e2584d923a6660a8d3ef5255329e0e53156da175c3bdcf5c0e3427a6",
+    "pack-delivery-verification.json": "3f71b931f984cb74cc88d60dbca661fdd50679100a2c4502a1456282b05bf4c2",
+    "pack-delivery.yml": "6a374e35d7ff6762c04a5cdced037e8aad5052eff54614bf2a61c823be904a23",
+    "spigot-description.bbcode": "1b0dce0891398b05feaf2b5e68d6b6743eea4db4d2d2fcb8e9b379f708a705d4",
+    "spigot-documentation.bbcode": "1bb3649fae51b9823369722a4ee2884e3c8cf03be565b98c4fc02b1bb2320b95",
+    "spigotmc-icon-96.png": "65380c2ce5072a1f579dfb929c29adf719a41618821894d877396e6943380ef6"
+  },
+  "source_build": {
+    "url": "https://github.com/lino9999/BlocksAdder/actions/runs/44854064551",
+    "jobs": {
+      "compile (21)": "success",
+      "compile (25)": "success"
+    }
+  }
+}
