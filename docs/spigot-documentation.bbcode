@@ -80,6 +80,21 @@ native-recipes:
   exclude-results: [iron_ingot][/CODE]
 The five station names are crafting, cooking, anvil, smithing and stonecutting. Run /ba validate and /ba reload to change active stations. A full server stop and start applies a changed output exclusion list. Other namespaces can still produce the same items. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/recipe-controls.md]Native recipe controls[/URL]
 
+[SIZE=5][B]Organizing the catalog[/B][/SIZE]
+Use /ba browse to open the group overview or /ba browse <group> to go straight to its items. Each catalog record can set label, title, icon, rank and a full permission. The include and exclude lists accept exact item IDs and star wildcards. Use group to contribute to an existing group, or if-defined: skip for a fallback definition. In config.yml, catalog-layout.front pins named groups and catalog-layout.remainder chooses alphabetic or declared order. Item group assignments still populate it automatically.
+[CODE]format: blocksadder/bundle-1
+bundle: showroom
+entries:
+  - key: showcase
+    kind: catalog
+    settings:
+      title: Pottery shelf
+      icon: BRICK
+      rank: 1
+      include: ['kiln:tile', 'kiln:*']
+      exclude: ['kiln:glaze'][/CODE]
+Each icon shows the number of items visible to its viewer. The built-in all group opens all visible items. A separate item listing permission applies across groups and search. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/catalog-groups.md]Catalog settings and permissions[/URL] · [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/catalog-groups.yml]Complete showroom example[/URL]
+
 [SIZE=5][B]Finding custom items[/B][/SIZE]
 Use /ba search <text>, /basearch <text> or /bsearch <text> to match part of a full ID or display name. With ProtocolLib, click the catalog compass or omit the argument to open a private sign editor. The editor joins the four lines exactly as entered. A blank submission lists all eligible items. Search results have 45 items per page. Back from a recipe restores the search page.
 The blocksadder.search permission defaults to true. Hidden items and items protected by traits.catalog.permission are filtered for each player. Category permissions govern browsing by group. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/catalog-search.md]Catalog search guide[/URL]

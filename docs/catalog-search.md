@@ -8,7 +8,7 @@ With a compatible ProtocolLib installed, click the **Search items** compass in t
 
 Each page holds up to 45 items sorted by full ID. Matching ignores capitalization and display-name colors. Search punctuation and spaces are literal. For example, `kiln:tile` matches by ID even if the item has a different display name. To browse a category such as pottery, use `/ba browse pottery`. If a query has no matches, the compass reports that the list is empty and lets you start another search.
 
-Left-click a result to inspect its recipes. **Back** in the recipe browser returns to the same query and page. **Back to catalog** on a results page opens the catalog for players with `blocksadder.browse`. A new search starts at the first page.
+Left-click a result to inspect its recipes. **Back** in the recipe browser returns to the same query and page. **Back to catalog** on a results page opens the group overview for players with `blocksadder.browse`. A compass search remembers the originating overview page. A typed search returns to the first page. [Browse groups](catalog-groups.md) A new search starts at the first page.
 
 ## Control access
 

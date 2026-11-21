@@ -1,5 +1,8 @@
 integrations:
   placeholders: true
+catalog-layout:
+  front: []
+  remainder: alphabetic
 recipe-book:
   learn: [encounter]
 recipe-feedback:

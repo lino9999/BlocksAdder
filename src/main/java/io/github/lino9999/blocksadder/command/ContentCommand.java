@@ -42,7 +42,7 @@ public final class ContentCommand implements TabExecutor {
             switch (action) {
                 case "help" -> help(sender);
                 case "info" -> Text.send(sender, "BlocksAdder " + plugin.getDescription().getVersion() + " by Lino | " + plugin.content().items().size() + " items | " + plugin.worldContent().count() + " loaded placements | " + Bukkit.getBukkitVersion());
-                case "browse" -> menus.open(args.length > 2 ? online(args[2], sender) : player(sender), args.length > 1 ? args[1] : "", 0);
+                case "browse" -> menus.open(sender, args.length > 2 ? online(args[2], sender) : player(sender), args.length > 1 ? args[1] : "", 0);
                 case "search" -> menus.search(player(sender), args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : null);
                 case "get" -> {
                     usage(args, 2, "get <item> [amount]");
@@ -396,7 +396,14 @@ public final class ContentCommand implements TabExecutor {
                     if (args.length == 2) choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                     if (args.length == 3) choices.addAll(plugin.content().items().stream().map(item -> item.id().toString()).toList());
                 }
-                case "browse" -> { if (args.length == 2) choices.addAll(plugin.content().items().stream().filter(item -> menus.listed(sender, item)).map(item -> item.category()).distinct().toList()); }
+                case "browse" -> {
+                    if (args.length == 2) plugin.content().groups().ordered().stream().filter(group -> group.allowed(sender))
+                            .forEach(group -> choices.add(group.key()));
+                    else if (args.length == 3 && sender.hasPermission("blocksadder.others"))
+                        plugin.content().groups().find(args[1]).filter(group -> group.allowed(sender)).ifPresent(group ->
+                                Bukkit.getOnlinePlayers().stream().filter(viewer -> viewer.hasPermission("blocksadder.browse") && group.allowed(viewer))
+                                        .forEach(viewer -> choices.add(viewer.getName())));
+                }
                 case "pack" -> { if (args.length == 2) choices.addAll(List.of("build", "send", "hash")); else choices.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList()); }
                 case "stat" -> {
                     if (args.length == 2) choices.addAll(List.of("read", "write", "add", "subtract"));

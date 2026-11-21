@@ -23,11 +23,7 @@ public record CatalogPolicy(String permission, boolean inspect) {
         }
         String permission = null;
         if (values.containsKey("permission")) {
-            Object value = values.get("permission");
-            if (!(value instanceof String node) || node.length() > 256 || !NODE.matcher(node).matches()) {
-                throw new IllegalArgumentException("Item " + item + " requires a literal catalog permission node.");
-            }
-            permission = node;
+            permission = permission(values.get("permission"), "Item " + item);
         }
         Object inspect = values.containsKey("inspect") ? values.get("inspect") : true;
         if (!(inspect instanceof Boolean enabled)) {
@@ -38,5 +34,10 @@ public record CatalogPolicy(String permission, boolean inspect) {
 
     public boolean visibleTo(Permissible viewer) {
         return permission == null || viewer.hasPermission(permission);
+    }
+
+    static String permission(Object raw, String source) {
+        if (raw instanceof String node && node.length() <= 256 && NODE.matcher(node).matches()) return node;
+        throw new IllegalArgumentException(source + " requires a literal catalog permission node.");
     }
 }

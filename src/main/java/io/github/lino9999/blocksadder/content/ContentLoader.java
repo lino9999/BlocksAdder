@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,19 @@ public final class ContentLoader {
     public static List<String> definitionTypes() { return TYPES; }
 
     public ContentRegistry load() throws IOException, InvalidConfigurationException {
+        return load(CatalogLayout.DEFAULT);
+    }
+
+    public ContentRegistry load(ConfigurationSection settings) throws IOException, InvalidConfigurationException {
+        return load(CatalogLayout.read(settings));
+    }
+
+    private ContentRegistry load(CatalogLayout layout) throws IOException, InvalidConfigurationException {
         Path root = plugin.getDataFolder().toPath().resolve("contents");
         Files.createDirectories(root);
         Map<String, ItemDefinition> items = new LinkedHashMap<>();
         Map<String, ConfigurationSection> sections = new LinkedHashMap<>();
+        var disabledGroups = new HashSet<String>();
         try (var stream = Files.walk(root)) {
             for (Path path : stream.filter(p -> Files.isRegularFile(p, LinkOption.NOFOLLOW_LINKS))
                     .filter(p -> p.toString().endsWith(".yml") || p.toString().endsWith(".yaml")).sorted().toList()) {
@@ -66,14 +76,18 @@ public final class ContentLoader {
                     for (String key : group.getKeys(false)) {
                         ConfigurationSection config = group.getConfigurationSection(key);
                         if (config == null) throw new InvalidConfigurationException("Definition must be a section: " + type + "/" + key);
-                        if (!config.getBoolean("enabled", true)) continue;
-                        String id = new ContentId(namespace, key).toString();
+                        ContentId record = new ContentId(namespace, key);
+                        if (!config.getBoolean("enabled", true)) {
+                            if (type.equals("categories")) disabledGroups.add(CatalogGroups.groupKey(record, config));
+                            continue;
+                        }
+                        String id = record.toString();
                         if (sections.putIfAbsent(type + "/" + id, config) != null) throw new InvalidConfigurationException("Duplicate definition: " + type + "/" + id);
                     }
                 }
             }
         }
         CropSchemas.apply(items, sections);
-        return new ContentRegistry(items, sections);
+        return new ContentRegistry(items, sections, disabledGroups, layout);
     }
 }

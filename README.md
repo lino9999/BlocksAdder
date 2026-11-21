@@ -6,9 +6,9 @@
 
 BlocksAdder by **Lino** is a Java plugin for Spigot and Paper 1.21.11 through 26.3. Define items, workstations, crops and player stats in YAML. Players can search custom items, browse recipes and follow ingredient uses in game. BlocksAdder builds a resource pack for the models, textures, sounds and glyphs you supply.
 
-[Download preview 22](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.22) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
+[Download preview 23](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.23) · [Configuration](docs/configuration.md) · [World content](docs/world-content.md) · [Recipes and gameplay](docs/gameplay.md) · [Developer API](docs/api.md) · [Verification](docs/verification.md)
 
-**Preview 22 adds catalog search.** Use `/ba search crystal` to find custom items by ID or display name. With ProtocolLib you can enter a query on a private sign from the catalog. Open a result to browse its recipes and return to the same search page. [Search guide](docs/catalog-search.md) · [Recipe catalog](docs/recipe-catalog.md) · [Example bundle](docs/examples/recipe-catalog.yml) · [Locked recipe feedback](docs/recipe-feedback.md) · [Remaining features](docs/parity-progress.md)
+**Preview 23 adds catalog groups.** Open `/ba browse` and choose an icon, or go directly to a group with `/ba browse <group>`. Arrange items across multiple shelves, set who can open each one, and return to the same page after inspecting a recipe. [Catalog groups](docs/catalog-groups.md) · [Showroom example](docs/examples/catalog-groups.yml) · [Item search](docs/catalog-search.md) · [Recipe browser](docs/recipe-catalog.md) · [Remaining features](docs/parity-progress.md)
 
 Current development uses the independently designed `blocksadder/bundle-1` content format. The historical 1.0.0 release has a smaller feature set and an earlier format. [Configuration](docs/configuration.md) · [Independent implementation](docs/independent-implementation.md) · [Historical comparison](docs/feature-parity.md)
 
@@ -49,7 +49,7 @@ Named item-event commands can separately opt in to [incoming PlaceholderAPI argu
 
 The target server range is **Minecraft Java 1.21.11 through 26.3**, on Spigot or Paper. Use **Java 21 for 1.21.11** and **Java 25 for 26.x**, following your server's requirements. See the exact tested builds and test boundaries in [verification](docs/verification.md). Folia and Bedrock resource packs are not supported.
 
-1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 22 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.22)
+1. Download `BlocksAdder-1.1.0-SNAPSHOT.jar` from the current development preview. [Preview 23 release](https://github.com/lino9999/BlocksAdder/releases/tag/v1.1.0-dev.23)
 2. Place it in the server's `plugins/` directory and restart the server.
 3. Review `plugins/BlocksAdder/config.yml` and the generated examples in `contents/blocksadder/configs/examples.yml`.
 4. Run `/ba validate`, then `/ba pack build` after adding assets.
@@ -66,7 +66,7 @@ The main command is `/blocksadder`; aliases are `/ba` and `/badd`. Angle bracket
 | --- | --- | --- |
 | `/ba help` | `blocksadder.help` | Show command usage. |
 | `/ba info` | `blocksadder.info` | Show version, author, loaded item/placement counts and server version. |
-| `/ba browse [category] [player]` | `blocksadder.browse` | Open the paginated item catalog. |
+| `/ba browse [category] [player]` | `blocksadder.browse` | Open the group overview or a named group. Use `all` to browse all visible items with that group enabled. |
 | `/ba search [text]` | `blocksadder.search` | Find visible items across categories by namespaced ID or display name. Omit the text to open the optional sign editor. |
 | `/ba recipe [item] [player]` | `blocksadder.recipe` | Browse recipes and ingredient uses for the held or named item. Opening a menu for another player also requires `blocksadder.others`. |
 | `/ba glyph [id]` | `blocksadder.glyph` | List font image IDs or print a glyph. |
@@ -135,7 +135,7 @@ Shortcuts are `/baget` (`/bget`), `/bagive` (`/bgive`), `/bapack` (`/bpack`), `/
 
 `blocksadder.admin` grants the command/gameplay permissions listed in its manifest children and defaults to operators. Meter bypass permissions are separate, default to false and are not included. Public browsing/help/info/recipe/glyph/pack/HUD/emote/plant-view commands and ordinary building/use permissions default to everyone; administrative permissions and `blocksadder.pack.build` default to operators. `blocksadder.others` is required to open menus, send packs, control HUDs, choose plant detail or trigger emotes for another player. Item quantities are limited to 1–6,400; delivery splits legal stack sizes and drops overflow at the player.
 
-Gameplay permissions are `blocksadder.place`, `blocksadder.break`, `blocksadder.use`, `blocksadder.glyphs` and per-definition permissions. Category access uses `blocksadder.category.*` or `blocksadder.category.<category>`; an explicitly denied category overrides the wildcard. Catalog left-clicks show recipes; right-clicks grant items only with `blocksadder.get`. Shift-right-click grants one legal stack.
+Gameplay permissions are `blocksadder.place`, `blocksadder.break`, `blocksadder.use`, `blocksadder.glyphs` and per-definition permissions. Group access defaults to `blocksadder.category.*` or `blocksadder.category.<group>`. An explicit group denial overrides the wildcard. Configure a full `permission` on an authored group to use that node. [Catalog permissions](docs/catalog-groups.md) Catalog left-clicks show recipes; right-clicks grant items only with `blocksadder.get`. Shift-right-click grants one legal stack.
 
 ## Content example
 

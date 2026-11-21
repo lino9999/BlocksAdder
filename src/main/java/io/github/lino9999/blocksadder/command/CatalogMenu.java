@@ -3,6 +3,7 @@ package io.github.lino9999.blocksadder.command;
 import io.github.lino9999.blocksadder.command.CatalogView.Action;
 import io.github.lino9999.blocksadder.command.CatalogView.Listing;
 import io.github.lino9999.blocksadder.command.CatalogView.Reading;
+import static io.github.lino9999.blocksadder.command.CatalogView.button;
 import io.github.lino9999.blocksadder.command.search.CatalogPrompt;
 import io.github.lino9999.blocksadder.content.ContentRegistry;
 import io.github.lino9999.blocksadder.content.ItemDefinition;
@@ -34,7 +35,6 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CatalogMenu implements Listener {
-    private static final int PAGE_SIZE = 45;
     private static final int MAX_BOOKMARKS = 128;
     private final JavaPlugin plugin;
     private final Supplier<ContentRegistry> registry;
@@ -42,8 +42,7 @@ public final class CatalogMenu implements Listener {
     private final RecipeService recipes;
     private final CatalogPrompt prompt;
     private final Map<UUID, LinkedHashMap<String, Integer>> bookmarks = new HashMap<>();
-    private ContentRegistry listedRegistry;
-    private CatalogSearchIndex index;
+    private final CatalogPages pages;
 
     public CatalogMenu(JavaPlugin plugin, Supplier<ContentRegistry> registry, ItemService items, RecipeService recipes) {
         this.plugin = plugin;
@@ -51,29 +50,41 @@ public final class CatalogMenu implements Listener {
         this.items = items;
         this.recipes = recipes;
         prompt = CatalogPrompt.create(plugin);
+        pages = new CatalogPages(items);
     }
 
     boolean listed(Permissible viewer, ItemDefinition item) {
-        String categoryNode = "blocksadder.category." + item.category();
-        boolean category = viewer.isPermissionSet(categoryNode) ? viewer.hasPermission(categoryNode)
-                : viewer.hasPermission("blocksadder.category.*") || viewer.hasPermission(categoryNode);
-        return category && searchable(viewer, item);
-    }
-
-    private boolean searchable(Permissible viewer, ItemDefinition item) {
-        return !item.options().getBoolean("hidden", false) && registry.get().catalog(item).visibleTo(viewer);
+        var current = registry.get();
+        return current.catalogVisible(viewer, item)
+                && current.groups().primary(item).filter(group -> group.allowed(viewer)).isPresent();
     }
 
     public void open(Player player, String category, int page) {
-        prompt.cancel(player);
-        listing(player, Listing.catalog(category, page));
+        open(player, player, category, page);
+    }
+
+    void open(Permissible sender, Player viewer, String category, int page) {
+        if (!viewer.hasPermission("blocksadder.browse")) throw new IllegalArgumentException("The viewer cannot open the catalog.");
+        Listing destination = Listing.overview(page);
+        if (!category.isBlank()) {
+            var group = registry.get().groups().find(category)
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown catalog group: " + category));
+            if (!group.allowed(sender) || !group.allowed(viewer)) throw new IllegalArgumentException("Access to this catalog group is restricted.");
+            destination = Listing.group(group.key(), page, -1);
+        }
+        prompt.cancel(viewer);
+        listing(viewer, destination);
     }
 
     public void search(Player player, String query) {
+        search(player, query, 0);
+    }
+
+    private void search(Player player, String query, int overviewPage) {
         prompt.cancel(player);
         if (!player.hasPermission("blocksadder.search")) return;
         if (query != null) {
-            listing(player, Listing.search(CatalogSearchIndex.checked(query)));
+            listing(player, Listing.search(CatalogSearchIndex.checked(query), overviewPage));
             return;
         }
         if (!prompt.available()) {
@@ -85,7 +96,7 @@ public final class CatalogMenu implements Listener {
         if (!defaultInventory(player) || started != registry.get() || !player.hasPermission("blocksadder.search")) return;
         if (!prompt.open(player, submitted -> {
             if (started == registry.get() && player.isOnline() && player.hasPermission("blocksadder.search"))
-                listing(player, Listing.search(submitted));
+                listing(player, Listing.search(submitted, overviewPage));
         })) Text.send(player, "Type /ba search <text> to search the catalog.");
     }
 
@@ -95,59 +106,13 @@ public final class CatalogMenu implements Listener {
     }
 
     private void listing(Player player, Listing requested) {
-        boolean search = requested.searching();
-        if (search && !player.hasPermission("blocksadder.search")) {
+        ContentRegistry current = registry.get();
+        if (!requested.allowed(current, player)) {
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof CatalogView) player.closeInventory();
             return;
         }
-        ContentRegistry current = registry.get();
-        if (listedRegistry != current) {
-            index = new CatalogSearchIndex(current, items);
-            listedRegistry = current;
-        }
-        List<ItemDefinition> content = index.matching(search ? requested.query() : "")
-                .filter(item -> requested.category().isBlank() || item.category().equalsIgnoreCase(requested.category()))
-                .filter(item -> search ? searchable(player, item) : listed(player, item)).toList();
-        int last = Math.max(0, (content.size() - 1) / PAGE_SIZE);
-        int page = Math.clamp(requested.page(), 0, last);
-        CatalogView view = new CatalogView(player.getUniqueId(), current, requested.at(page), null, null, 54,
-                Text.color((search ? "&3BlocksAdder search" : "&3BlocksAdder") + " &8| &7" + (page + 1) + "/" + (last + 1)));
-        for (int slot = 0, pos = page * PAGE_SIZE; slot < PAGE_SIZE && pos < content.size(); slot++, pos++) {
-            ItemDefinition item = content.get(pos);
-            String id = item.id().toString();
-            ItemStack stack = items.create(id, 1);
-            var meta = stack.getItemMeta();
-            var lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<String>();
-            lore.add(Text.color("&8" + id));
-            if (current.catalog(item).inspect()) lore.add(Text.color("&7Left click to inspect recipes"));
-            if (player.hasPermission("blocksadder.get")) lore.add(Text.color("&7Right click to receive this item"));
-            meta.setLore(lore);
-            stack.setItemMeta(meta);
-            view.put(slot, stack, Action.ITEM, id);
-        }
-        if (page > 0) control(view, 45, Action.PREVIOUS, Material.ARROW, "&bPrevious page");
-        if (search) control(view, 46, Action.BACK, Material.OAK_DOOR, "&bBack to catalog");
-        if (player.hasPermission("blocksadder.search")) searchButton(view, requested.query(), content.size());
-        control(view, 49, Action.CLOSE, Material.BARRIER, "&cClose");
-        if (page < last) control(view, 53, Action.NEXT, Material.ARROW, "&bNext page");
-        if (registry.get() == current && (!search || player.hasPermission("blocksadder.search"))) player.openInventory(view.getInventory());
-    }
-
-    private static void searchButton(CatalogView view, String query, int matches) {
-        ItemStack compass = button(Material.COMPASS, "&bSearch items", List.of());
-        if (query != null) {
-            var meta = compass.getItemMeta();
-            String count = matches == 0 ? "No matching items" : matches == 1 ? "1 matching item" : matches + " matching items";
-            if (query.isEmpty()) meta.setLore(List.of(count));
-            else {
-                String literal = org.bukkit.ChatColor.stripColor(query).replaceAll("\\p{Cntrl}", " ");
-                int length = literal.codePointCount(0, literal.length());
-                if (length > 72) literal = literal.substring(0, literal.offsetByCodePoints(0, 72)) + "…";
-                meta.setLore(List.of(count, "Query “" + literal + "”"));
-            }
-            compass.setItemMeta(meta);
-        }
-        view.put(47, compass, Action.SEARCH, null);
+        CatalogView view = pages.build(player, current, requested);
+        if (current == registry.get() && requested.allowed(current, player)) player.openInventory(view.getInventory());
     }
 
     public void recipe(Player player, String id) {
@@ -196,11 +161,11 @@ public final class CatalogMenu implements Listener {
         view.result = view.getInventory().getItem(15).clone();
         view.getInventory().setItem(31, informationBook);
         if (player.hasPermission("blocksadder.get"))
-            control(view, 32, Action.GIVE_RESULT, Material.HOPPER, "&bReceive displayed item");
-        if (page > 0) control(view, 27, Action.PREVIOUS, Material.ARROW, "&bPrevious recipe");
-        control(view, 29, Action.BACK, Material.OAK_DOOR, "&bBack");
-        control(view, 33, Action.CLOSE, Material.BARRIER, "&cClose");
-        if (page + 1 < total) control(view, 35, Action.NEXT, Material.ARROW, "&bNext recipe");
+            view.control(32, Action.GIVE_RESULT, Material.HOPPER, "&bReceive displayed item");
+        if (page > 0) view.control(27, Action.PREVIOUS, Material.ARROW, "&bPrevious recipe");
+        view.control(29, Action.BACK, Material.OAK_DOOR, "&bBack");
+        view.control(33, Action.CLOSE, Material.BARRIER, "&cClose");
+        if (page + 1 < total) view.control(35, Action.NEXT, Material.ARROW, "&bNext recipe");
         var opened = player.openInventory(view.getInventory());
         if (opened != null && player.getOpenInventory().getTopInventory().getHolder() == view)
             remember(player.getUniqueId(), id, page);
@@ -250,28 +215,32 @@ public final class CatalogMenu implements Listener {
     }
 
     private void activate(Player player, CatalogView view, CatalogView.Button button, ClickType click) {
-        if (view.reading == null && view.listing.searching() && !player.hasPermission("blocksadder.search")) {
+        if (view.reading == null && !view.listing.allowed(view.registry, player)) {
             player.closeInventory();
             return;
         }
         switch (button.action()) {
+            case GROUP -> {
+                var group = view.registry.groups().find(button.target()).orElse(null);
+                if (group != null && group.allowed(player)) listing(player, Listing.group(group.key(), 0, view.listing.page()));
+            }
             case ITEM, OUTPUT -> {
                 if (button.action() == Action.ITEM && view.reading != null && click.isShiftClick() && player.hasPermission("blocksadder.get")) {
-                    ItemStack template = button.itemId() == null ? button.display() : items.create(button.itemId(), 1);
+                    ItemStack template = button.target() == null ? button.display() : items.create(button.target(), 1);
                     items.giveOwned(player, template, 1);
                     return;
                 }
-                if (button.itemId() == null) return;
-                ItemDefinition item = view.registry.find(button.itemId()).orElse(null);
+                if (button.target() == null) return;
+                ItemDefinition item = view.registry.find(button.target()).orElse(null);
                 if (item == null) return;
-                if (view.reading == null && !(view.listing.searching() ? searchable(player, item) : listed(player, item))) return;
+                if (view.reading == null && !view.registry.catalogVisible(player, item)) return;
                 if (view.reading == null && click.isRightClick()) {
                     if (player.hasPermission("blocksadder.get")) {
                         int amount = click.isShiftClick() ? button.display().getMaxStackSize() : 1;
-                        items.give(player, button.itemId(), amount);
+                        items.give(player, button.target(), amount);
                     }
-                } else if (view.reading == null || !view.reading.subject().equals(button.itemId())) {
-                    inspect(player, button.itemId(), view.listing, view.reading);
+                } else if (view.reading == null || !view.reading.subject().equals(button.target())) {
+                    inspect(player, button.target(), view.listing, view.reading);
                 }
             }
             case GIVE_RESULT -> {
@@ -286,10 +255,10 @@ public final class CatalogMenu implements Listener {
             case BACK -> {
                 if (view.parent != null) show(player, view.parent, view.listing, null);
                 else if (view.reading != null && view.listing != null) listing(player, view.listing);
-                else if (view.reading == null && player.hasPermission("blocksadder.browse")) open(player, "", 0);
+                else if (view.reading == null && player.hasPermission("blocksadder.browse")) listing(player, Listing.overview(view.listing.returnPage()));
                 else player.closeInventory();
             }
-            case SEARCH -> search(player, null);
+            case SEARCH -> search(player, null, view.listing.returnPage());
             case CLOSE -> player.closeInventory();
         }
     }
@@ -313,8 +282,7 @@ public final class CatalogMenu implements Listener {
     public void reset() {
         prompt.clear();
         bookmarks.clear();
-        index = null;
-        listedRegistry = null;
+        pages.clear();
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.getOpenInventory().getTopInventory().getHolder() instanceof CatalogView) player.closeInventory();
         }
@@ -323,18 +291,5 @@ public final class CatalogMenu implements Listener {
     public void close() {
         reset();
         prompt.close();
-    }
-
-    private static void control(CatalogView view, int slot, Action action, Material material, String name) {
-        view.put(slot, button(material, name, List.of()), action, null);
-    }
-
-    private static ItemStack button(Material material, String name, List<String> lore) {
-        var stack = new ItemStack(material);
-        var meta = stack.getItemMeta();
-        meta.setDisplayName(Text.color(name));
-        if (!lore.isEmpty()) meta.setLore(lore.stream().map(line -> Text.color("&7" + line)).toList());
-        stack.setItemMeta(meta);
-        return stack;
     }
 }

@@ -168,7 +168,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     }
 
     private ContentRegistry validateContent(YamlConfiguration candidateSettings) throws Exception {
-        ContentRegistry candidate = new ContentLoader(this).load();
+        ContentRegistry candidate = new ContentLoader(this).load(candidateSettings);
         io.github.lino9999.blocksadder.pack.EquipmentAssetCompiler.validate(candidate);
         ItemService validator = new ItemService(this, () -> candidate);
         for (ItemDefinition item : candidate.items()) validator.create(item.id().toString(), 1);

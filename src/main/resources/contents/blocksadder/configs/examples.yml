@@ -109,26 +109,32 @@ entries:
   kind: catalog
   settings:
     title: Materials
+    icon: AMETHYST_SHARD
 - key: building
   kind: catalog
   settings:
     title: Building
+    icon: BRICKS
 - key: furniture
   kind: catalog
   settings:
     title: Furniture
+    icon: OAK_STAIRS
 - key: tools
   kind: catalog
   settings:
     title: Tools
+    icon: IRON_PICKAXE
 - key: farming
   kind: catalog
   settings:
     title: Farming
+    icon: WHEAT
 - key: consumables
   kind: catalog
   settings:
     title: Consumables
+    icon: APPLE
 - key: crystal_block
   kind: recipe
   settings:

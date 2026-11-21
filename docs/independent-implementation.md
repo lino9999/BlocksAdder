@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+Preview 23 adds an immutable group index to the BlocksAdder registry. Independent bundle records contribute ranked, overlapping groups with scoped item selectors. The menu binds each category tile to the open window and computes its count from the viewer's current item permissions. [Catalog groups](catalog-groups.md) · [Distribution audit](catalog-groups-audit.json)
+
 Preview 22 uses a registry-scoped index of BlocksAdder IDs and visible labels, a permission-aware results inventory and an optional sign transport. Search shares the recipe browser's return path. The command, aliases, English messages and item policies belong to BlocksAdder. [Search guide](catalog-search.md) · [Distribution audit](catalog-search-audit.json)
 
 Preview 21 adds a reload-time index of producing and consuming recipes, a server-owned catalog inventory, session-scoped page positions and the `traits.catalog` policy. Its interface uses standard inventory items and BlocksAdder text. The reference provided evidence about player interactions and permission boundaries. [Recipe catalog](recipe-catalog.md) · [Distribution audit](recipe-catalog-audit.json)

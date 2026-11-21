@@ -1,0 +1,33 @@
+format: blocksadder/bundle-1
+bundle: showroom
+entries:
+  - key: display
+    kind: catalog
+    settings:
+      group: showcase
+      label: '&bPottery shelf'
+      title: 'Pottery on display'
+      icon: kiln:tile
+      rank: 1
+      include: ['kiln:tile', 'kiln:*']
+      exclude: ['kiln:glaze']
+  - key: pigments
+    kind: catalog
+    settings:
+      title: Glazes
+      icon: BLUE_DYE
+      permission: showroom.browse.glazes
+      include: ['kiln:glaze']
+  - key: exhibits
+    kind: catalog
+    settings:
+      title: Upcoming exhibits
+      icon: ITEM_FRAME
+  - key: spare_display
+    kind: catalog
+    settings:
+      group: showcase
+      if-defined: skip
+      title: Crystal display
+      icon: AMETHYST_SHARD
+      include: ['blocksadder:crystal_block']

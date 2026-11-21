@@ -48,6 +48,8 @@ Use `recipe-stations.active` to enable custom recipe families on reload. Use `na
 
 Use `recipe-feedback.channels` to show players a locked crafting, anvil or smithing result, explain it in chat or keep it silent. [Recipe permission feedback](recipe-feedback.md)
 
+Use a `kind: catalog` record to define an icon, window title and ordered item selection for a group. Existing `item.group` assignments appear automatically. Pin selected groups with `catalog-layout.front` in `config.yml` and choose `alphabetic` or `declared` for the remaining order. [Group settings and showroom example](catalog-groups.md)
+
 Set `traits.catalog.permission` on an item to limit who finds it in catalog listings and global search results. [Search guide](catalog-search.md) Set `traits.catalog.inspect: false` to disable opening that item's recipe pages. Active recipes automatically supply production and ingredient-use pages. [Recipe catalog and pottery example](recipe-catalog.md)
 
 Set `active: false` on a record or the whole bundle to disable it. Unknown document, record and presentation fields, repeated definitions, invalid identifiers and unsupported format versions reject the candidate. `/ba validate` checks a candidate; `/ba reload` validates before publishing it.

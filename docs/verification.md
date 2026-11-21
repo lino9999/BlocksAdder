@@ -1,5 +1,9 @@
 # Verification
 
+## Preview 23 catalog groups
+
+The preview 23 JAR passed 40,792 server assertions in 22 accepted processes. Two protocol players navigated authored groups on nine Spigot and Paper builds. Each build loaded the published showroom and pottery bundles. Spigot 1.21.11 and Paper 26.3 repeated the search suite with ProtocolLib installed and absent. The registry and layout checks are recorded separately. [Builds and results](catalog-groups-verification.json) · [Group guide](catalog-groups.md) · [Distribution audit](catalog-groups-audit.json)
+
 ## Preview 22 catalog search
 
 The preview 22 JAR passed 18,301 server assertions in 22 accepted processes. Two protocol players exercised catalog search on nine Spigot and Paper builds with ProtocolLib. Spigot 1.21.11 and Paper 26.3 also ran the command-only path with ProtocolLib absent and repeated the recipe browser suite. All nine builds repeated the core checks with the published pottery bundle. The offline matcher checks are recorded separately. [Builds and results](catalog-search-verification.json) · [Search guide](catalog-search.md) · [Distribution audit](catalog-search-audit.json)
