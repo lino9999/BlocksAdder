@@ -16,6 +16,14 @@ resource-pack:
   build-on-startup: true
   auto-apply: false
   required: false
+  delivery:
+    pause: []
+    notice:
+      title: ''
+      subtitle: ''
+    timeout-ticks: 1200
+    join-delay-ticks: 20
+    self-cooldown-ticks: 0
   url: ''
   max-uncompressed-mb: 128
   host:

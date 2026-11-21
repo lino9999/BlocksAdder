@@ -4,6 +4,8 @@ BlocksAdder is authored as a separate project by Lino. The supplied binary is be
 
 ## Design boundary
 
+Preview 25 implements resource pack application using a per-connection sequence of request IDs, public Bukkit events and retained ZIP revisions. BlocksAdder defines its own activity list, title settings, outcome policies and deadlines. The reference supplied behavioral evidence about the interval from acceptance to completion. [Delivery guide](pack-delivery.md) · [Distribution audit](pack-delivery-audit.json)
+
 Preview 24 derives source notes from BlocksAdder’s validated generation, reward, planting and vehicle rules. It indexes canonical outputs, attaches them to the displayed recipe result and paginates the descriptions. The project defines its own indicator labels, materials and YAML settings. [Recipe sources](recipe-sources.md) · [Distribution audit](recipe-sources-audit.json)
 
 Preview 23 adds an immutable group index to the BlocksAdder registry. Independent bundle records contribute ranked, overlapping groups with scoped item selectors. The menu binds each category tile to the open window and computes its count from the viewer's current item permissions. [Catalog groups](catalog-groups.md) · [Distribution audit](catalog-groups-audit.json)

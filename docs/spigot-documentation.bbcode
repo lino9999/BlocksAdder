@@ -8,6 +8,11 @@
 Install the JAR matching this documentation in plugins/ and restart. Development 1.1.0-SNAPSHOT uses the bundle format below. Historical release 1.0.0 is a separate preview with an older format and a smaller feature set. Download only from [URL=https://github.com/lino9999/BlocksAdder/releases]GitHub Releases[/URL] and read the matching release notes.
 Custom visuals need the generated resource pack. ProtocolLib is optional; specific camera/equipment-view and tile-NBT adapters have separate requirements. Folia and Bedrock packs are unsupported.
 
+[SIZE=5][B]Resource pack delivery[/B][/SIZE]
+Set resource-pack.url in plugins/BlocksAdder/config.yml to the public ZIP address. Use /ba pack build, /ba reload after changing settings and /ba pack send in game. Sending to a named player or all players requires blocksadder.others. Building requires blocksadder.pack.build.
+
+Under resource-pack.delivery, pause accepts movement, teleports, commands and combat. The optional notice.title and notice.subtitle appear after acceptance. timeout-ticks limits the wait for a response and the time spent applying. join-delay-ticks controls automatic sends. self-cooldown-ticks limits player requests without a target. Set decline and failure separately to allow or kick. Grant blocksadder.pack.exempt to excuse a player from BlocksAdder enforcement. [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/pack-delivery.md]Full delivery reference[/URL] · [URL=https://github.com/lino9999/BlocksAdder/blob/main/docs/examples/pack-delivery.yml]Example server settings[/URL]
+
 [SIZE=5][B]Content documents[/B][/SIZE]
 Content belongs under plugins/BlocksAdder/contents/. Each complete file has a format marker, bundle identifier and typed record list:
 [CODE]format: blocksadder/bundle-1

@@ -113,7 +113,7 @@ resource-pack:
 
 `/ba pack build` creates `pack/BlocksAdder.zip`, orders its entries deterministically and calculates SHA-1/SHA-256 from the actual bytes. A failed asynchronous build retains the previous published artifact. Upload that exact ZIP for external hosting and configure a direct HTTP(S) URL without credentials or a fragment.
 
-Built-in hosting exposes only `/BlocksAdder.zip` through GET/HEAD with capped workers. Configure its public URL and a separate available port. It does not configure DNS, forwarding, firewalls or TLS. `auto-apply` requests the pack after joining; `required` handles decline/failure for this plugin's pack UUID.
+Built-in hosting exposes `/BlocksAdder.zip` through GET and HEAD with capped workers. Configure its public URL and a separate available port. `auto-apply` offers the pack after joining. Set `delivery.pause` to select which actions pause during application. The optional `delivery.decline` and `delivery.failure` policies override the corresponding `required` defaults. [Delivery settings, timings and permissions](pack-delivery.md) · [Server settings example](examples/pack-delivery.yml)
 
 ## Editing and upgrades
 

@@ -2,9 +2,19 @@
 
 This report describes the supplied artifact, not a claim of complete behavioral equivalence. BlocksAdder is independently authored. Original classes, shaders, textures, models, configuration files, libraries and license checks are not incorporated into its implementation.
 
+## Resource pack application
+
+Static REA inspection of the supplied artifact identified acceptance, download and application as distinct moments. Acceptance can start a title and temporarily restrict movement, teleports, commands and entity damage involving the player. Completion, rejection and failure release those restrictions. Manual requests also distinguish a player's own resend from an administrator's targeted send. BlocksAdder implements these behaviors with an independently defined YAML section, per-connection request ownership and a finite deadline. [Resource pack delivery](pack-delivery.md)
+
+Static inspection of the server implementations also distinguished a whole-stack replacement from adding or removing a single pack ID. Retail clients can keep an unanswered consent prompt across a replacement. BlocksAdder recognizes previously issued IDs on the same connection and can remove the retired layer if the client later accepts it. [Paper player resource pack API](https://jd.papermc.io/paper/26.3/org/bukkit/entity/Player.html)
+
 ## Recipe result sources
 
 Static inspection of the supplied JAR found eight informational roles attached to the selected custom output. These include block drops, ore and surface placement, tree components, seed products, creature and fishing rewards, and fuels accepted by the selected vehicle. The source icons have no grant action. The evidence distinguishes the result on an ingredient-use page from the item that opened the browser. BlocksAdder derives its own rows from current gameplay rules and adds a separate cave family, paged details and independently named presentation settings. [Source guide](recipe-sources.md)
+
+## Catalog artwork
+
+The reference selects background glyphs by screen type. An information screen can inherit the crafting background and its horizontal position separately. Category pages can override the catalog background. The title and image have separate horizontal offsets, and a missing glyph affects the item catalog and a recipe detail page differently. The preview 25 catalog uses textual titles and fixed navigation items. Configurable backgrounds, button artwork and an explicit stonecutting fallback remain open. [Catalog behavior](recipe-catalog.md) · [Implementation progress](parity-progress.md)
 
 ## Identity and evidence
 

@@ -275,7 +275,7 @@ public final class ContentCommand implements TabExecutor {
                     if (!sender.hasPermission("blocksadder.others")) throw new IllegalArgumentException("Missing permission: blocksadder.others");
                     if (args[2].equalsIgnoreCase("all")) Bukkit.getOnlinePlayers().forEach(plugin.packs()::apply);
                     else plugin.packs().apply(target(args[2]));
-                } else plugin.packs().apply(player(sender));
+                } else plugin.packs().applySelf(player(sender));
                 Text.send(sender, "Resource pack request sent.");
             }
             default -> throw new IllegalArgumentException("Use pack build, pack send or pack hash.");

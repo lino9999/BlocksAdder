@@ -173,6 +173,9 @@ permissions:
     default: op
   blocksadder.others:
     default: op
+  blocksadder.pack.exempt:
+    description: Keeps a player connected when BlocksAdder pack enforcement is enabled.
+    default: false
   blocksadder.pack.build:
     default: op
   blocksadder.model:

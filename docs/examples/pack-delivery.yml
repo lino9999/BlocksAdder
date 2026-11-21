@@ -1,0 +1,15 @@
+resource-pack:
+  build-on-startup: true
+  auto-apply: true
+  required: false
+  url: 'https://packs.example.org/BlocksAdder.zip'
+  delivery:
+    join-delay-ticks: 20
+    self-cooldown-ticks: 200
+    timeout-ticks: 1200
+    pause: [movement, teleports, commands, combat]
+    notice:
+      title: '&bApplying server artwork'
+      subtitle: '&7Your controls will return shortly'
+    decline: allow
+    failure: allow

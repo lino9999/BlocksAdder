@@ -1,0 +1,857 @@
+{
+  "recorded_at": "2026-11-21T02:06:49.858630+00:00",
+  "passed": true,
+  "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+  "jar_bytes": 1438137,
+  "server_assertions": 5486,
+  "accepted_server_processes": 24,
+  "distinct_live_builds": 11,
+  "pack_suite_assertions": 4917,
+  "native_status_reports": 605,
+  "unique_owned_requests": 374,
+  "player_sessions": 66,
+  "pack_suite_cases": [
+    "automatic issue and peer ownership",
+    "accepted title and all four independent guards",
+    "only own layer retired and stale statuses cannot unlock replacement",
+    "all nonsuccess outcomes release optional protections",
+    "rebuild preserves issued request and subsequent pushes use new ZIP",
+    "transactional rejected reload and clean successful reload",
+    "deadline on sent then rearm once on accepted",
+    "manual self throttle and privileged naming",
+    "death releases accepted and same-account quit session is isolated",
+    "policy kick switches independent, bypass, legacy native prompt",
+    "independent title and final disable"
+  ],
+  "targeted_results": [
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot21",
+      "version": "1.21.11",
+      "java": 21,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "d059c0871120203919f37c9befac8942dd5f6c8cb7ce3e803c4816abd0c39527",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "76b110ae23c5c0b37a80f81c5adb5db1e18c7e92ef8c6675e2e2ee4bec41afb7",
+      "client_log_sha256": "fcc216de95a559f98620e42f9adc194511eb6ebc70ba7e8989b0f94c1ca9e4c3",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 34,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "paper21",
+      "version": "1.21.11",
+      "java": 21,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "a09c66e977c32120fe6af61935e52ad2b6b8060d99aedcf9bf416d9d4bc9cdc1",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "eceeff853713a2460d05ebc9473f7b36c1ea12e992d0f2045ce3c23d68b81c19",
+      "client_log_sha256": "f1dc17c4eef3f12312c9909de2120dcec9af70d2c5b1da85f4534e7d1c5090b4",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 32,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot261",
+      "version": "26.1",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "e1140a1969afa0a4244b99cdee6aaf43141a7d06bd9431289a474fda6c956fc1",
+      "probe_jar_sha256": "630172110bcba6b2bf3b18265da60d2b049b3f9400b53767f910adaf4c6905b0",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "f5c48822158eab7aee001f5b040037f9c51a9bc33523dbae33a93429e2b4cf41",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "b0d8f34472c674f3f34c7c4b5253b65e1d5a761d3745867bce2f8cb9b00a5e32",
+      "client_log_sha256": "82341eef11becb2971b1aa80dd8181ccb1374fa76bf7d495e0b9c3c1e1134655",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 33,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot2611",
+      "version": "26.1.1",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "8e41fa7b93ccd88b97039a65c599f3ba14112689e1b2baab65f91759269beea1",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "e9d15904acca9579989cd76caad4d190c9c9ce336fc965a1af44a4b3a1c392a1",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "d7ea3881c4ec417efb5047b5a894eafbcda29c27aac496aeea2c7f25bfcd834f",
+      "client_log_sha256": "de6e5aa7e55537e3d0963e0a6cdeb88b13091a9950391a3f6273060bbdc5e6b8",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 33,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "paper2611",
+      "version": "26.1.1",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "6df4597ffe245aab2459444eb175ceef07dab0fc0947bc7cfeaf04d3a25eb893",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "accef93f8e4466cd691c4bd889f646be3da85985663d1c8c38ae8c7e2a6a219a",
+      "client_log_sha256": "d5b1abb6fc7b413c04014f231bbdeac9eb02ea24ddc0d69ba9dfa07f6b555625",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 32,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot2612",
+      "version": "26.1.2",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "probe_jar_sha256": "630172110bcba6b2bf3b18265da60d2b049b3f9400b53767f910adaf4c6905b0",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "2f321a5add6c177f71d6a0396338de0a7596e72903ecb91b4dbfe1e7c660d9ef",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "227cc50b5146e4161568747380cd74e1922f32d2ed28dd53cafc0b39f4345f65",
+      "client_log_sha256": "127898fb70df3ae6f1c4811ef0c305a4202d6758814f206be4706c7db37cde11",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 33,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "paper2612",
+      "version": "26.1.2",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "probe_jar_sha256": "630172110bcba6b2bf3b18265da60d2b049b3f9400b53767f910adaf4c6905b0",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "2a0e5694b3c215ae71493df8a859b827cf341ec34ac2e0d77615d8d7ec80b227",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "5a2d239ee8cc55b31c624e33e24de26c957e0004cbcf00be40482fb8a98d6c22",
+      "client_log_sha256": "08fcafc4568f10d63301968b1f24e0274ab8084fb643327e8421b3427cedfece",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 32,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot262",
+      "version": "26.2",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "8a040f97a309976e5009f1ac8499cfb0147f413cd5beb6d6568b6fcc3ad804cf",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "bed53b96fa6101d3facd117ed1cca516111b13c72da3ca927c997a8bac69ec17",
+      "client_log_sha256": "69c9cda337e2182858153de8c6b725c7251e4c6f23cb91712ecf2f9ebc095e65",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 34,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "paper262",
+      "version": "26.2",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "b33a38974b7616c350e0284f7ab3c2c9a3c208653add2ef1c956279570b8a6af",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "3b90478d859f03c5f5d4bdac5bdd3e84d06b65336f02a74154adedf0809790ce",
+      "client_log_sha256": "6422e38af07cb7a8be4f4e7fc640d191335ef05edae574523f21af870d8ea89a",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 32,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "spigot263",
+      "version": "26.3",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "f06d9374da7f182c7e7991835a40eced05ee2e1080c1a5c2297ef6863cd9837a",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "d2f424410165186929e1611343b1fea93f42841d1f95702259e7554436533934",
+      "client_log_sha256": "47e767fdd51d4c1324a840259ee53d2be8d969453a34188484cf95a8dd86c15c",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 34,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    },
+    {
+      "suite": "resource-pack-delivery",
+      "server": "paper263",
+      "version": "26.3",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "probe_jar_sha256": "045e12f38ea2e5557ab5d171d85f79cf8d7956408801db7b969e01734277bcbd",
+      "wire_sha256": "8dace08772ef5f93536ae2623968db1fa7235c8fd156a48265ba135f4943e302",
+      "input_manifest_sha256": "b490bd0ad2867f9ba7f415319e06480f9f514b0069e4c57dc0592f1febc9f156",
+      "frozen_inputs_unchanged": true,
+      "console_log_sha256": "c6ac0a5865a0026535a9fcf27fc30d5955379842ca2b642385939fc5000048f6",
+      "client_log_sha256": "f6444c83e07a74c1b947c830ed832440ad376aec349fb644b77e9e2a27c62479",
+      "assertions": 447,
+      "native_status_reports": 55,
+      "unique_owned_requests": 34,
+      "player_sessions": 6,
+      "peer_identities": 2,
+      "server_exit": 0,
+      "client_exit": 0,
+      "native_outcomes": [
+        "ACCEPTED",
+        "DECLINED",
+        "DISCARDED",
+        "DOWNLOADED",
+        "FAILED_DOWNLOAD",
+        "FAILED_RELOAD",
+        "INVALID_URL",
+        "SUCCESSFULLY_LOADED"
+      ],
+      "managed_pop_packets": 31,
+      "targeted_repeat_pop_ids": 1,
+      "foreign_requests": 1,
+      "protected_and_unprotected_direct_hits": 5,
+      "native_arrow_impacts": 2,
+      "policy_disconnects": 3,
+      "reason_texts": [
+        "This server requires the BlocksAdder content pack.",
+        "The BlocksAdder content pack request was discarded.",
+        "The BlocksAdder content pack could not be applied."
+      ],
+      "sha1_values": [
+        "2658c7b1d0b22501fc5ac27d778f51f9e44797aa",
+        "e830f0e96eb9598a44b2ba8d8c2aff02ab57a2d6"
+      ],
+      "titles_received": 32,
+      "native_commands": 63,
+      "protocol_lib_present": false
+    }
+  ],
+  "bundle_matrix": [
+    {
+      "server": "paper-1.21.11",
+      "java": 21,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "5ffef465eeeb5f2a3c23a24419d97c51afd7dbb4923ff42df9a3f58bba1ccfba",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "22214d634b573b41289cd7f5f86d3e24671fd6d19fef153a97e23ea29e14eb99"
+    },
+    {
+      "server": "paper-26.1.1",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "43d08ed52c7af4e9f72769122501a5c15f99c7ace0c428a3eef040fd3f6fdbc5",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "0c6acdc3a9fda0246651de8e92ae8c00041d8ed32dbc14325872abb8d0d11406"
+    },
+    {
+      "server": "paper-26.1.2",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "1d70b1dab9cf4a6de615209a536f3a45a2186240253c428213ce2188ab95e5f7",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "008d2cba4f380fafa463661663394106d5321c85b3f5d3a67e6d64412315748c"
+    },
+    {
+      "server": "paper-26.2",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "3cce0a4922baf79bd8e1275ee5ff9f073f24675770e09b0d4be9442d513e7a6b",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "6d49a2a55032c5712a33cf2b66e08bd5ab1b87d5ba8fd1f541f0725e6732a19f"
+    },
+    {
+      "server": "paper-26.3",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "6bff8115cffa99a2ad01abcd44b05137fa5652d02eadc3f11b1e132d03de4402"
+    },
+    {
+      "server": "spigot-1.21.11",
+      "java": 21,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "e9762d530baaa750b2718451fc3b5ea1b7ff2c59328e9a28ad5a1e734027d566"
+    },
+    {
+      "server": "spigot-26.1.2",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "67ad88a82570f51516faa7b0d19b24079aca8ae85da488a408ea464a26767fed",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "00a5d4fac537709365530178f505298c96ee283216b4e6d3cc3266f03d8f05b5"
+    },
+    {
+      "server": "spigot-26.2",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "a880aea1313cc2c29d67a448cba37bb7314195d3c602519374ada35efc0ff4bb",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "8bc8d97e07cf755703563afbf75ff4b153fc8e2928570e886981739b4b18b958"
+    },
+    {
+      "server": "spigot-26.3",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "e0b82659eab415f49a40de3444b1f0e12fa919bdebb3171d985d4db101ddb089",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "287e38dd52032c2c1d87a065da97740d5db08a4f2825955ff74750779574b3a8"
+    },
+    {
+      "server": "spigot-26.1.1",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "8e41fa7b93ccd88b97039a65c599f3ba14112689e1b2baab65f91759269beea1",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "console_log_sha256": "c4605dfd9b1ca03fb1ca6c7bc2640b508302906ff74b0f772cc5d62cc2d0703b"
+    },
+    {
+      "server": "spigot-26.1",
+      "java": 25,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "e1140a1969afa0a4244b99cdee6aaf43141a7d06bd9431289a474fda6c956fc1",
+      "probe_jar_sha256": "33baf4ab235eb2c4c12788b600dc85c6af4f052ea5d6f389db1bd2ed967b379d",
+      "example_sha256": "c069aa3c4ca7488bf6f650abde39b8c8ebafbc62e7a73d3cd9168e96fe10c087",
+      "assertions": 49,
+      "passed": true,
+      "summary": "BUNDLE_VERIFICATION: PASS passed=49 failed=0",
+      "verified_game_version": "26.1",
+      "nested_server_sha256": "1db472c58a202ee756505144c17df9d8c291031161a1d7467f6c998c127be768",
+      "console_log_sha256": "af5f610c8a38141f5d87bb54e9cbad218e93a53b22ca7dd7cae748692a100f96"
+    }
+  ],
+  "first_build_examples": [
+    {
+      "suite": "delayed-first-build",
+      "server": "paper263",
+      "version": "26.3",
+      "java": 25,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "cdd56d33f27e77110e6f8b43cf6d9571c3854c9ae099986b24a3c18c5904cc11",
+      "assertions": 15,
+      "frozen_inputs_unchanged": true,
+      "sample_sha256": "6a374e35d7ff6762c04a5cdced037e8aad5052eff54614bf2a61c823be904a23",
+      "console_log_sha256": "7d7804e61d04d8b7550267120411ff4d593b65c088b2e63e03ef24c5e3fd88b7",
+      "client_log_sha256": "36e5947cc49ce8108cab2b8f08f1f925304461ed60253a35701cd7b0a012070a"
+    },
+    {
+      "suite": "delayed-first-build",
+      "server": "spigot21",
+      "version": "1.21.11",
+      "java": 21,
+      "passed": true,
+      "jar_sha256": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+      "server_build_sha256": "fd27d4ac2baa29a1b63823e301401894c011643953d84e411110cb72ba465f99",
+      "assertions": 15,
+      "frozen_inputs_unchanged": true,
+      "sample_sha256": "6a374e35d7ff6762c04a5cdced037e8aad5052eff54614bf2a61c823be904a23",
+      "console_log_sha256": "9015573a93ca85b050cb052ea5e1981240504614577801d6efe196c630bcaf67",
+      "client_log_sha256": "36e5947cc49ce8108cab2b8f08f1f925304461ed60253a35701cd7b0a012070a"
+    }
+  ],
+  "offline_assertions": 14014,
+  "offline_bukkit": {
+    "assertions": 9182,
+    "runs": [
+      {
+        "jar": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+        "java": "JAVA_VERSION=\"21.0.7\"",
+        "libraries": {
+          "spigot-api-1.21.11-R0.2-SNAPSHOT.jar": "ada8547e6c1a197183f432172b7838ebb850b212beedd26c4e36acfce8ea24be",
+          "snakeyaml-2.2.jar": "1467931448a0817696ae2805b7b8b20bfb082652bf9c4efaed528930dc49389b",
+          "asm-9.9.1.jar": "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+        },
+        "result": [
+          "PACK_DELIVERY_PASS policy=72 invalid=71 events=4448 damage_causes=33 shooter_reads=0"
+        ]
+      },
+      {
+        "jar": "badd80026c2abb14762d65547d6f2047185e553d7077cbe4fa3d5b737f38e4b6",
+        "java": "JAVA_VERSION=\"25.0.1\"",
+        "libraries": {
+          "spigot-api-26.3-R0.1-SNAPSHOT.jar": "862b80292dff0284ff9583b9dc9cc2f3a0494aee1d9476cd9b099ad0c0130de6",
+          "snakeyaml-2.7.jar": "2e194eba45a67dee19a4e272f4a04b18de8054e9f598b094382f6dae0b0e4b5e",
+          "asm-9.10.1.jar": "ed825d10ab1399c8c0cb669e688cf0c8c82629b4c8399b58352b68e92ca10fcb"
+        },
+        "result": [
+          "PACK_DELIVERY_PASS policy=72 invalid=71 events=4448 damage_causes=33 shooter_reads=0"
+        ]
+      }
+    ],
+    "class_sha256": {
+      "io/github/lino9999/blocksadder/pack/PackActivityGuard.class": "a37b292e9be8c9d6a2631f01a0a5dc52af9b9d241d6acb5aaaf959e5ad83fecb",
+      "io/github/lino9999/blocksadder/pack/PackDeliveryPolicy$Activity.class": "b12e0d5f1a6a5c3da4ffde170303c214937d347ffe4fc155c37261c9bfb13799",
+      "io/github/lino9999/blocksadder/pack/PackDeliveryPolicy.class": "c28642f3e01d377f5b3e809d6610ec465d54897f1c02d54e70b3027e036c9548"
+    }
+  },
+  "offline_request_ids_and_revision_retention": {
+    "assertions_by_runtime": {
+      "java-runtime-delta": 2416,
+      "java-runtime-epsilon": 2416
+    },
+    "class_sha256": {
+      "PackDelivery": "e9ab1c6488e8361d28cf41123cf77b0216458ac937763fd77f309eec725fffb4",
+      "PackDelivery$Offers": "f31225127f2f20a6b3e33f990e68e57dfbfdf2b6d9bbe4c5d3ce0858db12ccc3",
+      "PackActivityGuard": "a37b292e9be8c9d6a2631f01a0a5dc52af9b9d241d6acb5aaaf959e5ad83fecb",
+      "PackDownloads": "b5dff2f928c5c8fd73597d600b3a0355f62d26bb8318c545c68b3b4b1f077c55",
+      "PackService": "6c6ae8eca3feaacbf3845ecd8ac169d66fc5c1ed7ed5449631741d87f8b8f102",
+      "PackDelivery$Request": "b788f5563eaa911fe108f23e6dc1ac183fd4e5b2aa12c57206125a4067823aad"
+    }
+  },
+  "research": {
+    "reference_sha256": "cedc3ff88d57fb303e865b017d8e090da0f9f203d3922ff7887e27342f0c053d",
+    "previous_release_sha256": "1ad3f7be61103eea1f9c42b08a9615b3919f684ca0eb25ae6fb046a9807886ff",
+    "baseline_members_sha256": {
+      "io/github/lino9999/blocksadder/pack/PackService.class": "d01fb067f6dcf9c85a4087cc3ed57a55604b57cef414aa4a63ae03c4e21eaa6b",
+      "io/github/lino9999/blocksadder/command/ContentCommand.class": "a8bfd671bebe697bfcaf317fb9b7c1d216dd03406672bd533accceeb28469a24",
+      "config.yml": "4d39fea5fa9a572401dde73482d63d2aef47eb4f4e0ce22007d593319b6dea8a",
+      "plugin.yml": "cd2fe7ad9170e0e4127ae4e3789900578ee6679e3eca8fe1214619913585980f"
+    },
+    "rea_occurrences": "ev_0b331c4269ecc335f91f77eda65dc4bf5a742a20c726c443ce42954568a611b5",
+    "rea_nodes": "ev_d0d1c924ba97ab09b4cf644e6bf06eb3d331d4e837b0070dd4594c186d392860",
+    "method": "Read-only static inspection of the reference and separate inspection of the official server, API and client artifacts."
+  },
+  "limits": [
+    "Two offline-mode native-protocol clients per server downloaded the real locally hosted ZIP and explicitly reported statuses. Server actions, client UI packets and failure disconnections were observed. ZIP rendering, audio playback and untouched retail-client status generation were not exercised.",
+    "Fresh, loopback-only servers ran the named builds. The Java version follows the server version. This release does not establish graphical rendering, server-proxy behavior, public marketplace approval or complete functional parity."
+  ],
+  "spigot_26_1_1": {
+    "build": "dev-Spigot-4a90bec-d74c5d8",
+    "server_sha256": "8e41fa7b93ccd88b97039a65c599f3ba14112689e1b2baab65f91759269beea1",
+    "api_sha256": "c0ef1c35d096390fc01f4191ed384eb8df8643ac3af5afbcb0fc52b05af8cde2",
+    "runtime_jars": 80,
+    "all_runtime_jars_cached_and_rehashed": true
+  },
+  "paper_26_1_availability": {
+    "at": "2026-11-21T01:57:38.271356+00:00",
+    "source": "https://fill.papermc.io/v3/projects/paper",
+    "relevant_groups": {
+      "26.1": [
+        "26.1.2",
+        "26.1.1"
+      ]
+    }
+  },
+  "spigot_26_1_build": {
+    "revision_url": "https://hub.spigotmc.org/versions/4611.json",
+    "revision": {
+      "name": "4611",
+      "description": "Jenkins build 4611",
+      "refs": {
+        "BuildData": "5bf19beb9fa500f822c35eb5634fcefe27f60bec",
+        "Bukkit": "282dad0ee9804b783af8ea919ec6eb0727f42eea",
+        "CraftBukkit": "48ab3694054ecc24d13ce154aedb6a2c309ae313",
+        "Spigot": "cc5228d82b825a0288dd89cce14f9f49c1d07e1b"
+      },
+      "hashes": {
+        "CraftBukkit": "2f799f2e992a917ca3181dfe3c22fc8a8b29482b41bf36ad161d16b9cc6a8e11",
+        "Spigot": "4840fb98c2859b074d65947bacc9f039ca0d122f7bf5d00b78cc74ad795f59ec"
+      },
+      "toolsVersion": 197,
+      "javaVersions": [
+        69,
+        70
+      ]
+    },
+    "current_alias": {
+      "url": "https://hub.spigotmc.org/versions/26.1.json",
+      "revision": "4632",
+      "produced_game_version": "26.1.2"
+    },
+    "buildtools_url": "https://hub.spigotmc.org/jenkins/job/BuildTools/201/artifact/target/BuildTools.jar",
+    "buildtools_sha256": "81ed06f5ce5fb705b558bf9b3cc2c5c53cdd9742406c5338c452faa13a1e1c24",
+    "server_sha256": "e1140a1969afa0a4244b99cdee6aaf43141a7d06bd9431289a474fda6c956fc1"
+  }
+}

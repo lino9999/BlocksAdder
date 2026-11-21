@@ -1,5 +1,9 @@
 # Verification
 
+## Preview 25 resource pack delivery
+
+The preview 25 JAR passed 5,486 server assertions across 24 accepted processes on 11 Spigot and Paper builds. Two protocol players per build exercised pack prompts, titles, request replacement, damage, movement, permissions and timeout recovery. Across the pack suite the clients issued 605 status reports. Separate Spigot 1.21.11 and Paper 26.3 runs verified that players joining before the first pack build received the correct ZIP once. The packaged policy, event handlers, request IDs and revision store passed 14,014 additional offline checks. The matrix includes Spigot 26.1 built from archived revision 4611 and the separate Spigot 26.1.1 runtime. Paper's public 26.1 release group lists 26.1.1 and 26.1.2. [Build matrix](pack-delivery-verification.json) · [Delivery guide](pack-delivery.md) · [Distribution audit](pack-delivery-audit.json)
+
 ## Preview 24 recipe sources
 
 The preview 24 JAR passed 11,698 server assertions across 29 accepted processes on nine Spigot and Paper builds. Two protocol players per build inspected every source family, followed recipe outputs and paged longer tooltips. Spigot 1.21.11 and Paper 26.3 repeated those checks with ProtocolLib installed. On each build a separate example server loaded the published river bundle and checked both configured reward paths on a real creature death. A third server ran the core bundle regression suite. [Build matrix](recipe-sources-verification.json) · [Source guide](recipe-sources.md) · [Distribution audit](recipe-sources-audit.json)

@@ -3,20 +3,22 @@ package io.github.lino9999.blocksadder.pack;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.github.lino9999.blocksadder.content.ContentRegistry;
-import io.github.lino9999.blocksadder.util.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.file.Files;
-import java.util.HexFormat;
-import java.util.UUID;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +31,10 @@ public final class PackService implements Listener, AutoCloseable {
     private final Supplier<ContentRegistry> registry;
     private final ExecutorService worker = Executors.newSingleThreadExecutor(Thread.ofPlatform().daemon().name("BlocksAdder-pack").factory());
     private final AtomicBoolean building = new AtomicBoolean();
-    private volatile PackArtifact artifact;
-    private volatile byte[] hostedBytes;
+    private final PackDownloads revisions = new PackDownloads();
+    private final Map<Player, BukkitTask> joining = new IdentityHashMap<>();
+    private final PackDelivery delivery;
+    private PackDeliveryPolicy policy;
     private volatile String url = "";
     private volatile boolean required;
     private volatile long maxBytes;
@@ -48,16 +52,21 @@ public final class PackService implements Listener, AutoCloseable {
     public PackService(JavaPlugin plugin, Supplier<ContentRegistry> registry) {
         this.plugin = plugin;
         this.registry = registry;
+        this.delivery = new PackDelivery(plugin, revisions);
     }
 
+    public PackDelivery delivery() { return delivery; }
+
     public void reload() throws IOException {
-        stopHost();
         var config = plugin.getConfig();
+        var candidatePolicy = PackDeliveryPolicy.read(config);
         String candidate = config.getString("resource-pack.url", "").trim();
         if (!candidate.isBlank()) {
             URI uri = URI.create(candidate);
             if (!("https".equals(uri.getScheme()) || "http".equals(uri.getScheme())) || uri.getHost() == null || uri.getUserInfo() != null || uri.getFragment() != null) throw new IllegalArgumentException("resource-pack.url must be an HTTP(S) URL without credentials or a fragment.");
         }
+        stopHost();
+        policy = candidatePolicy;
         url = candidate;
         autoApply = config.getBoolean("resource-pack.auto-apply", false);
         required = config.getBoolean("resource-pack.required", false);
@@ -83,8 +92,14 @@ public final class PackService implements Listener, AutoCloseable {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 PackArtifact result = new PackBuilder(plugin.getDataFolder().toPath()).build(snapshot, limit, rewriteSounds, exportFonts);
-                hostedBytes = Files.readAllBytes(result.path());
-                artifact = result;
+                revisions.publish(new PackDownloads.Revision(result, Files.readAllBytes(result.path())));
+                if (!closed) {
+                    try {
+                        Bukkit.getScheduler().runTask(plugin, this::offerWaiting);
+                    } catch (org.bukkit.plugin.IllegalPluginAccessException stopped) {
+                        if (!closed && plugin.isEnabled()) throw stopped;
+                    }
+                }
                 return result;
             } catch (IOException exception) {
                 throw new java.util.concurrent.CompletionException(exception);
@@ -95,31 +110,63 @@ public final class PackService implements Listener, AutoCloseable {
     }
 
     public PackArtifact artifact() {
-        return artifact;
+        var current = revisions.current();
+        return current == null ? null : current.artifact();
     }
 
     public void apply(Player player) {
-        PackArtifact current = artifact;
+        offer(player, false);
+    }
+
+    public void applySelf(Player player) {
+        offer(player, true);
+    }
+
+    private void offer(Player player, boolean self) {
+        if (!Bukkit.isPrimaryThread()) throw new IllegalStateException("Pack requests must run on the server thread.");
+        var current = revisions.current();
         if (url.isBlank()) throw new IllegalArgumentException("Set resource-pack.url before sending the resource pack.");
         if (current == null) throw new IllegalArgumentException("Build the resource pack first with /ba pack build.");
-        String separator = url.contains("?") ? "&" : "?";
-        player.setResourcePack(UUID.nameUUIDFromBytes(("BlocksAdder:" + current.sha1()).getBytes(java.nio.charset.StandardCharsets.UTF_8)),
-                url + separator + "v=" + current.sha1(), HexFormat.of().parseHex(current.sha1()), "BlocksAdder custom content", required);
+        delivery.offer(player, current, url, required, policy, self);
+        cancelJoin(player);
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (!autoApply || url.isBlank() || artifact == null) return;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (event.getPlayer().isOnline()) apply(event.getPlayer());
-        }, 20L);
+        if (!autoApply || url.isBlank()) return;
+        Player player = event.getPlayer();
+        cancelJoin(player);
+        joining.put(player, Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            joining.put(player, null);
+            offerIfReady(player);
+        }, policy.joinDelayTicks()));
     }
 
     @EventHandler
-    public void onStatus(PlayerResourcePackStatusEvent event) {
-        if (!required || artifact == null || !event.getID().equals(UUID.nameUUIDFromBytes(("BlocksAdder:" + artifact.sha1()).getBytes(java.nio.charset.StandardCharsets.UTF_8)))) return;
-        String status = event.getStatus().name();
-        if (status.equals("DECLINED") || status.startsWith("FAILED") || status.equals("INVALID_URL")) event.getPlayer().kickPlayer("The BlocksAdder resource pack is required on this server.");
+    public void onQuit(PlayerQuitEvent event) { cancelJoin(event.getPlayer()); }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) { cancelJoin(event.getEntity()); }
+
+    private void offerWaiting() {
+        for (Player player : List.copyOf(joining.keySet())) {
+            if (joining.get(player) == null) offerIfReady(player);
+        }
+    }
+
+    private void offerIfReady(Player player) {
+        if (!player.isOnline()) cancelJoin(player);
+        else if (revisions.current() != null) apply(player);
+    }
+
+    private void cancelJoin(Player player) {
+        BukkitTask timer = joining.remove(player);
+        if (timer != null) timer.cancel();
+    }
+
+    public void resetDeliveries() {
+        List.copyOf(joining.keySet()).forEach(this::cancelJoin);
+        delivery.reset();
     }
 
     private void serve(HttpExchange exchange) throws IOException {
@@ -133,11 +180,21 @@ public final class PackService implements Listener, AutoCloseable {
                 exchange.sendResponseHeaders(405, -1);
                 return;
             }
-            byte[] data = hostedBytes;
-            if (data == null) {
+            if (revisions.current() == null) {
                 exchange.sendResponseHeaders(503, -1);
                 return;
             }
+            String query = exchange.getRequestURI().getRawQuery();
+            String hash = null;
+            if (query != null) {
+                for (String field : query.split("&")) if (field.startsWith("v=")) hash = field.substring(2);
+            }
+            var current = revisions.resolve(hash);
+            if (current == null) {
+                exchange.sendResponseHeaders(410, -1);
+                return;
+            }
+            byte[] data = current.bytes();
             if (!downloads.tryAcquire()) {
                 exchange.sendResponseHeaders(429, -1);
                 return;
@@ -171,6 +228,8 @@ public final class PackService implements Listener, AutoCloseable {
     @Override
     public void close() {
         closed = true;
+        resetDeliveries();
+        delivery.close();
         stopHost();
         worker.shutdownNow();
     }

@@ -144,6 +144,8 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             manager.registerEvents(recipes, this);
             manager.registerEvents(menus, this);
             manager.registerEvents(packs, this);
+            manager.registerEvents(packs.delivery(), this);
+            manager.registerEvents(new io.github.lino9999.blocksadder.pack.PackActivityGuard(packs.delivery()::applying), this);
             manager.registerEvents(rewardRouting, this);
             getServer().getServicesManager().register(BlocksAdderApi.class, this, this, ServicePriority.Normal);
             placeholders.start();
@@ -168,6 +170,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
     }
 
     private ContentRegistry validateContent(YamlConfiguration candidateSettings) throws Exception {
+        io.github.lino9999.blocksadder.pack.PackDeliveryPolicy.read(candidateSettings);
         ContentRegistry candidate = new ContentLoader(this).load(candidateSettings);
         io.github.lino9999.blocksadder.pack.EquipmentAssetCompiler.validate(candidate);
         ItemService validator = new ItemService(this, () -> candidate);
@@ -225,6 +228,7 @@ public final class BlocksAdderPlugin extends JavaPlugin implements BlocksAdderAp
             sounds.reload();
             packs.reload();
             if (menus != null) menus.reset();
+            packs.resetDeliveries();
         } catch (Exception exception) {
             content = previous;
             settings = previousSettings;
